@@ -23,40 +23,35 @@ out/
 src-tauri/target/
 src-tauri/WixTools/
 
-# Test files
-*.test.ts
+# Test files (exclude test HTML/JS in root, but keep vitest.config.ts)
+test-*.html
+test-*.js
+*-test.html
 *.test.js
-*.spec.ts
 *.spec.js
-**/tests/
-**/test/
-**/*test*/**
-**/*-test.ts
-**/*-test.js
-**/*.test.tsx
-**/*.spec.tsx
+*.test.tsx
+*.spec.tsx
+src/tests/
+public/test-media/
+test-results/
+docs/*TEST*.md
+docs/*test*.md
+docs/TESTING*.md
 
-# Demo files
-**/demo/
-**/demos/
-**/*demo*/**
-**/*-demo.ts
-**/*-demo.js
-**/*.demo.tsx
+# Keep necessary development files
+!vitest.config.ts
+!test-plugins/
+!src-tauri/test_network_debug.rs
+!src/utils/init-demo-data.ts
+
+# Demo files (exclude demo HTML in root)
+demo-*.html
+*-demo.html
 *demo*.html
-*demo*.ts
-*demo*.js
 
-# Preview files
-**/preview/
-**/previews/
-**/*preview*/**
-**/*-preview.ts
-**/*-preview.js
-**/*.preview.tsx
-*preview*.html
-*preview*.ts
-*preview*.js
+# Preview files (exclude preview HTML in root)
+preview*.html
+*-preview.html
 
 # IDE and editor files
 .vscode/

@@ -1,0 +1,597 @@
+/* PLUGIN-071 to PLUGIN-074: Plugin Installer Styles */
+
+.plugin-installer {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+/* Header */
+.installer-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.installer-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.close-button {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  font-size: 24px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Body */
+.installer-body {
+  padding: 32px 24px;
+  min-height: 400px;
+}
+
+.installer-step {
+  animation: fadeIn 0.3s ease-in;
+}
+
+.installer-step.hidden {
+  display: none;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Step 1: File Selection */
+.file-picker-area {
+  text-align: center;
+  padding: 40px 20px;
+  border: 2px dashed #d1d5db;
+  border-radius: 8px;
+  background: #f9fafb;
+  transition: all 0.3s;
+}
+
+.file-picker-area:hover {
+  border-color: #667eea;
+  background: #f3f4f6;
+}
+
+.file-picker-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.file-picker-text {
+  font-size: 16px;
+  color: #374151;
+  margin-bottom: 24px;
+}
+
+.file-picker-hint {
+  font-size: 13px;
+  color: #6b7280;
+  margin-top: 12px;
+}
+
+/* Step 2: Manifest Review */
+.manifest-info {
+  background: #f9fafb;
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.plugin-header-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.plugin-name {
+  font-size: 24px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.plugin-version {
+  background: #667eea;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.info-row {
+  margin-bottom: 16px;
+  display: flex;
+  gap: 12px;
+}
+
+.info-label {
+  font-weight: 600;
+  color: #6b7280;
+  min-width: 120px;
+  flex-shrink: 0;
+}
+
+.info-value {
+  color: #374151;
+  flex: 1;
+}
+
+.info-value.description {
+  line-height: 1.6;
+}
+
+/* Permissions Section */
+.permissions-section {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.permissions-section h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 16px;
+}
+
+.permissions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* PLUGIN-073: Enhanced Permission Items with Checkboxes */
+.permission-item-enhanced {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px;
+  background: white;
+  border-radius: 8px;
+  border: 2px solid #e5e7eb;
+  transition: all 0.2s;
+}
+
+.permission-item-enhanced:hover {
+  border-color: #667eea;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+}
+
+/* Custom Checkbox */
+.permission-checkbox-container {
+  position: relative;
+  cursor: pointer;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  margin-top: 4px;
+}
+
+.permission-checkbox {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+}
+
+.permission-checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 24px;
+  width: 24px;
+  background-color: #f3f4f6;
+  border: 2px solid #d1d5db;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.permission-checkbox-container:hover .permission-checkmark {
+  background-color: #e5e7eb;
+  border-color: #667eea;
+}
+
+.permission-checkbox:checked ~ .permission-checkmark {
+  background-color: #667eea;
+  border-color: #667eea;
+}
+
+.permission-checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 7px;
+  top: 3px;
+  width: 6px;
+  height: 11px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.permission-checkbox:checked ~ .permission-checkmark:after {
+  display: block;
+}
+
+/* Permission Details */
+.permission-details {
+  flex: 1;
+}
+
+.permission-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.permission-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.permission-title {
+  font-weight: 600;
+  color: #111827;
+  font-size: 15px;
+}
+
+/* Risk Level Badges */
+.risk-badge {
+  padding: 3px 10px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.risk-badge.low {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.risk-badge.medium {
+  background: #fed7aa;
+  color: #9a3412;
+}
+
+.risk-badge.high {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.permission-description {
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.permission-warning {
+  color: #b45309;
+  background: #fef3c7;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  margin-top: 8px;
+  line-height: 1.5;
+}
+
+/* Permission Approval Notice */
+.permission-approval-notice {
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 16px;
+}
+
+.approval-notice-text {
+  color: #075985;
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0 0 12px 0;
+}
+
+.approve-all-button {
+  background: #0ea5e9;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.approve-all-button:hover {
+  background: #0284c7;
+  transform: translateY(-1px);
+}
+
+.approve-all-button:active {
+  transform: translateY(0);
+}
+
+/* Basic permission item (fallback) */
+.permission-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+}
+
+.permission-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.permission-text {
+  color: #374151;
+  font-size: 14px;
+}
+
+.no-permissions {
+  color: #6b7280;
+  font-style: italic;
+  padding: 12px;
+}
+
+/* Contributions Section */
+.contributions-section {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.contributions-section h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 16px;
+}
+
+.contributions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.contribution-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+}
+
+.contribution-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.contribution-text {
+  color: #374151;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* Step 3: Installation Progress */
+.progress-container {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.progress-icon {
+  font-size: 64px;
+  margin-bottom: 24px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.progress-container h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 24px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+  width: 0%;
+}
+
+.progress-status {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+/* Step 4: Completion */
+.completion-container {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.completion-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  margin: 0 auto 24px;
+}
+
+.completion-icon.success {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.completion-icon.error {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.completion-container h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 12px;
+}
+
+.completion-message {
+  color: #6b7280;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.error-message {
+  color: #991b1b;
+  background: #fee2e2;
+  padding: 12px 16px;
+  border-radius: 6px;
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+/* Buttons */
+.installer-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+.primary-button,
+.secondary-button {
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.primary-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.primary-button:hover:not(:disabled):not(.button-disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.primary-button:active:not(:disabled):not(.button-disabled) {
+  transform: translateY(0);
+}
+
+/* PLUGIN-073: Disabled button state */
+.primary-button:disabled,
+.primary-button.button-disabled {
+  background: linear-gradient(135deg, #d1d5db 0%, #9ca3af 100%);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.secondary-button {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.secondary-button:hover {
+  background: #e5e7eb;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .plugin-installer {
+    border-radius: 0;
+    max-width: 100%;
+  }
+
+  .installer-body {
+    padding: 24px 16px;
+  }
+
+  .plugin-header-info {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .installer-actions {
+    flex-direction: column-reverse;
+  }
+
+  .primary-button,
+  .secondary-button {
+    width: 100%;
+  }
+}

@@ -1,0 +1,105 @@
+/* src/styles/custom-modal.css */
+
+.custom-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.custom-modal-overlay.visible {
+  opacity: 1;
+}
+
+.custom-modal {
+  background-color: var(--color-bg-primary);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  padding: 28px;
+  width: 90%;
+  max-width: 420px;
+  transform: scale(0.95);
+  transition: transform 0.3s ease;
+}
+
+.custom-modal-overlay.visible .custom-modal {
+  transform: scale(1);
+}
+
+.custom-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.custom-modal-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.custom-modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.8rem;
+  color: var(--color-text-secondary);
+  transition: color 0.2s ease;
+}
+
+.custom-modal-close:hover {
+  color: var(--color-text-primary);
+}
+
+.custom-modal-content {
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.custom-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.custom-modal-button {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.1s ease;
+}
+
+.custom-modal-button:active {
+    transform: translateY(1px);
+}
+
+.custom-modal-button.confirm {
+  background-color: var(--color-primary);
+  color: #ffffff;
+}
+
+.custom-modal-button.confirm:hover {
+  background-color: var(--color-primary-dark);
+}
+
+.custom-modal-button.cancel {
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+}
+
+.custom-modal-button.cancel:hover {
+  background-color: var(--color-bg-tertiary);
+}

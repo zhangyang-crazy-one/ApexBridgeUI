@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Groups - VCPChat</title>
+  <link rel="stylesheet" href="../../styles/main.css">
+  <link rel="stylesheet" href="../../styles/components.css">
+  <link rel="stylesheet" href="../../styles/groups.css">
+</head>
+<body class="claude-theme">
+  <!-- Top Navigation Bar -->
+  <div class="top-nav">
+    <div class="nav-left">
+      <button class="button-icon back-btn" id="back-btn" title="Back to Chat">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+          <path d="M10.707 2.293a1 1 0 010 1.414L5.414 9H17a1 1 0 110 2H5.414l5.293 5.293a1 1 0 01-1.414 1.414l-7-7a1 1 0 010-1.414l7-7a1 1 0 011.414 0z"/>
+        </svg>
+      </button>
+      <h1 class="page-title" data-i18n="groups_title">Agent Groups</h1>
+    </div>
+    <div class="nav-right">
+      <button class="button button-primary" id="create-group-btn">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+          <path d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"/>
+        </svg>
+        <span data-i18n="create_group">Create Group</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-container">
+    <!-- Search Bar -->
+    <div class="search-bar">
+      <svg class="search-icon" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
+      </svg>
+      <input
+        type="text"
+        id="group-search"
+        class="search-input"
+        placeholder="Search groups by name..."
+        data-i18n-placeholder="search_groups"
+      />
+    </div>
+
+    <!-- Group Stats -->
+    <div class="stats-bar">
+      <div class="stat-item">
+        <span class="stat-label" data-i18n="total_groups">Total Groups:</span>
+        <span class="stat-value" id="total-groups-count">0</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label" data-i18n="sequential_groups">Sequential:</span>
+        <span class="stat-value" id="sequential-count">0</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label" data-i18n="free_groups">Free:</span>
+        <span class="stat-value" id="free-count">0</span>
+      </div>
+    </div>
+
+    <!-- Groups Grid -->
+    <div class="groups-grid" id="groups-grid">
+      <!-- Group cards will be rendered here -->
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state hidden" id="empty-state">
+      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+      </svg>
+      <h3 data-i18n="no_groups">No groups yet</h3>
+      <p data-i18n="no_groups_desc">Click "Create Group" to set up your first agent collaboration group</p>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading-state hidden" id="loading-state">
+      <div class="spinner"></div>
+      <p data-i18n="loading_groups">Loading groups...</p>
+    </div>
+  </div>
+
+  <!-- Modal Container -->
+  <div id="modal-container"></div>
+
+  <!-- Scripts -->
+  <script type="module" src="./groups.ts"></script>
+</body>
+</html>

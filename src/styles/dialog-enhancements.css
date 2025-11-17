@@ -1,0 +1,420 @@
+/**
+ * Confirmation Dialogs & Alert Modals Beautification
+ *
+ * 为确认对话框、错误提示、警告弹窗添加与主题一致的美化样式
+ *
+ * 设计原则：
+ * - 保持 Anthropic 温暖米色主题
+ * - 添加几何网格背景纹理
+ * - 使用编排动画序列
+ * - 极端字重对比
+ * - 丰富按钮微交互
+ */
+
+/* ========================================
+   确认对话框容器 (Overlay)
+   ======================================== */
+
+.custom-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(20, 20, 19, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 300ms ease;
+}
+
+/* Active state - show modal */
+.custom-modal-overlay.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ========================================
+   对话框主体 (Modal Container)
+   ======================================== */
+
+.custom-modal {
+  position: relative;
+  background-color: var(--bg-primary);
+  border-radius: var(--radius-lg);
+  border: 2px solid var(--border-color);
+  width: 90%;
+  max-width: 480px;
+  padding: var(--spacing-xl);
+  box-shadow:
+    0 4px 16px rgba(10, 10, 9, 0.15),
+    0 8px 32px rgba(10, 10, 9, 0.2);
+
+  /* 弹簧式入场动画 - 从 choreographed-animations.css 继承 */
+  animation: springIn 600ms cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  transform: scale(0.95);
+  transition: transform 300ms ease;
+}
+
+.custom-modal-overlay.visible .custom-modal {
+  transform: scale(1);
+}
+
+/* 几何网格背景 */
+.custom-modal::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background:
+    /* 对角线网格 */
+    linear-gradient(45deg, transparent 48%, rgba(20, 20, 19, 0.02) 49%, rgba(20, 20, 19, 0.02) 51%, transparent 52%),
+    linear-gradient(-45deg, transparent 48%, rgba(20, 20, 19, 0.02) 49%, rgba(20, 20, 19, 0.02) 51%, transparent 52%);
+  background-size: 24px 24px;
+  border-radius: var(--radius-lg);
+  pointer-events: none;
+  opacity: 0.6;
+  z-index: 0;
+}
+
+/* ========================================
+   对话框标题 (Header)
+   ======================================== */
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-lg);
+  position: relative;
+  z-index: 1;
+}
+
+.modal-header h3 {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-heading-black);
+  color: var(--text-primary);
+  margin: 0;
+  letter-spacing: -0.5px;
+  animation: slideDown 400ms cubic-bezier(0.34, 1.56, 0.64, 1) 100ms backwards;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========================================
+   关闭按钮
+   ======================================== */
+
+.modal-close-btn {
+  position: absolute;
+  top: var(--spacing-md);
+  right: var(--spacing-md);
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-size: 28px;
+  line-height: 1;
+  z-index: 2;
+  transition:
+    transform 300ms cubic-bezier(0.68, -0.55, 0.27, 1.55),
+    background 200ms ease,
+    color 200ms ease;
+}
+
+.modal-close-btn:hover {
+  background: var(--bg-tertiary);
+  transform: rotate(90deg) scale(1.1);
+  color: var(--text-primary);
+}
+
+/* 脉冲效果 */
+.modal-close-btn:active::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--active-bg);
+  opacity: 0.3;
+  transform: translate(-50%, -50%) scale(0);
+  animation: pulse 0.5s ease-out;
+  pointer-events: none;
+}
+
+@keyframes pulse {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2.5);
+    opacity: 0;
+  }
+}
+
+/* ========================================
+   对话框内容 (Body)
+   ======================================== */
+
+.modal-body {
+  position: relative;
+  z-index: 1;
+  margin-bottom: var(--spacing-xl);
+  animation: fadeInRight 400ms ease 250ms backwards;
+}
+
+.modal-body p {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-body-light);
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* 强调文本 */
+.modal-body strong {
+  font-weight: var(--font-body-bold);
+  color: var(--text-primary);
+}
+
+/* ========================================
+   按钮区域 (Footer)
+   ======================================== */
+
+.modal-footer {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: flex-end;
+  animation: slideUp 400ms ease 350ms backwards;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========================================
+   按钮基础样式
+   ======================================== */
+
+.modal-btn {
+  position: relative;
+  overflow: hidden;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--radius-md);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-heading-black);
+  cursor: pointer;
+  transition: all 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ========================================
+   取消按钮
+   ======================================== */
+
+.modal-cancel-btn {
+  border: 2px solid var(--border-color);
+  background: transparent;
+  color: var(--text-primary);
+}
+
+/* 边框扫描动画 */
+.modal-cancel-btn::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -100%;
+  width: 100%;
+  height: calc(100% + 4px);
+  background: linear-gradient(90deg, transparent, var(--active-bg), transparent);
+  transition: left 0.5s ease;
+  pointer-events: none;
+}
+
+.modal-cancel-btn:hover::before {
+  left: 100%;
+}
+
+.modal-cancel-btn:hover {
+  border-color: var(--active-bg);
+  color: var(--active-bg);
+  transform: translateX(-4px);
+}
+
+.modal-cancel-btn:active {
+  transform: translateX(-2px) scale(0.97);
+}
+
+/* ========================================
+   确认按钮
+   ======================================== */
+
+.modal-confirm-btn {
+  border: none;
+  background: var(--active-bg);
+  color: var(--active-text);
+  letter-spacing: 0.5px;
+
+  /* 三层阴影 */
+  box-shadow:
+    0 1px 2px rgba(10, 10, 9, 0.1),
+    0 4px 8px rgba(10, 10, 9, 0.15),
+    0 8px 16px rgba(10, 10, 9, 0.2);
+}
+
+.modal-confirm-btn:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow:
+    0 2px 4px rgba(10, 10, 9, 0.15),
+    0 8px 16px rgba(10, 10, 9, 0.25),
+    0 16px 32px rgba(10, 10, 9, 0.3);
+}
+
+.modal-confirm-btn:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow:
+    0 1px 2px rgba(10, 10, 9, 0.2),
+    0 2px 4px rgba(10, 10, 9, 0.25);
+}
+
+/* 水波纹效果 */
+.modal-confirm-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(250, 249, 245, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
+  pointer-events: none;
+}
+
+.modal-confirm-btn:active::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* ========================================
+   响应式设计
+   ======================================== */
+
+@media (max-width: 768px) {
+  .custom-modal {
+    width: 95%;
+    max-width: none;
+    padding: var(--spacing-lg);
+  }
+
+  .modal-header h3 {
+    font-size: var(--font-size-base);
+  }
+
+  .modal-footer {
+    flex-direction: column-reverse;
+  }
+
+  .modal-cancel-btn,
+  .modal-confirm-btn {
+    width: 100%;
+  }
+}
+
+/* ========================================
+   暗色模式适配
+   ======================================== */
+
+[data-theme="dark"] .custom-modal {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+}
+
+[data-theme="dark"] .custom-modal-overlay {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+/* ========================================
+   焦点可见性（无障碍）
+   ======================================== */
+
+.modal-cancel-btn:focus-visible,
+.modal-confirm-btn:focus-visible,
+.modal-close-btn:focus-visible {
+  outline: 3px solid var(--active-bg);
+  outline-offset: 4px;
+}
+
+/* ========================================
+   性能优化
+   ======================================== */
+
+.custom-modal {
+  will-change: transform, opacity;
+}
+
+.custom-modal-overlay.visible .custom-modal {
+  will-change: auto;
+}
+
+/* ========================================
+   禁用动画（用户偏好）
+   ======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .custom-modal,
+  .modal-header h3,
+  .modal-body,
+  .modal-footer,
+  .modal-close-btn,
+  .modal-cancel-btn,
+  .modal-confirm-btn {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

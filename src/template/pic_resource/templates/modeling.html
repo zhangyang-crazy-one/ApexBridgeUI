@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>数据建模 - DAMA Platform</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    /* ========== Reset & Base Styles ========== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* ========== Anthropic-inspired Design System ========== */
+    :root {
+      /* Colors - Warm Neutral Palette */
+      --bg-primary: #FAF9F5;
+      --bg-secondary: #F0EEE6;
+      --bg-tertiary: #E8E6DD;
+      --text-primary: #141413;
+      --text-secondary: #666666;
+      --text-tertiary: #999999;
+      --border-color: #E5E5E5;
+      --button-bg: #141413;
+      --button-text: #FAF9F5;
+      --input-bg: #FFFFFF;
+      --primary-color: #2563eb;
+      --primary-light: #dbeafe;
+      --success-color: #10b981;
+      --warning-color: #f59e0b;
+      --info-color: #3b82f6;
+
+      /* Typography */
+      --font-heading: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-body: Georgia, "Times New Roman", Times, serif;
+
+      --font-size-sm: 14px;
+      --font-size-base: 16px;
+      --font-size-lg: 18px;
+      --font-size-xl: 20px;
+      --font-size-2xl: 24px;
+
+      /* Spacing */
+      --spacing-xs: 8px;
+      --spacing-sm: 12px;
+      --spacing-md: 20px;
+      --spacing-lg: 32px;
+      --spacing-xl: 48px;
+
+      /* Border Radius */
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+
+      /* Shadows */
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    body {
+      font-family: var(--font-heading);
+      font-size: 15px;
+      line-height: 1.5;
+      color: var(--text-primary);
+      background-color: var(--bg-primary);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ========== Header / Navigation ========== */
+    .header {
+      background-color: var(--bg-secondary);
+      padding: var(--spacing-sm) var(--spacing-lg);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .header-container {
+      max-width: 1800px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--spacing-lg);
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      text-decoration: none;
+      color: var(--text-primary);
+      flex-shrink: 0;
+    }
+
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      filter: grayscale(100%) brightness(0);
+    }
+
+    .logo-text {
+      font-family: var(--font-heading);
+      font-size: var(--font-size-xl);
+      font-weight: 500;
+      letter-spacing: -0.5px;
+    }
+
+    .header-nav {
+      display: flex;
+      gap: var(--spacing-xs);
+      flex: 1;
+      justify-content: center;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+      padding: var(--spacing-xs) var(--spacing-sm);
+      font-family: var(--font-heading);
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+      text-decoration: none;
+      border-radius: var(--radius-sm);
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .nav-link:hover {
+      background-color: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .nav-link.active {
+      background-color: var(--button-bg);
+      color: var(--button-text);
+      font-weight: 500;
+    }
+
+    .nav-icon {
+      width: 18px;
+      height: 18px;
+      opacity: 0.7;
+    }
+
+    .nav-link.active .nav-icon {
+      opacity: 1;
+      filter: brightness(0) invert(1);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: var(--spacing-sm);
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .btn-header {
+      padding: var(--spacing-xs) var(--spacing-md);
+      font-family: var(--font-heading);
+      font-size: var(--font-size-sm);
+      font-weight: 500;
+      color: var(--text-primary);
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn-header:hover {
+      background-color: var(--bg-tertiary);
+    }
+
+    .btn-header.btn-primary {
+      background-color: var(--button-bg);
+      color: var(--button-text);
+      border-color: var(--button-bg);
+    }
+
+    .btn-header.btn-primary:hover {
+      opacity: 0.85;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      font-family: var(--font-heading);
+      font-size: 14px;
+      font-weight: 500;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--button-bg);
+      color: var(--button-text);
+    }
+
+    .btn-primary:hover {
+      opacity: 0.85;
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-secondary);
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 13px;
+    }
+    /* ========== Workspace Layout ========== */
+    .workspace-container {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: var(--spacing-md);
+    }
+
+    .workspace-header {
+      margin-bottom: var(--spacing-md);
+    }
+
+    .workspace-title {
+      font-family: var(--font-heading);
+      font-size: 28px;
+      font-weight: 500;
+      margin-bottom: var(--spacing-sm);
+      color: var(--text-primary);
+    }
+
+    .workspace-description {
+      font-size: 15px;
+      color: var(--text-secondary);
+    }
+
+    .modeling-workspace {
+      display: grid;
+      grid-template-columns: 280px 1fr 380px;
+      gap: var(--spacing-md);
+      height: calc(100vh - 200px);
+      min-height: 600px;
+    }
+
+    .entity-palette {
+      background: white;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      overflow-y: auto;
+      padding: var(--spacing-md);
+    }
+
+    .canvas-area {
+      background: white;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      position: relative;
+      overflow: auto;
+    }
+
+    .properties-panel {
+      background: white;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      overflow-y: auto;
+      padding: var(--spacing-md);
+    }
+
+    .panel-title {
+      font-family: var(--font-heading);
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: var(--spacing-md);
+      color: var(--text-primary);
+    }
+
+    /* ========== Entity Items ========== */
+    .entity-item {
+      padding: var(--spacing-sm);
+      margin-bottom: var(--spacing-sm);
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      cursor: move;
+      transition: all 0.2s;
+    }
+
+    .entity-item:hover {
+      background: var(--primary-light);
+      border-color: var(--primary-color);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .entity-item-title {
+      font-weight: 500;
+      margin-bottom: 4px;
+      color: var(--text-primary);
+    }
+
+    .entity-item-meta {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    /* ========== Entity Nodes on Canvas ========== */
+    .entity-node {
+      position: absolute;
+      background: white;
+      border: 2px solid var(--text-primary);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      min-width: 220px;
+      cursor: move;
+      transition: all 0.2s;
+    }
+
+    .entity-node:hover {
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    .entity-node.selected {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+    }
+
+    .entity-header {
+      padding: var(--spacing-sm);
+      background: var(--text-primary);
+      color: white;
+      font-weight: 500;
+      font-size: 15px;
+      border-radius: calc(var(--radius-md) - 2px) calc(var(--radius-md) - 2px) 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: grab;
+      user-select: none;
+    }
+
+    .entity-header:active {
+      cursor: grabbing;
+    }
+
+    .entity-body {
+      padding: var(--spacing-sm);
+    }
+
+    .attribute-row {
+      padding: 8px;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Courier New', monospace;
+    }
+
+    .attribute-row:last-child {
+      border-bottom: none;
+    }
+
+    .pk-icon {
+      color: var(--warning-color);
+      font-weight: bold;
+      font-size: 12px;
+    }
+
+    .fk-icon {
+      color: var(--info-color);
+      font-weight: bold;
+      font-size: 12px;
+    }
+
+    /* ========== DDL Preview ========== */
+    .ddl-preview {
+      background: #1e293b;
+      color: #e2e8f0;
+      padding: var(--spacing-md);
+      border-radius: var(--radius-sm);
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      overflow-x: auto;
+      max-height: 400px;
+      overflow-y: auto;
+      border: 1px solid #334155;
+    }
+
+    .ddl-keyword {
+      color: #60a5fa;
+      font-weight: bold;
+    }
+
+    .ddl-type {
+      color: #34d399;
+    }
+
+    .ddl-comment {
+      color: #94a3b8;
+      font-style: italic;
+    }
+
+    /* ========== Model Type Selector ========== */
+    .model-type-selector {
+      display: flex;
+      gap: var(--spacing-xs);
+      margin-bottom: var(--spacing-md);
+    }
+
+    .model-type-btn {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid var(--border-color);
+      background: white;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: var(--font-heading);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .model-type-btn:hover {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+    }
+
+    .model-type-btn.active {
+      background: var(--text-primary);
+      color: white;
+      border-color: var(--text-primary);
+    }
+
+    /* ========== Platform Selector ========== */
+    .platform-selector {
+      display: flex;
+      gap: var(--spacing-xs);
+      flex-wrap: wrap;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .platform-chip {
+      padding: 6px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: var(--font-heading);
+      font-weight: 500;
+      color: var(--text-secondary);
+      background: white;
+    }
+
+    .platform-chip:hover {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+    }
+
+    .platform-chip.active {
+      background: var(--text-primary);
+      color: white;
+      border-color: var(--text-primary);
+    }
+
+    /* ========== Section Headers ========== */
+    .section-header {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: var(--spacing-sm);
+      color: var(--text-primary);
+    }
+
+    /* ========== Utility Classes ========== */
+    .w-full {
+      width: 100%;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: var(--spacing-lg);
+      color: var(--text-tertiary);
+      font-size: 14px;
+    }
+
+    /* ========== Responsive Design ========== */
+    @media (max-width: 1200px) {
+      .modeling-workspace {
+        grid-template-columns: 240px 1fr 320px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .modeling-workspace {
+        grid-template-columns: 1fr;
+        height: auto;
+      }
+
+      .entity-palette,
+      .properties-panel {
+        max-height: 400px;
+      }
+
+      .canvas-area {
+        min-height: 500px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header / Navigation -->
+  <header class="header">
+    <div class="header-container">
+      <a href="index.html" class="logo-container">
+        <img src="../../icon/hdlogo.com-measurable-data-token-mdt.svg" alt="DAMA Logo" class="logo-icon">
+        <span class="logo-text">DAMA Platform</span>
+      </a>
+
+      <nav class="header-nav">
+        <a href="index.html" class="nav-link">
+          <img src="../../icon/Emoji_instead/dashboard-4.svg" alt="首页" class="nav-icon">
+          <span>首页</span>
+        </a>
+        <a href="modeling.html" class="nav-link active">
+          <img src="../../icon/Emoji_instead/data.svg" alt="数据建模" class="nav-icon">
+          <span>数据建模</span>
+        </a>
+        <a href="metadata.html" class="nav-link">
+          <img src="../../icon/Emoji_instead/database-3.svg" alt="元数据管理" class="nav-icon">
+          <span>元数据管理</span>
+        </a>
+        <a href="lineage.html" class="nav-link">
+          <img src="../../icon/Emoji_instead/code-fork-3.svg" alt="数据血缘" class="nav-icon">
+          <span>数据血缘</span>
+        </a>
+        <a href="data-flow-matrix.html" class="nav-link">
+          <img src="../../icon/Emoji_instead/refresh.svg" alt="数据流矩阵" class="nav-icon">
+          <span>数据流矩阵</span>
+        </a>
+        <a href="enterprise-data-architecture.html" class="nav-link">
+          <img src="../../icon/Emoji_instead/ic_enterprice.svg" alt="企业架构" class="nav-icon">
+          <span>企业架构</span>
+        </a>
+        <a href="ai-assistant.html" class="nav-link">
+          <img src="../../icon/Emoji_instead/robot.svg" alt="AI助手" class="nav-icon">
+          <span>AI助手</span>
+        </a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="btn-header" onclick="clearCanvas()">清空画布</button>
+        <button class="btn-header" onclick="saveModel()">保存模型</button>
+        <button class="btn-header btn-primary" onclick="generateDDL()">生成DDL</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Workspace -->
+  <div class="workspace-container">
+    <div class="workspace-header">
+      <h1 class="workspace-title">数据建模 - ERD编辑器</h1>
+      <p class="workspace-description">可视化设计概念、逻辑、物理三层数据模型，自动生成多平台DDL脚本</p>
+    </div>
+
+    <div class="modeling-workspace">
+      <!-- Entity Palette -->
+      <div class="entity-palette">
+        <h3 class="panel-title">实体模板</h3>
+
+        <div class="model-type-selector">
+          <button class="model-type-btn active" onclick="setModelType('CONCEPTUAL')">概念</button>
+          <button class="model-type-btn" onclick="setModelType('LOGICAL')">逻辑</button>
+          <button class="model-type-btn" onclick="setModelType('PHYSICAL')">物理</button>
+        </div>
+
+        <div class="entity-item" draggable="true" ondragstart="dragStart(event, 'customer')">
+          <div class="entity-item-title">客户 (Customer)</div>
+          <div class="entity-item-meta">4个属性</div>
+        </div>
+
+        <div class="entity-item" draggable="true" ondragstart="dragStart(event, 'order')">
+          <div class="entity-item-title">订单 (Order)</div>
+          <div class="entity-item-meta">6个属性</div>
+        </div>
+
+        <div class="entity-item" draggable="true" ondragstart="dragStart(event, 'product')">
+          <div class="entity-item-title">产品 (Product)</div>
+          <div class="entity-item-meta">5个属性</div>
+        </div>
+
+        <div class="entity-item" draggable="true" ondragstart="dragStart(event, 'order_item')">
+          <div class="entity-item-title">订单明细 (OrderItem)</div>
+          <div class="entity-item-meta">5个属性</div>
+        </div>
+
+        <div style="margin-top: var(--spacing-md);">
+          <button class="btn btn-secondary btn-sm w-full" onclick="addCustomEntity()">
+            + 自定义实体
+          </button>
+        </div>
+      </div>
+
+      <!-- Canvas Area -->
+      <div class="canvas-area" id="canvas" ondrop="drop(event)" ondragover="allowDrop(event)">
+        <!-- Entities will be added here dynamically -->
+      </div>
+
+      <!-- Properties Panel -->
+      <div class="properties-panel">
+        <h3 class="panel-title">属性面板</h3>
+
+        <div id="properties-content">
+          <div class="empty-state">
+            <p>选择一个实体查看属性</p>
+          </div>
+        </div>
+
+        <div style="margin-top: var(--spacing-md);">
+          <h4 class="section-header">DDL生成平台</h4>
+          <div class="platform-selector">
+            <div class="platform-chip active" onclick="selectPlatform(this, 'POSTGRESQL')">PostgreSQL</div>
+            <div class="platform-chip" onclick="selectPlatform(this, 'MYSQL')">MySQL</div>
+            <div class="platform-chip" onclick="selectPlatform(this, 'ORACLE')">Oracle</div>
+            <div class="platform-chip" onclick="selectPlatform(this, 'SQL_SERVER')">SQL Server</div>
+          </div>
+        </div>
+
+        <div style="margin-top: var(--spacing-md);">
+          <h4 class="section-header">DDL预览</h4>
+          <div class="ddl-preview" id="ddl-preview">
+            <span class="ddl-comment">-- 选择实体后生成DDL</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Entity templates
+    const entityTemplates = {
+      customer: {
+        name: 'customer',
+        displayName: '客户',
+        attributes: [
+          { name: 'customer_id', type: 'BIGINT', isPK: true, isFK: false, comment: '客户ID' },
+          { name: 'customer_name', type: 'VARCHAR(100)', isPK: false, isFK: false, comment: '客户姓名' },
+          { name: 'email', type: 'VARCHAR(100)', isPK: false, isFK: false, comment: '电子邮箱' },
+          { name: 'created_at', type: 'TIMESTAMP', isPK: false, isFK: false, comment: '创建时间' }
+        ]
+      },
+      order: {
+        name: 'order',
+        displayName: '订单',
+        attributes: [
+          { name: 'order_id', type: 'BIGINT', isPK: true, isFK: false, comment: '订单ID' },
+          { name: 'customer_id', type: 'BIGINT', isPK: false, isFK: true, comment: '客户ID' },
+          { name: 'order_date', type: 'DATE', isPK: false, isFK: false, comment: '订单日期' },
+          { name: 'total_amount', type: 'DECIMAL(10,2)', isPK: false, isFK: false, comment: '订单总额' },
+          { name: 'status', type: 'VARCHAR(20)', isPK: false, isFK: false, comment: '订单状态' },
+          { name: 'created_at', type: 'TIMESTAMP', isPK: false, isFK: false, comment: '创建时间' }
+        ]
+      },
+      product: {
+        name: 'product',
+        displayName: '产品',
+        attributes: [
+          { name: 'product_id', type: 'BIGINT', isPK: true, isFK: false, comment: '产品ID' },
+          { name: 'product_name', type: 'VARCHAR(200)', isPK: false, isFK: false, comment: '产品名称' },
+          { name: 'price', type: 'DECIMAL(10,2)', isPK: false, isFK: false, comment: '产品价格' },
+          { name: 'stock', type: 'INT', isPK: false, isFK: false, comment: '库存数量' },
+          { name: 'created_at', type: 'TIMESTAMP', isPK: false, isFK: false, comment: '创建时间' }
+        ]
+      },
+      order_item: {
+        name: 'order_item',
+        displayName: '订单明细',
+        attributes: [
+          { name: 'order_item_id', type: 'BIGINT', isPK: true, isFK: false, comment: '订单明细ID' },
+          { name: 'order_id', type: 'BIGINT', isPK: false, isFK: true, comment: '订单ID' },
+          { name: 'product_id', type: 'BIGINT', isPK: false, isFK: true, comment: '产品ID' },
+          { name: 'quantity', type: 'INT', isPK: false, isFK: false, comment: '数量' },
+          { name: 'subtotal', type: 'DECIMAL(10,2)', isPK: false, isFK: false, comment: '小计' }
+        ]
+      }
+    };
+
+    let entities = [];
+    let selectedEntity = null;
+    let currentPlatform = 'POSTGRESQL';
+    let currentModelType = 'CONCEPTUAL';
+    let entityIdCounter = 0;
+
+    function dragStart(event, entityType) {
+      event.dataTransfer.setData('entityType', entityType);
+    }
+
+    function allowDrop(event) {
+      event.preventDefault();
+    }
+
+    function drop(event) {
+      event.preventDefault();
+      const entityType = event.dataTransfer.getData('entityType');
+      const template = entityTemplates[entityType];
+      
+      if (!template) return;
+
+      const canvas = document.getElementById('canvas');
+      const rect = canvas.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+
+      addEntityToCanvas(template, x, y);
+    }
+
+    function addEntityToCanvas(template, x, y) {
+      const entityId = `entity-${entityIdCounter++}`;
+      const entity = {
+        id: entityId,
+        ...template,
+        x: x,
+        y: y
+      };
+
+      entities.push(entity);
+      renderEntity(entity);
+    }
+
+    function renderEntity(entity) {
+      const canvas = document.getElementById('canvas');
+      const entityDiv = document.createElement('div');
+      entityDiv.id = entity.id;
+      entityDiv.className = 'entity-node';
+      entityDiv.style.left = entity.x + 'px';
+      entityDiv.style.top = entity.y + 'px';
+      // Note: onclick removed - selection is now handled in makeDraggable
+
+      let attributesHTML = '';
+      entity.attributes.forEach(attr => {
+        const icon = attr.isPK ? '<span class="pk-icon">🔑</span>' : (attr.isFK ? '<span class="fk-icon">🔗</span>' : '');
+        attributesHTML += `
+          <div class="attribute-row">
+            ${icon}
+            <span style="flex: 1;">${attr.name}</span>
+            <span style="color: var(--text-tertiary); font-size: 0.75rem;">${attr.type}</span>
+          </div>
+        `;
+      });
+
+      entityDiv.innerHTML = `
+        <div class="entity-header">
+          <span>${entity.displayName}</span>
+          <span style="font-size: 0.75rem; opacity: 0.8;">${entity.name}</span>
+        </div>
+        <div class="entity-body">
+          ${attributesHTML}
+        </div>
+      `;
+
+      canvas.appendChild(entityDiv);
+      makeDraggable(entityDiv, entity);
+    }
+
+    function makeDraggable(element, entity) {
+      let isDragging = false;
+      let startX = 0, startY = 0;
+      let currentX = entity.x;
+      let currentY = entity.y;
+
+      element.onmousedown = dragMouseDown;
+
+      function dragMouseDown(e) {
+        // Only allow dragging from the entity header
+        if (e.target.closest('.entity-header')) {
+          e.preventDefault();
+          e.stopPropagation();
+
+          isDragging = false;
+          startX = e.clientX;
+          startY = e.clientY;
+
+          // Store current position
+          currentX = entity.x;
+          currentY = entity.y;
+
+          document.onmouseup = closeDragElement;
+          document.onmousemove = elementDrag;
+
+          // Change cursor to grabbing
+          element.style.cursor = 'grabbing';
+        }
+      }
+
+      function elementDrag(e) {
+        e.preventDefault();
+
+        // Check if mouse has moved more than 5px (to distinguish from click)
+        const deltaX = Math.abs(e.clientX - startX);
+        const deltaY = Math.abs(e.clientY - startY);
+
+        if (deltaX > 5 || deltaY > 5) {
+          isDragging = true;
+        }
+
+        if (isDragging) {
+          // Calculate new position based on mouse movement
+          const dx = e.clientX - startX;
+          const dy = e.clientY - startY;
+
+          const newX = currentX + dx;
+          const newY = currentY + dy;
+
+          // Update element position
+          element.style.left = newX + "px";
+          element.style.top = newY + "px";
+
+          // Update entity position
+          entity.x = newX;
+          entity.y = newY;
+        }
+      }
+
+      function closeDragElement(e) {
+        document.onmouseup = null;
+        document.onmousemove = null;
+
+        // Restore cursor
+        element.style.cursor = 'move';
+
+        // If not dragging (just a click), select the entity
+        if (!isDragging) {
+          selectEntity(entity.id);
+        }
+
+        isDragging = false;
+      }
+    }
+
+    function selectEntity(entityId) {
+      // Remove previous selection
+      document.querySelectorAll('.entity-node').forEach(node => {
+        node.classList.remove('selected');
+      });
+
+      // Add selection to clicked entity
+      const entityElement = document.getElementById(entityId);
+      entityElement.classList.add('selected');
+
+      // Find entity data
+      selectedEntity = entities.find(e => e.id === entityId);
+      
+      // Update properties panel
+      updatePropertiesPanel(selectedEntity);
+      
+      // Generate DDL
+      generateDDLForEntity(selectedEntity);
+    }
+
+    function updatePropertiesPanel(entity) {
+      const content = document.getElementById('properties-content');
+      
+      let attributesHTML = '';
+      entity.attributes.forEach((attr, index) => {
+        attributesHTML += `
+          <div class="form-group">
+            <label class="form-label">属性 ${index + 1}</label>
+            <input type="text" class="form-input" value="${attr.name}" readonly>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.5rem;">
+              <input type="text" class="form-input" value="${attr.type}" readonly>
+              <div style="display: flex; gap: 0.5rem;">
+                <label style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.75rem;">
+                  <input type="checkbox" ${attr.isPK ? 'checked' : ''} disabled> PK
+                </label>
+                <label style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.75rem;">
+                  <input type="checkbox" ${attr.isFK ? 'checked' : ''} disabled> FK
+                </label>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      content.innerHTML = `
+        <div class="form-group">
+          <label class="form-label">实体名称</label>
+          <input type="text" class="form-input" value="${entity.displayName}" readonly>
+        </div>
+        <div class="form-group">
+          <label class="form-label">表名</label>
+          <input type="text" class="form-input" value="${entity.name}" readonly>
+        </div>
+        ${attributesHTML}
+      `;
+    }
+
+    function generateDDLForEntity(entity) {
+      const preview = document.getElementById('ddl-preview');
+      
+      let ddl = `<span class="ddl-comment">-- Table: ${entity.displayName} (${entity.name})</span>\n`;
+      ddl += `<span class="ddl-keyword">CREATE TABLE</span> ${entity.name} (\n`;
+      
+      entity.attributes.forEach((attr, index) => {
+        const comma = index < entity.attributes.length - 1 ? ',' : '';
+        ddl += `  ${attr.name} <span class="ddl-type">${attr.type}</span>${comma} <span class="ddl-comment">-- ${attr.comment}</span>\n`;
+      });
+      
+      const pkAttrs = entity.attributes.filter(a => a.isPK).map(a => a.name).join(', ');
+      if (pkAttrs) {
+        ddl += `,\n  <span class="ddl-keyword">PRIMARY KEY</span> (${pkAttrs})\n`;
+      }
+      
+      ddl += `);\n\n`;
+      
+      const fkAttrs = entity.attributes.filter(a => a.isFK);
+      fkAttrs.forEach(fk => {
+        const refTable = fk.name.replace('_id', '');
+        ddl += `<span class="ddl-keyword">ALTER TABLE</span> ${entity.name}\n`;
+        ddl += `  <span class="ddl-keyword">ADD CONSTRAINT</span> fk_${entity.name}_${refTable}\n`;
+        ddl += `  <span class="ddl-keyword">FOREIGN KEY</span> (${fk.name})\n`;
+        ddl += `  <span class="ddl-keyword">REFERENCES</span> ${refTable}(${fk.name});\n\n`;
+      });
+      
+      preview.innerHTML = ddl;
+    }
+
+    function clearCanvas() {
+      if (confirm('确定要清空画布吗?')) {
+        document.getElementById('canvas').innerHTML = '';
+        entities = [];
+        selectedEntity = null;
+        document.getElementById('properties-content').innerHTML = `
+          <div style="text-align: center; padding: 2rem; color: var(--text-tertiary);">
+            <p>选择一个实体查看属性</p>
+          </div>
+        `;
+        document.getElementById('ddl-preview').innerHTML = '<span class="ddl-comment">-- 选择实体后生成DDL</span>';
+      }
+    }
+
+    function saveModel() {
+      alert('模型已保存!(模拟功能)');
+    }
+
+    function generateDDL() {
+      if (entities.length === 0) {
+        alert('请先添加实体到画布');
+        return;
+      }
+      alert(`已为 ${entities.length} 个实体生成DDL脚本!(模拟功能)`);
+    }
+
+    function setModelType(type) {
+      currentModelType = type;
+      document.querySelectorAll('.model-type-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      event.target.classList.add('active');
+    }
+
+    function selectPlatform(element, platform) {
+      currentPlatform = platform;
+      document.querySelectorAll('.platform-chip').forEach(chip => {
+        chip.classList.remove('active');
+      });
+      element.classList.add('active');
+      
+      if (selectedEntity) {
+        generateDDLForEntity(selectedEntity);
+      }
+    }
+
+    function addCustomEntity() {
+      alert('自定义实体功能开发中...');
+    }
+
+    // Initialize with sample entities
+    window.onload = function() {
+      addEntityToCanvas(entityTemplates.customer, 100, 100);
+      addEntityToCanvas(entityTemplates.order, 400, 100);
+      addEntityToCanvas(entityTemplates.product, 100, 350);
+      addEntityToCanvas(entityTemplates.order_item, 400, 350);
+    };
+  </script>
+</body>
+</html>
+

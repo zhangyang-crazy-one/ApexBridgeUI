@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSS Loading Test</title>
+  <link rel="stylesheet" href="/src/styles/main.css">
+  <link rel="stylesheet" href="/src/styles/themes.css">
+  <link rel="stylesheet" href="/src/styles/syntax-highlighter.css">
+  <link rel="stylesheet" href="/src/styles/image-renderer.css">
+  <link rel="stylesheet" href="/src/styles/video-renderer.css">
+  <link rel="stylesheet" href="/src/styles/latex-renderer.css">
+  <link rel="stylesheet" href="/src/styles/mermaid-renderer.css">
+  <style>
+    body {
+      padding: 40px;
+      font-family: var(--font-heading);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+    }
+
+    .test-section {
+      margin: 20px 0;
+      padding: 20px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+    }
+
+    .success { color: #42A592; }
+    .fail { color: #E74C3C; }
+  </style>
+</head>
+<body>
+  <h1>Renderer CSS Loading Test</h1>
+  <p>Testing if all new renderer CSS files are loaded correctly.</p>
+
+  <div id="results"></div>
+
+  <div class="test-section">
+    <h2>Syntax Highlighting Test</h2>
+    <pre><code class="language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">test</span>():
+    <span class="hljs-string">"Test"</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-number">42</span></code></pre>
+  </div>
+
+  <div class="test-section">
+    <h2>Image Renderer Styles Test</h2>
+    <div class="image-renderer">
+      <div class="image-header">
+        <span class="image-title">Test Image Viewer</span>
+      </div>
+      <div class="image-container">
+        <p>Image renderer styles</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="test-section">
+    <h2>Video Renderer Styles Test</h2>
+    <div class="video-renderer">
+      <div class="video-header">
+        <span class="video-title">Test Video Player</span>
+      </div>
+      <div class="video-container">
+        <p>Video renderer styles</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="test-section">
+    <h2>LaTeX Renderer Styles Test</h2>
+    <div class="latex-renderer">
+      <div class="latex-header">
+        <span class="latex-title">Test LaTeX</span>
+      </div>
+      <div class="latex-content">
+        <p>LaTeX renderer styles</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="test-section">
+    <h2>Mermaid Renderer Styles Test</h2>
+    <div class="mermaid-renderer">
+      <div class="mermaid-header">
+        <span class="mermaid-title">Test Mermaid Diagram</span>
+      </div>
+      <div class="mermaid-diagram-container">
+        <p>Mermaid renderer styles</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function checkCSSLoaded() {
+      const results = [];
+
+      // Check if CSS files are loaded
+      const stylesheets = Array.from(document.styleSheets);
+      const cssFiles = [
+        'main.css',
+        'themes.css',
+        'syntax-highlighter.css',
+        'image-renderer.css',
+        'video-renderer.css',
+        'latex-renderer.css',
+        'mermaid-renderer.css'
+      ];
+
+      cssFiles.forEach(file => {
+        const loaded = stylesheets.some(sheet =>
+          sheet.href && sheet.href.includes(file)
+        );
+        results.push({
+          file,
+          loaded,
+          status: loaded ? '✓ LOADED' : '✗ NOT LOADED'
+        });
+      });
+
+      // Check computed styles
+      const keyword = document.querySelector('.hljs-keyword');
+      const imageRenderer = document.querySelector('.image-renderer');
+      const videoRenderer = document.querySelector('.video-renderer');
+      const latexRenderer = document.querySelector('.latex-renderer');
+      const mermaidRenderer = document.querySelector('.mermaid-renderer');
+
+      const styles = {
+        keyword: keyword ? window.getComputedStyle(keyword).color : 'not found',
+        imageRendererBg: imageRenderer ? window.getComputedStyle(imageRenderer).backgroundColor : 'not found',
+        videoRendererBg: videoRenderer ? window.getComputedStyle(videoRenderer).backgroundColor : 'not found',
+        latexRendererBg: latexRenderer ? window.getComputedStyle(latexRenderer).backgroundColor : 'not found',
+        mermaidRendererBg: mermaidRenderer ? window.getComputedStyle(mermaidRenderer).backgroundColor : 'not found'
+      };
+
+      // Display results
+      const resultsDiv = document.getElementById('results');
+      let html = '<h2>CSS Loading Results</h2><ul>';
+
+      results.forEach(r => {
+        const className = r.loaded ? 'success' : 'fail';
+        html += `<li class="${className}">${r.status} - ${r.file}</li>`;
+      });
+
+      html += '</ul><h2>Computed Styles</h2><pre>' + JSON.stringify(styles, null, 2) + '</pre>';
+
+      resultsDiv.innerHTML = html;
+
+      // Log to console
+      console.log('CSS Loading Test Results:', {
+        files: results,
+        styles,
+        totalStylesheets: stylesheets.length
+      });
+    }
+
+    // Run test when page loads
+    window.addEventListener('load', () => {
+      setTimeout(checkCSSLoaded, 500);
+    });
+  </script>
+</body>
+</html>

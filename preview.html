@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VCPChat UI Preview - 界面预览</title>
+  <style>
+    /**
+     * VCPChat Main Styles - UI Preview Version
+     * 主窗口布局与自定义标题栏
+     */
+
+    /* CSS Variables for theming */
+    :root {
+      /* Claude.ai color scheme */
+      --bg-primary: #F5F3EF;
+      --bg-secondary: #FFFFFF;
+      --bg-dark: #2D2D2D;
+      --accent: #D97757;
+      --text-primary: #1F1F1F;
+      --text-secondary: #6B6B6B;
+      --border: #E5E5E5;
+
+      /* Layout dimensions */
+      --titlebar-height: 40px;
+      --sidebar-width: 280px;
+      --resize-handle-width: 4px;
+
+      /* Transitions */
+      --transition-fast: 150ms;
+      --transition-normal: 300ms;
+    }
+
+    /* Reset and Base Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--text-primary);
+      background-color: var(--bg-primary);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Custom Title Bar */
+    .titlebar {
+      height: var(--titlebar-height);
+      background-color: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      user-select: none;
+      position: relative;
+      z-index: 1000;
+    }
+
+    .titlebar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .titlebar-icon {
+      width: 20px;
+      height: 20px;
+      object-fit: contain;
+      background-color: var(--accent);
+      border-radius: 4px;
+      padding: 2px;
+    }
+
+    .titlebar-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
+    }
+
+    .titlebar-center {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .titlebar-right {
+      display: flex;
+      align-items: center;
+    }
+
+    .window-controls {
+      display: flex;
+      gap: 8px;
+    }
+
+    .window-control-btn {
+      width: 32px;
+      height: 32px;
+      border: none;
+      background-color: transparent;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color var(--transition-fast) ease;
+      color: var(--text-secondary);
+      font-size: 16px;
+    }
+
+    .window-control-btn:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .window-control-btn.close:hover {
+      background-color: #E81123;
+      color: white;
+    }
+
+    /* Main Application Container */
+    .app-container {
+      display: flex;
+      height: calc(100% - var(--titlebar-height));
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Sidebars */
+    .sidebar {
+      background-color: var(--bg-secondary);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      overflow-x: hidden;
+      transition: width var(--transition-normal) ease;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-left {
+      width: var(--sidebar-width);
+      order: 1;
+    }
+
+    .sidebar-right {
+      width: var(--sidebar-width);
+      order: 5;
+      border-right: none;
+      border-left: 1px solid var(--border);
+    }
+
+    .sidebar.collapsed {
+      width: 0;
+      border: none;
+    }
+
+    /* Sidebar Header */
+    .sidebar-header {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--text-primary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .sidebar-toggle {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 4px;
+      color: var(--text-secondary);
+      transition: background-color var(--transition-fast) ease;
+    }
+
+    .sidebar-toggle:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    /* Sidebar Content */
+    .sidebar-content {
+      flex: 1;
+      padding: 8px;
+    }
+
+    .sidebar-item {
+      padding: 12px;
+      margin-bottom: 4px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color var(--transition-fast) ease;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .sidebar-item:hover {
+      background-color: rgba(0, 0, 0, 0.03);
+    }
+
+    .sidebar-item.active {
+      background-color: var(--accent);
+      color: white;
+    }
+
+    .sidebar-item-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: var(--bg-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .sidebar-item.active .sidebar-item-icon {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .sidebar-item-text {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .sidebar-item-title {
+      font-weight: 500;
+      font-size: 14px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .sidebar-item-subtitle {
+      font-size: 12px;
+      opacity: 0.7;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Resize Handles */
+    .resize-handle {
+      width: var(--resize-handle-width);
+      background-color: transparent;
+      cursor: col-resize;
+      flex-shrink: 0;
+      position: relative;
+      transition: background-color var(--transition-fast) ease;
+    }
+
+    .resize-handle:hover {
+      background-color: var(--accent);
+    }
+
+    .resize-handle:active {
+      background-color: var(--accent);
+    }
+
+    .resize-handle-left {
+      order: 2;
+    }
+
+    .resize-handle-right {
+      order: 4;
+    }
+
+    /* Main Content Area */
+    .main-content {
+      flex: 1;
+      background-color: var(--bg-primary);
+      overflow-y: auto;
+      overflow-x: hidden;
+      order: 3;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Welcome Screen */
+    .welcome-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      text-align: center;
+      padding: 48px;
+    }
+
+    .welcome-screen h1 {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+    }
+
+    .welcome-screen p {
+      font-size: 16px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .welcome-screen .version {
+      font-size: 14px;
+      color: var(--text-secondary);
+      font-weight: 500;
+      margin-top: 24px;
+      opacity: 0.6;
+    }
+
+    .welcome-screen .features {
+      margin-top: 32px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      width: 100%;
+      max-width: 800px;
+    }
+
+    .feature-card {
+      background-color: var(--bg-secondary);
+      padding: 24px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      text-align: left;
+    }
+
+    .feature-card h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--accent);
+    }
+
+    .feature-card p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+
+    /* Scrollbar Styling */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background-color: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background-color: rgba(0, 0, 0, 0.2);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background-color: rgba(0, 0, 0, 0.3);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .sidebar-left,
+      .sidebar-right {
+        position: absolute;
+        height: 100%;
+        z-index: 100;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      }
+
+      .sidebar-left {
+        left: 0;
+      }
+
+      .sidebar-right {
+        right: 0;
+      }
+
+      .resize-handle {
+        display: none;
+      }
+
+      .welcome-screen .features {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Utility Classes */
+    .hidden {
+      display: none !important;
+    }
+
+    .collapsed {
+      width: 0 !important;
+      border: none !important;
+      overflow: hidden !important;
+    }
+
+    .no-select {
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    /* UI Preview Notice */
+    .preview-notice {
+      position: fixed;
+      top: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: var(--accent);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      z-index: 10000;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      animation: slideDown 0.3s ease-out;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- UI Preview Notice -->
+  <div class="preview-notice">
+    🎨 UI/UX 预览模式 - 请在下方提出您的优化建议
+  </div>
+
+  <!-- Custom Title Bar -->
+  <div id="titlebar" class="titlebar">
+    <div class="titlebar-left">
+      <div class="titlebar-icon">V</div>
+      <span class="titlebar-title">VCPChat</span>
+    </div>
+    <div class="titlebar-center">
+      当前话题：与 Claude 的对话
+    </div>
+    <div class="titlebar-right">
+      <div id="window-controls" class="window-controls">
+        <button class="window-control-btn minimize" title="最小化">−</button>
+        <button class="window-control-btn maximize" title="最大化">□</button>
+        <button class="window-control-btn close" title="关闭">×</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Application Layout -->
+  <div id="app-container" class="app-container">
+    <!-- Left Sidebar (Agent/Group List) -->
+    <aside id="sidebar-left" class="sidebar sidebar-left">
+      <div class="sidebar-header">
+        <span>对话列表</span>
+        <button class="sidebar-toggle" onclick="toggleSidebar('left')" title="折叠侧边栏">‹</button>
+      </div>
+      <div class="sidebar-content">
+        <div class="sidebar-item active">
+          <div class="sidebar-item-icon">🤖</div>
+          <div class="sidebar-item-text">
+            <div class="sidebar-item-title">Claude</div>
+            <div class="sidebar-item-subtitle">AI 助手</div>
+          </div>
+        </div>
+        <div class="sidebar-item">
+          <div class="sidebar-item-icon">👥</div>
+          <div class="sidebar-item-text">
+            <div class="sidebar-item-title">团队协作</div>
+            <div class="sidebar-item-subtitle">3个成员在线</div>
+          </div>
+        </div>
+        <div class="sidebar-item">
+          <div class="sidebar-item-icon">💡</div>
+          <div class="sidebar-item-text">
+            <div class="sidebar-item-title">创意工坊</div>
+            <div class="sidebar-item-subtitle">头脑风暴</div>
+          </div>
+        </div>
+        <div class="sidebar-item">
+          <div class="sidebar-item-icon">📊</div>
+          <div class="sidebar-item-text">
+            <div class="sidebar-item-title">数据分析</div>
+            <div class="sidebar-item-subtitle">项目统计</div>
+          </div>
+        </div>
+        <div class="sidebar-item">
+          <div class="sidebar-item-icon">🎨</div>
+          <div class="sidebar-item-text">
+            <div class="sidebar-item-title">设计讨论</div>
+            <div class="sidebar-item-subtitle">UI/UX 优化</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Resize Handle for Left Sidebar -->
+    <div id="resize-handle-left" class="resize-handle resize-handle-left"></div>
+
+    <!-- Main Content Area -->
+    <main id="main-content" class="main-content">
+      <div class="welcome-screen">
+        <h1>欢迎使用 VCPChat</h1>
+        <p>AI 协作平台</p>
+        <p class="version">Version 1.0.0</p>
+
+        <div class="features">
+          <div class="feature-card">
+            <h3>💬 智能对话</h3>
+            <p>与 AI 进行自然流畅的对话，支持多轮上下文理解</p>
+          </div>
+          <div class="feature-card">
+            <h3>🎨 协同画布</h3>
+            <p>实时代码编辑和协作，支持语法高亮和差异对比</p>
+          </div>
+          <div class="feature-card">
+            <h3>📝 智能笔记</h3>
+            <p>富文本编辑器，支持从对话中快速保存内容</p>
+          </div>
+          <div class="feature-card">
+            <h3>🔌 插件生态</h3>
+            <p>丰富的插件系统，扩展无限可能</p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Resize Handle for Right Sidebar -->
+    <div id="resize-handle-right" class="resize-handle resize-handle-right"></div>
+
+    <!-- Right Sidebar (Notifications) -->
+    <aside id="sidebar-right" class="sidebar sidebar-right">
+      <div class="sidebar-header">
+        <span>通知中心</span>
+        <button class="sidebar-toggle" onclick="toggleSidebar('right')" title="折叠侧边栏">›</button>
+      </div>
+      <div class="sidebar-content">
+        <div class="sidebar-item">
+          <div class="sidebar-item-icon">🔔</div>
+          <div class="sidebar-item-text">
+            <div class="sidebar-item-title">系统通知</div>
+            <div class="sidebar-item-subtitle">5分钟前</div>
+          </div>
+        </div>
+        <div class="sidebar-item">
+          <div class="sidebar-item-icon">💬</div>
+          <div class="sidebar-item-text">
+            <div class="sidebar-item-title">新消息</div>
+            <div class="sidebar-item-subtitle">来自 AI 助手</div>
+          </div>
+        </div>
+        <div class="sidebar-item">
+          <div class="sidebar-item-icon">⚙️</div>
+          <div class="sidebar-item-text">
+            <div class="sidebar-item-title">更新可用</div>
+            <div class="sidebar-item-subtitle">点击查看详情</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    console.log('VCPChat UI Preview - 界面预览加载完成');
+
+    // Toggle sidebar visibility
+    function toggleSidebar(side) {
+      const sidebar = document.getElementById(`sidebar-${side}`);
+      sidebar.classList.toggle('collapsed');
+    }
+
+    // Resize handle functionality
+    let isResizing = false;
+    let currentHandle = null;
+    let startX = 0;
+    let startWidth = 0;
+
+    document.querySelectorAll('.resize-handle').forEach(handle => {
+      handle.addEventListener('mousedown', (e) => {
+        isResizing = true;
+        currentHandle = handle;
+        startX = e.clientX;
+
+        const sidebar = handle.classList.contains('resize-handle-left')
+          ? document.getElementById('sidebar-left')
+          : document.getElementById('sidebar-right');
+        startWidth = sidebar.offsetWidth;
+
+        document.body.style.cursor = 'col-resize';
+        e.preventDefault();
+      });
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (!isResizing) return;
+
+      const sidebar = currentHandle.classList.contains('resize-handle-left')
+        ? document.getElementById('sidebar-left')
+        : document.getElementById('sidebar-right');
+
+      const delta = currentHandle.classList.contains('resize-handle-left')
+        ? e.clientX - startX
+        : startX - e.clientX;
+
+      const newWidth = Math.max(200, Math.min(500, startWidth + delta));
+      sidebar.style.width = `${newWidth}px`;
+    });
+
+    document.addEventListener('mouseup', () => {
+      if (isResizing) {
+        isResizing = false;
+        currentHandle = null;
+        document.body.style.cursor = '';
+      }
+    });
+
+    // Window control buttons (preview only)
+    document.querySelectorAll('.window-control-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (btn.classList.contains('close')) {
+          alert('关闭窗口 (仅预览)');
+        } else if (btn.classList.contains('minimize')) {
+          alert('最小化窗口 (仅预览)');
+        } else if (btn.classList.contains('maximize')) {
+          alert('最大化窗口 (仅预览)');
+        }
+      });
+    });
+
+    // Auto-hide preview notice after 5 seconds
+    setTimeout(() => {
+      const notice = document.querySelector('.preview-notice');
+      if (notice) {
+        notice.style.transition = 'opacity 0.3s ease-out';
+        notice.style.opacity = '0';
+        setTimeout(() => notice.remove(), 300);
+      }
+    }, 5000);
+  </script>
+</body>
+</html>

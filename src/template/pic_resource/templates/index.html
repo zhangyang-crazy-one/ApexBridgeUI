@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DAMA Data Platform - 企业级数据管理与治理平台</title>
+  <style>
+    /* ========== Reset & Base Styles ========== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* ========== Anthropic-inspired Design System ========== */
+    :root {
+      /* Colors - Warm Neutral Palette */
+      --bg-primary: #FAF9F5;        /* Warm white background */
+      --bg-secondary: #F0EEE6;      /* Light beige (header) */
+      --bg-tertiary: #E8E6DD;       /* Darker beige */
+      --text-primary: #141413;      /* Deep black text */
+      --text-secondary: #666666;    /* Gray secondary text */
+      --text-tertiary: #999999;     /* Light gray text */
+      --border-color: #E5E5E5;      /* Light gray border */
+      --button-bg: #141413;         /* Black button */
+      --button-text: #FAF9F5;       /* White button text */
+      --input-bg: #FFFFFF;          /* White input background */
+
+      /* Typography - Anthropic-style */
+      --font-heading: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-body: Georgia, "Times New Roman", Times, serif;
+
+      /* Font Sizes - Large & Readable */
+      --font-size-sm: 14px;
+      --font-size-base: 16px;
+      --font-size-lg: 18px;
+      --font-size-xl: 20px;
+      --font-size-2xl: 24px;
+      --font-size-3xl: 28px;
+      --font-size-h1: 48px;
+      --font-size-h2: 36px;
+      --font-size-h3: 24px;
+      --font-size-body: 20px;
+      --font-size-small: 16px;
+
+      /* Spacing */
+      --spacing-xs: 8px;
+      --spacing-sm: 12px;
+      --spacing-md: 20px;
+      --spacing-lg: 32px;
+      --spacing-xl: 48px;
+
+      /* Border Radius */
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+    }
+
+    body {
+      font-family: var(--font-body);
+      font-size: var(--font-size-body);
+      line-height: 1.4;
+      color: var(--text-primary);
+      background-color: var(--bg-primary);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ========== Header / Navigation ========== */
+    .header {
+      background-color: var(--bg-secondary);
+      padding: var(--spacing-sm) var(--spacing-lg);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .header-container {
+      max-width: 1800px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--spacing-lg);
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      text-decoration: none;
+      color: var(--text-primary);
+      flex-shrink: 0;
+    }
+
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      filter: grayscale(100%) brightness(0);
+    }
+
+    .logo-text {
+      font-family: var(--font-heading);
+      font-size: var(--font-size-xl);
+      font-weight: 500;
+      letter-spacing: -0.5px;
+    }
+
+    .header-nav {
+      display: flex;
+      gap: var(--spacing-xs);
+      flex: 1;
+      justify-content: center;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+      padding: var(--spacing-xs) var(--spacing-sm);
+      font-family: var(--font-heading);
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+      text-decoration: none;
+      border-radius: var(--radius-sm);
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .nav-link:hover {
+      background-color: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .nav-link.active {
+      background-color: var(--button-bg);
+      color: var(--button-text);
+      font-weight: 500;
+    }
+
+    .nav-icon {
+      width: 18px;
+      height: 18px;
+      opacity: 0.7;
+    }
+
+    .nav-link.active .nav-icon {
+      opacity: 1;
+      filter: brightness(0) invert(1);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: var(--spacing-sm);
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .btn-header {
+      padding: var(--spacing-xs) var(--spacing-md);
+      font-family: var(--font-heading);
+      font-size: var(--font-size-sm);
+      font-weight: 500;
+      color: var(--text-primary);
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn-header:hover {
+      background-color: var(--bg-tertiary);
+    }
+
+    .btn-header.btn-primary {
+      background-color: var(--button-bg);
+      color: var(--button-text);
+      border-color: var(--button-bg);
+    }
+
+    .btn-header.btn-primary:hover {
+      opacity: 0.85;
+    }
+
+    /* ========== Hero Section ========== */
+    .hero {
+      position: relative;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 100px var(--spacing-lg) 120px;
+      overflow: hidden;
+    }
+
+    .hero-background {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 50%;
+      height: 100%;
+      background-image: url('../../pic_resource/DATA.png');
+      background-size: cover;
+      background-position: center;
+      opacity: 0.08;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      max-width: 900px;
+      z-index: 1;
+    }
+
+    .hero-title {
+      font-family: var(--font-heading);
+      font-size: 56px;
+      font-weight: 500;
+      line-height: 1.1;
+      margin-bottom: var(--spacing-lg);
+      letter-spacing: -1.5px;
+    }
+
+    .hero-description {
+      font-size: 22px;
+      line-height: 1.6;
+      color: var(--text-primary);
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .hero-mission {
+      font-size: 20px;
+      line-height: 1.6;
+      color: var(--text-primary);
+      margin-bottom: var(--spacing-xl);
+    }
+
+    .hero-cta {
+      display: inline-block;
+      padding: 16px 40px;
+      font-family: var(--font-heading);
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--button-text);
+      background: var(--button-bg);
+      border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .hero-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    /* ========== Feature Cards ========== */
+    .cards-section {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 80px var(--spacing-lg);
+      background: var(--bg-primary);
+    }
+
+    .section-title {
+      font-family: var(--font-heading);
+      font-size: 32px;
+      font-weight: 500;
+      margin-bottom: var(--spacing-xl);
+      text-align: center;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--spacing-lg);
+    }
+
+    .feature-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      color: var(--text-primary);
+      transition: all 0.3s ease;
+      overflow: hidden;
+      background: white;
+      border: 1px solid var(--border-color);
+      height: 420px;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+    }
+
+    .card-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      background-color: #F5F5F5;
+    }
+
+    .card-content {
+      padding: var(--spacing-lg);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-title {
+      font-family: var(--font-heading);
+      font-size: 26px;
+      font-weight: 500;
+      margin-bottom: var(--spacing-sm);
+      line-height: 1.2;
+    }
+
+    .card-description {
+      font-size: 18px;
+      line-height: 1.6;
+      color: var(--text-secondary);
+      flex: 1;
+    }
+
+    /* ========== Featured Section ========== */
+    .featured-section {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 80px var(--spacing-lg);
+      border-top: 1px solid var(--border-color);
+    }
+
+    .featured-title {
+      font-family: var(--font-heading);
+      font-size: 32px;
+      font-weight: 500;
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .featured-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--spacing-lg);
+    }
+
+    .featured-item {
+      display: flex;
+      flex-direction: column;
+      text-decoration: none;
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      transition: all 0.3s ease;
+      background: white;
+    }
+
+    .featured-item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    }
+
+    .featured-item-image {
+      width: 100%;
+      height: 180px;
+      background: linear-gradient(135deg, #F5F1E8 0%, #E5E5E5 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+    }
+
+    .featured-item-content {
+      padding: var(--spacing-md);
+    }
+
+    .featured-item-title {
+      font-family: var(--font-heading);
+      font-size: 18px;
+      font-weight: 500;
+      margin-bottom: var(--spacing-sm);
+      line-height: 1.3;
+    }
+
+    .featured-item-meta {
+      font-family: var(--font-heading);
+      font-size: 14px;
+      color: var(--text-secondary);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* ========== Footer ========== */
+    .footer {
+      background: var(--bg-secondary);
+      padding: var(--spacing-lg);
+      margin-top: var(--spacing-xl);
+      border-top: 1px solid var(--border-color);
+    }
+
+    .footer-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--spacing-md);
+    }
+
+    .footer-text {
+      font-family: var(--font-heading);
+      font-size: var(--font-size-small);
+      color: var(--text-secondary);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: var(--spacing-md);
+    }
+
+    .footer-link {
+      font-family: var(--font-heading);
+      font-size: var(--font-size-small);
+      color: var(--text-primary);
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+
+    .footer-link:hover {
+      opacity: 0.7;
+    }
+
+    /* ========== Modal Styles ========== */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: var(--bg-primary);
+      border-radius: var(--radius-md);
+      padding: var(--spacing-xl);
+      max-width: 480px;
+      width: 90%;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: var(--spacing-md);
+      right: var(--spacing-md);
+      background: none;
+      border: none;
+      font-size: 28px;
+      cursor: pointer;
+      color: var(--text-secondary);
+      transition: color 0.2s;
+      padding: 0;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-close:hover {
+      color: var(--text-primary);
+    }
+
+    .modal-title {
+      font-family: var(--font-heading);
+      font-size: 28px;
+      font-weight: 500;
+      margin-bottom: var(--spacing-lg);
+      color: var(--text-primary);
+    }
+
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-md);
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-xs);
+    }
+
+    .form-label {
+      font-family: var(--font-heading);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .form-input {
+      padding: 12px 16px;
+      font-family: var(--font-heading);
+      font-size: 16px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      background: var(--input-bg);
+      color: var(--text-primary);
+      transition: border-color 0.2s;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--text-primary);
+    }
+
+    .form-submit {
+      padding: 14px 24px;
+      font-family: var(--font-heading);
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--button-text);
+      background: var(--button-bg);
+      border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: opacity 0.2s;
+      margin-top: var(--spacing-sm);
+    }
+
+    .form-submit:hover {
+      opacity: 0.85;
+    }
+
+    /* ========== Responsive Design ========== */
+    @media (max-width: 1200px) {
+      .cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 1024px) {
+      .cards-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .featured-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .hero-title {
+        font-size: 42px;
+      }
+
+      .hero-background {
+        width: 60%;
+        opacity: 0.05;
+      }
+    }
+
+    @media (max-width: 768px) {
+      :root {
+        --font-size-h1: 36px;
+        --font-size-h2: 28px;
+        --font-size-h3: 20px;
+        --font-size-body: 18px;
+      }
+
+      .header {
+        padding: var(--spacing-sm) var(--spacing-md);
+      }
+
+      .logo-text {
+        display: none;
+      }
+
+      .hero {
+        padding: 60px var(--spacing-md) 80px;
+      }
+
+      .hero-title {
+        font-size: 32px;
+      }
+
+      .hero-description {
+        font-size: 18px;
+      }
+
+      .hero-mission {
+        font-size: 16px;
+      }
+
+      .hero-background {
+        display: none;
+      }
+
+      .cards-section {
+        padding: 60px var(--spacing-md);
+      }
+
+      .feature-card {
+        height: auto;
+      }
+
+      .card-image {
+        height: 200px;
+      }
+
+      .featured-section {
+        padding: 60px var(--spacing-md);
+      }
+
+      .featured-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-container {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header / Navigation -->
+  <header class="header">
+    <div class="header-container">
+      <a href="index.html" class="logo-container">
+        <img src="../../icon/hdlogo.com-measurable-data-token-mdt.svg" alt="DAMA Logo" class="logo-icon">
+        <span class="logo-text">DAMA Platform</span>
+      </a>
+
+      <nav class="header-nav">
+        <a href="index.html" class="nav-link active">
+          <img src="../../icon/Emoji_instead/dashboard-4.svg" alt="首页" class="nav-icon">
+          <span>首页</span>
+        </a>
+        <a href="modeling.html" class="nav-link">
+          <img src="../../icon/Emoji_instead/data.svg" alt="数据建模" class="nav-icon">
+          <span>数据建模</span>
+        </a>
+        <a href="metadata.html" class="nav-link">
+          <img src="../../icon/Emoji_instead/database-3.svg" alt="元数据管理" class="nav-icon">
+          <span>元数据管理</span>
+        </a>
+        <a href="lineage.html" class="nav-link">
+          <img src="../../icon/Emoji_instead/code-fork-3.svg" alt="数据血缘" class="nav-icon">
+          <span>数据血缘</span>
+        </a>
+        <a href="data-flow-matrix.html" class="nav-link">
+          <img src="../../icon/Emoji_instead/refresh.svg" alt="数据流矩阵" class="nav-icon">
+          <span>数据流矩阵</span>
+        </a>
+        <a href="enterprise-data-architecture.html" class="nav-link">
+          <img src="../../icon/Emoji_instead/ic_enterprice.svg" alt="企业架构" class="nav-icon">
+          <span>企业架构</span>
+        </a>
+        <a href="ai-assistant.html" class="nav-link">
+          <img src="../../icon/Emoji_instead/robot.svg" alt="AI助手" class="nav-icon">
+          <span>AI助手</span>
+        </a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="btn-header" id="openLoginModal">登录</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-background"></div>
+    <div class="hero-content">
+      <h1 class="hero-title">在DAMA平台，我们构建AI驱动的数据治理工具，服务于企业的长期数据战略。</h1>
+      <p class="hero-description">
+        虽然没有人能预见数据管理对企业的每一个影响，但我们知道，构建强大的数据治理能力需要大胆的技术创新和深思熟虑的实践。
+      </p>
+      <p class="hero-mission">
+        这就是为什么我们专注于构建以DMBOK2标准为基础的工具，如<a href="modeling.html" style="color: inherit; text-decoration: underline;">数据建模</a>、
+        <a href="metadata.html" style="color: inherit; text-decoration: underline;">元数据管理</a>和
+        <a href="ai-assistant.html" style="color: inherit; text-decoration: underline;">AI辅助决策</a>。
+        通过我们的日常研发、架构设计和产品迭代，我们致力于展示负责任的数据治理在实践中的样子。
+      </p>
+      <a href="modeling.html" class="hero-cta">开始使用</a>
+    </div>
+  </section>
+
+  <!-- Feature Cards Section -->
+  <section class="cards-section">
+    <h2 class="section-title">核心功能模块</h2>
+    <div class="cards-grid">
+      <!-- Card 1: Data Modeling -->
+      <a href="modeling.html" class="feature-card">
+        <img src="../../pic_resource/DATA.png" alt="数据建模" class="card-image">
+        <div class="card-content">
+          <h3 class="card-title">数据建模与设计</h3>
+          <p class="card-description">
+            可视化ERD编辑器支持概念、逻辑、物理三层模型设计，自动生成多平台DDL脚本，符合DMBOK2最佳实践。
+          </p>
+        </div>
+      </a>
+
+      <!-- Card 2: Metadata Management -->
+      <a href="metadata.html" class="feature-card">
+        <img src="../../pic_resource/Enter price.png" alt="元数据管理" class="card-image">
+        <div class="card-content">
+          <h3 class="card-title">智能元数据管理</h3>
+          <p class="card-description">
+            统一的数据目录提供全文搜索、智能标注和业务术语管理，支持从多种数据源自动采集元数据。
+          </p>
+        </div>
+      </a>
+
+      <!-- Card 3: Data Lineage -->
+      <a href="lineage.html" class="feature-card">
+        <img src="../../pic_resource/linear.png" alt="数据血缘" class="card-image">
+        <div class="card-content">
+          <h3 class="card-title">端到端数据血缘追踪</h3>
+          <p class="card-description">
+            基于Neo4j的血缘图谱，支持表级、字段级血缘追踪，提供影响分析和根因分析能力，确保数据可追溯性。
+          </p>
+        </div>
+      </a>
+
+      <!-- Card 4: Data Flow Matrix -->
+      <a href="data-flow-matrix.html" class="feature-card">
+        <img src="../../pic_resource/Data_flow.png" alt="数据流矩阵" class="card-image">
+        <div class="card-content">
+          <h3 class="card-title">DMBOK2数据流矩阵</h3>
+          <p class="card-description">
+            可视化数据流矩阵，展示数据在不同系统间的流转关系，支持数据流分析和优化，符合DMBOK2标准。
+          </p>
+        </div>
+      </a>
+
+      <!-- Card 5: Enterprise Architecture -->
+      <a href="enterprise-data-architecture.html" class="feature-card">
+        <img src="../../pic_resource/architecture.png" alt="企业架构" class="card-image">
+        <div class="card-content">
+          <h3 class="card-title">企业数据架构五层视图</h3>
+          <p class="card-description">
+            从概念模型到物理模型的五层架构视图，支持拖拽调整布局，实时展示架构关系，帮助理解企业数据全景。
+          </p>
+        </div>
+      </a>
+
+      <!-- Card 6: AI Assistant -->
+      <a href="ai-assistant.html" class="feature-card">
+        <img src="../../pic_resource/AI.png" alt="AI辅助决策" class="card-image">
+        <div class="card-content">
+          <h3 class="card-title">AI辅助决策</h3>
+          <p class="card-description">
+            集成DeepSeek AI的智能助手，提供数据建模建议、元数据自动标注和架构优化方案，采用风险分层机制确保安全性。
+          </p>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- Featured Section -->
+  <section class="featured-section">
+    <h2 class="featured-title">Featured</h2>
+    <div class="featured-grid">
+      <a href="lineage.html" class="featured-item">
+        <div class="featured-item-image">
+          <img src="../../icon/Emoji_instead/code-fork-3.svg" alt="数据血缘" style="width: 48px; height: 48px; opacity: 0.7;">
+        </div>
+        <div class="featured-item-content">
+          <div class="featured-item-title">端到端数据血缘追踪</div>
+          <div class="featured-item-meta">
+            <span>核心功能</span>
+            <span>2025-11-01</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="data-flow-matrix.html" class="featured-item">
+        <div class="featured-item-image">
+          <img src="../../icon/Emoji_instead/refresh.svg" alt="数据流矩阵" style="width: 48px; height: 48px; opacity: 0.7;">
+        </div>
+        <div class="featured-item-content">
+          <div class="featured-item-title">DMBOK2数据流矩阵可视化</div>
+          <div class="featured-item-meta">
+            <span>架构设计</span>
+            <span>2025-11-01</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="enterprise-data-architecture.html" class="featured-item">
+        <div class="featured-item-image">
+          <img src="../../icon/Emoji_instead/ic_enterprice.svg" alt="企业架构" style="width: 48px; height: 48px; opacity: 0.7;">
+        </div>
+        <div class="featured-item-content">
+          <div class="featured-item-title">企业数据架构五层视图</div>
+          <div class="featured-item-meta">
+            <span>架构设计</span>
+            <span>2025-11-01</span>
+          </div>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-container">
+      <p class="footer-text">© 2025 DAMA Platform. All rights reserved.</p>
+      <div class="footer-links">
+        <a href="#" class="footer-link">隐私政策</a>
+        <a href="#" class="footer-link">服务条款</a>
+        <a href="#" class="footer-link">关于我们</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Login Modal -->
+  <div class="modal-overlay" id="loginModal">
+    <div class="modal-content">
+      <button class="modal-close" id="closeLoginModal">&times;</button>
+      <h2 class="modal-title">登录 DAMA Platform</h2>
+      <form class="login-form" id="loginForm">
+        <div class="form-group">
+          <label for="username" class="form-label">用户名</label>
+          <input type="text" id="username" class="form-input" placeholder="请输入用户名" required>
+        </div>
+        <div class="form-group">
+          <label for="password" class="form-label">密码</label>
+          <input type="password" id="password" class="form-input" placeholder="请输入密码" required>
+        </div>
+        <button type="submit" class="form-submit">登录</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Modal functionality
+    const loginModal = document.getElementById('loginModal');
+    const openLoginBtn = document.getElementById('openLoginModal');
+    const closeLoginBtn = document.getElementById('closeLoginModal');
+    const loginForm = document.getElementById('loginForm');
+
+    // Open modal
+    openLoginBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      loginModal.classList.add('active');
+      document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    });
+
+    // Close modal
+    closeLoginBtn.addEventListener('click', function() {
+      loginModal.classList.remove('active');
+      document.body.style.overflow = ''; // Restore scrolling
+    });
+
+    // Close modal when clicking outside
+    loginModal.addEventListener('click', function(e) {
+      if (e.target === loginModal) {
+        loginModal.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && loginModal.classList.contains('active')) {
+        loginModal.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    });
+
+    // Login form submission
+    loginForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      // Simulate login (replace with actual authentication)
+      if (username && password) {
+        alert('登录功能开发中...\n\n用户名: ' + username);
+        loginModal.classList.remove('active');
+        document.body.style.overflow = '';
+        // Redirect to dashboard or main app
+        // window.location.href = 'modeling.html';
+      }
+    });
+  </script>
+</body>
+</html>
+

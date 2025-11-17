@@ -1,0 +1,253 @@
+/**
+ * Notification Toast Styles
+ *
+ * Simple notification toast system following Anthropic design system
+ * Supports 4 notification types: success, error, warning, info
+ */
+
+/* ============================================
+   Notification Container
+   ============================================ */
+
+.notification-toast {
+  position: fixed;
+  top: var(--spacing-lg);
+  right: var(--spacing-lg);
+  z-index: 10000;
+
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+
+  min-width: 320px;
+  max-width: 480px;
+  padding: var(--spacing-md);
+
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1),
+              0 2px 4px rgba(0, 0, 0, 0.06);
+
+  font-family: var(--font-body);
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+
+  animation: notification-slide-in 0.3s ease-out;
+
+  /* Accessibility */
+  outline: none;
+}
+
+/* Fade out animation */
+.notification-toast.notification-fade-out {
+  animation: notification-fade-out 0.3s ease-in;
+}
+
+/* ============================================
+   Notification Icon
+   ============================================ */
+
+.notification-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+}
+
+.notification-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* ============================================
+   Notification Message
+   ============================================ */
+
+.notification-message {
+  flex: 1;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+/* ============================================
+   Close Button
+   ============================================ */
+
+.notification-close {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 24px;
+  height: 24px;
+  padding: 0;
+
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+
+  color: var(--text-secondary);
+  cursor: pointer;
+
+  transition: all var(--transition-fast);
+}
+
+.notification-close:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.notification-close:active {
+  transform: scale(0.95);
+}
+
+.notification-close svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ============================================
+   Notification Types
+   ============================================ */
+
+/* Success - Green theme */
+.notification-success {
+  border-left: 4px solid #42A592;
+}
+
+.notification-success .notification-icon {
+  color: #42A592;
+}
+
+/* Error - Red theme */
+.notification-error {
+  border-left: 4px solid #E7584B;
+}
+
+.notification-error .notification-icon {
+  color: #E7584B;
+}
+
+/* Warning - Orange theme */
+.notification-warning {
+  border-left: 4px solid #F5A623;
+}
+
+.notification-warning .notification-icon {
+  color: #F5A623;
+}
+
+/* Info - Blue theme */
+.notification-info {
+  border-left: 4px solid #4A90E2;
+}
+
+.notification-info .notification-icon {
+  color: #4A90E2;
+}
+
+/* ============================================
+   Animations
+   ============================================ */
+
+@keyframes notification-slide-in {
+  from {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes notification-fade-out {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(20%);
+  }
+}
+
+/* ============================================
+   Dark Theme Support
+   ============================================ */
+
+[data-theme="dark"] .notification-toast {
+  background: #2c2926;
+  border-color: #3d3a36;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3),
+              0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="dark"] .notification-message {
+  color: #faf8f5;
+}
+
+[data-theme="dark"] .notification-close {
+  color: #a8a29e;
+}
+
+[data-theme="dark"] .notification-close:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #faf8f5;
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
+
+@media (max-width: 768px) {
+  .notification-toast {
+    top: var(--spacing-md);
+    right: var(--spacing-md);
+    left: var(--spacing-md);
+
+    min-width: unset;
+    max-width: unset;
+  }
+}
+
+/* ============================================
+   High Contrast Mode
+   ============================================ */
+
+@media (prefers-contrast: high) {
+  .notification-toast {
+    border-width: 2px;
+  }
+
+  .notification-success {
+    border-left-width: 6px;
+  }
+
+  .notification-error {
+    border-left-width: 6px;
+  }
+
+  .notification-warning {
+    border-left-width: 6px;
+  }
+
+  .notification-info {
+    border-left-width: 6px;
+  }
+}
+
+/* ============================================
+   Print Styles
+   ============================================ */
+
+@media print {
+  .notification-toast {
+    display: none;
+  }
+}

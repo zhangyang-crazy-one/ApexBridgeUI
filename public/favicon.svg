@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- ApexBridge Favicon - Optimized for small sizes (16x16, 32x32) -->
+  <style>
+    .favicon-bg { fill: #FAF9F5; }
+    .favicon-logo { fill: #141413; }
+    @media (prefers-color-scheme: dark) {
+      .favicon-bg { fill: #1a1a1a; }
+      .favicon-logo { fill: #e8e6e0; }
+    }
+  </style>
+
+  <!-- Background (optional, for better visibility on dark backgrounds) -->
+  <rect class="favicon-bg" width="32" height="32" rx="6"/>
+
+  <!-- Simplified Logo for small sizes -->
+  <!-- Triangle frame (letter A) -->
+  <path
+    class="favicon-logo"
+    d="M16 6 L26 26 L22 26 L16 12 L10 26 L6 26 Z"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2.4"
+  />
+
+  <!-- Arch bridge -->
+  <path
+    class="favicon-logo"
+    d="M11 17 Q16 14 21 17"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="3"
+    stroke-linecap="round"
+  />
+
+  <!-- Bridge anchors -->
+  <circle class="favicon-logo" cx="11" cy="17" r="2" fill="currentColor"/>
+  <circle class="favicon-logo" cx="21" cy="17" r="2" fill="currentColor"/>
+
+  <!-- Apex point -->
+  <circle class="favicon-logo" cx="16" cy="6" r="1.8" fill="currentColor"/>
+</svg>

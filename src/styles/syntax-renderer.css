@@ -1,0 +1,249 @@
+/**
+ * YAML/GraphQL/SQL/XML Renderer Styles (CORE-032, CORE-033, CORE-034, CORE-025)
+ *
+ * Shared styles for syntax highlighting renderers
+ * Theme-aware with Anthropic design system
+ * Note: These renderers share similar UI structure - syntax highlighting with copy button
+ */
+
+/* Common Syntax Renderer Container */
+.yaml-renderer,
+.graphql-renderer,
+.sql-renderer,
+.xml-renderer {
+  width: 100%;
+  max-width: 100%;
+  border-radius: var(--radius-md);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: border-color var(--transition-normal);
+}
+
+.yaml-renderer:hover,
+.graphql-renderer:hover,
+.sql-renderer:hover,
+.xml-renderer:hover {
+  border-color: var(--border-hover);
+}
+
+/* Header */
+.yaml-header,
+.graphql-header,
+.sql-header,
+.xml-header {
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.yaml-title,
+.graphql-title,
+.sql-title,
+.xml-title {
+  font-size: var(--font-size-xs);
+  font-family: var(--font-heading);
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Actions */
+.yaml-actions,
+.graphql-actions,
+.sql-actions,
+.xml-actions {
+  display: flex;
+  gap: var(--spacing-xs);
+}
+
+.yaml-action-btn,
+.graphql-action-btn,
+.sql-action-btn,
+.xml-action-btn {
+  padding: 4px 8px;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: var(--font-size-xs);
+  transition: all var(--transition-fast);
+}
+
+.yaml-action-btn:hover,
+.graphql-action-btn:hover,
+.sql-action-btn:hover,
+.xml-action-btn:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--border-hover);
+}
+
+/* Code Container */
+.yaml-code-container,
+.graphql-code-container,
+.sql-code-container,
+.xml-code-container {
+  padding: var(--spacing-md);
+  overflow-x: auto;
+  background: var(--bg-primary);
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.yaml-code,
+.graphql-code,
+.sql-code,
+.xml-code {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-primary);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Syntax Highlighting Colors */
+.syntax-keyword {
+  color: #d73a49;
+  font-weight: 600;
+}
+
+[data-theme="dark"] .syntax-keyword {
+  color: #f97583;
+}
+
+.syntax-string {
+  color: #22863a;
+}
+
+[data-theme="dark"] .syntax-string {
+  color: #85e89d;
+}
+
+.syntax-number {
+  color: #005cc5;
+}
+
+[data-theme="dark"] .syntax-number {
+  color: #79b8ff;
+}
+
+.syntax-comment {
+  color: #6a737d;
+  font-style: italic;
+}
+
+[data-theme="dark"] .syntax-comment {
+  color: #959da5;
+}
+
+.syntax-tag {
+  color: #22863a;
+}
+
+[data-theme="dark"] .syntax-tag {
+  color: #85e89d;
+}
+
+.syntax-attribute {
+  color: #6f42c1;
+}
+
+[data-theme="dark"] .syntax-attribute {
+  color: #b392f0;
+}
+
+.syntax-value {
+  color: #032f62;
+}
+
+[data-theme="dark"] .syntax-value {
+  color: #9ecbff;
+}
+
+/* Error State */
+.yaml-renderer.error,
+.graphql-renderer.error,
+.sql-renderer.error,
+.xml-renderer.error {
+  border-color: #E74C3C;
+}
+
+.yaml-error,
+.graphql-error,
+.sql-error,
+.xml-error {
+  padding: var(--spacing-md);
+  background: rgba(231, 76, 60, 0.1);
+  color: #E74C3C;
+  font-size: var(--font-size-sm);
+}
+
+/* Scrollbar */
+.yaml-code-container::-webkit-scrollbar,
+.graphql-code-container::-webkit-scrollbar,
+.sql-code-container::-webkit-scrollbar,
+.xml-code-container::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.yaml-code-container::-webkit-scrollbar-track,
+.graphql-code-container::-webkit-scrollbar-track,
+.sql-code-container::-webkit-scrollbar-track,
+.xml-code-container::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+  border-radius: 5px;
+}
+
+.yaml-code-container::-webkit-scrollbar-thumb,
+.graphql-code-container::-webkit-scrollbar-thumb,
+.sql-code-container::-webkit-scrollbar-thumb,
+.xml-code-container::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 5px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .yaml-code-container,
+  .graphql-code-container,
+  .sql-code-container,
+  .xml-code-container {
+    max-height: 400px;
+    padding: var(--spacing-sm);
+  }
+
+  .yaml-code,
+  .graphql-code,
+  .sql-code,
+  .xml-code {
+    font-size: 12px;
+  }
+}
+
+/* Print */
+@media print {
+  .yaml-header, .graphql-header, .sql-header, .xml-header,
+  .yaml-actions, .graphql-actions, .sql-actions, .xml-actions {
+    display: none;
+  }
+
+  .yaml-renderer, .graphql-renderer, .sql-renderer, .xml-renderer {
+    border: none;
+    background: transparent;
+  }
+
+  .yaml-code-container, .graphql-code-container,
+  .sql-code-container, .xml-code-container {
+    max-height: none;
+    overflow: visible;
+  }
+}

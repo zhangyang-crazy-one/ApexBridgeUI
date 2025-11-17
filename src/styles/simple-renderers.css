@@ -1,0 +1,351 @@
+/**
+ * Simple Renderer Styles (Color, URL, Regex, ASCII, Three.js)
+ * CORE-037, CORE-038, CORE-035, CORE-036, CORE-023
+ *
+ * Theme-aware styles for simple renderers
+ * Follows Anthropic design system
+ */
+
+/* ========== COLOR RENDERER ========== */
+.color-renderer {
+  width: 100%;
+  max-width: 600px;
+  border-radius: var(--radius-md);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.color-swatch {
+  width: 100%;
+  height: 120px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform var(--transition-fast);
+}
+
+.color-swatch:hover {
+  transform: scale(1.02);
+}
+
+.color-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.color-value {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: var(--text-primary);
+  padding: 8px 12px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-sm);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.color-value-label {
+  color: var(--text-tertiary);
+  margin-right: 8px;
+}
+
+.color-copy-btn {
+  padding: 4px 8px;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: var(--font-size-xs);
+  transition: all var(--transition-fast);
+}
+
+.color-copy-btn:hover {
+  background: var(--bg-tertiary);
+}
+
+/* ========== URL RENDERER ========== */
+.url-renderer {
+  width: 100%;
+  max-width: 600px;
+  border-radius: var(--radius-md);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  transition: border-color var(--transition-normal);
+}
+
+.url-renderer:hover {
+  border-color: var(--border-hover);
+}
+
+.url-preview-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  background: var(--bg-secondary);
+}
+
+.url-content {
+  padding: var(--spacing-md);
+}
+
+.url-title {
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.url-description {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: var(--spacing-sm);
+}
+
+.url-link {
+  font-size: var(--font-size-xs);
+  color: var(--active-bg);
+  text-decoration: none;
+  font-family: var(--font-mono);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.url-link:hover {
+  text-decoration: underline;
+}
+
+/* ========== REGEX RENDERER ========== */
+.regex-renderer {
+  width: 100%;
+  max-width: 800px;
+  border-radius: var(--radius-md);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+}
+
+.regex-header {
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+.regex-pattern-container {
+  padding: var(--spacing-md);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.regex-pattern {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: #d73a49;
+  background: var(--bg-secondary);
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .regex-pattern {
+  color: #f97583;
+}
+
+.regex-test-container {
+  padding: var(--spacing-md);
+}
+
+.regex-test-input {
+  width: 100%;
+  min-height: 100px;
+  padding: 10px 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  resize: vertical;
+}
+
+.regex-match {
+  background: rgba(255, 193, 7, 0.3);
+  border-bottom: 2px solid #FFC107;
+  padding: 1px 2px;
+  border-radius: 2px;
+}
+
+.regex-results {
+  margin-top: var(--spacing-sm);
+  padding: 8px 12px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  color: var(--text-tertiary);
+}
+
+/* ========== ASCII RENDERER ========== */
+.ascii-renderer {
+  width: 100%;
+  border-radius: var(--radius-md);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  padding: var(--spacing-md);
+  overflow-x: auto;
+}
+
+.ascii-art {
+  font-family: 'Courier New', 'Courier', monospace;
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--text-primary);
+  white-space: pre;
+  letter-spacing: 0;
+}
+
+/* ========== THREE.JS RENDERER ========== */
+.threejs-renderer {
+  width: 100%;
+  max-width: 100%;
+  border-radius: var(--radius-md);
+  background: #000;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  position: relative;
+  min-height: 400px;
+}
+
+.threejs-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  min-height: 400px;
+}
+
+.threejs-controls {
+  position: absolute;
+  bottom: var(--spacing-md);
+  right: var(--spacing-md);
+  display: flex;
+  gap: var(--spacing-xs);
+  background: rgba(0, 0, 0, 0.7);
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-md);
+}
+
+.threejs-control-btn {
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--radius-sm);
+  color: white;
+  cursor: pointer;
+  font-size: var(--font-size-xs);
+  transition: all var(--transition-fast);
+}
+
+.threejs-control-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.threejs-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: var(--font-size-sm);
+  text-align: center;
+}
+
+.threejs-error {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #E74C3C;
+  font-size: var(--font-size-sm);
+  text-align: center;
+  max-width: 80%;
+}
+
+/* ========== DIFF VIEWER (Additional styles) ========== */
+/* Note: diff-viewer.css already exists, these are supplementary */
+.diff-renderer {
+  width: 100%;
+  border-radius: var(--radius-md);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+}
+
+.diff-header {
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .color-renderer,
+  .url-renderer,
+  .regex-renderer {
+    max-width: 100%;
+  }
+
+  .color-swatch {
+    height: 80px;
+  }
+
+  .url-preview-image {
+    height: 150px;
+  }
+
+  .threejs-renderer {
+    min-height: 300px;
+  }
+
+  .threejs-canvas {
+    min-height: 300px;
+  }
+
+  .threejs-controls {
+    bottom: var(--spacing-sm);
+    right: var(--spacing-sm);
+  }
+}
+
+/* Print Styles */
+@media print {
+  .threejs-controls,
+  .regex-test-container,
+  .color-copy-btn {
+    display: none;
+  }
+
+  .color-renderer,
+  .url-renderer,
+  .regex-renderer,
+  .ascii-renderer,
+  .threejs-renderer,
+  .diff-renderer {
+    border: none;
+    background: transparent;
+  }
+}

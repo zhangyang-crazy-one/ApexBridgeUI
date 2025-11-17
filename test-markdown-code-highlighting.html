@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Markdown Code Highlighting Test</title>
+  <link rel="stylesheet" href="/src/styles/main.css">
+  <link rel="stylesheet" href="/src/styles/syntax-highlighter.css">
+  <style>
+    body {
+      padding: 40px;
+      max-width: 900px;
+      margin: 0 auto;
+      font-family: var(--font-body);
+    }
+
+    h1 {
+      font-family: var(--font-heading);
+      color: var(--text-primary);
+      margin-bottom: 24px;
+    }
+
+    .test-result {
+      margin: 20px 0;
+      padding: 16px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      background: var(--bg-secondary);
+    }
+
+    .test-result h2 {
+      font-family: var(--font-heading);
+      font-size: var(--font-size-lg);
+      margin: 0 0 12px 0;
+      color: var(--text-primary);
+    }
+
+    .rendered-content {
+      padding: 16px;
+      background: var(--bg-primary);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+    }
+
+    .status {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: var(--radius-sm);
+      font-size: var(--font-size-xs);
+      font-weight: 600;
+      margin-left: 12px;
+    }
+
+    .status.pass {
+      background: #42A592;
+      color: white;
+    }
+
+    .status.fail {
+      background: #E74C3C;
+      color: white;
+    }
+
+    .verification {
+      margin-top: 12px;
+      padding: 12px;
+      background: var(--bg-tertiary);
+      border-radius: var(--radius-sm);
+      font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+      font-size: 13px;
+    }
+
+    .verification-item {
+      margin: 4px 0;
+      color: var(--text-secondary);
+    }
+
+    .verification-item.pass {
+      color: #42A592;
+    }
+
+    .verification-item.fail {
+      color: #E74C3C;
+    }
+
+    button {
+      margin-top: 16px;
+      padding: 8px 16px;
+      background: var(--active-bg);
+      color: var(--active-text);
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-heading);
+      cursor: pointer;
+      transition: opacity var(--transition-fast);
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+  <h1>Markdown Code Highlighting Test</h1>
+  <p style="color: var(--text-secondary); margin-bottom: 32px;">
+    Testing MarkdownRenderer's syntax highlighting for embedded Python code blocks.
+  </p>
+
+  <div id="test-container"></div>
+
+  <script type="module">
+    import { getMessageRenderer } from '/src/core/renderer/messageRenderer.ts';
+
+    const markdownWithPythonCode = `请用Python写一个计算阶乘的函数，并给出使用示例
+
+以下是三种不同的Python实现方法：
+
+## 1. 使用 for 循环
+
+\`\`\`python
+def factorial_loop(n):
+    """
+    使用 for 循环计算一个非负整数的阶乘。
+    """
+    if n == 0:
+        return 1
+
+    result = 1
+    for i in range(1, n + 1):
+        result *= i
+    return result
+\`\`\`
+
+## 2. 使用递归
+
+\`\`\`python
+def factorial_recursive(n):
+    """
+    使用递归计算阶乘。
+    """
+    if n == 0 or n == 1:
+        return 1
+    return n * factorial_recursive(n - 1)
+\`\`\`
+
+## 3. 使用示例
+
+\`\`\`python
+# 测试三种方法
+test_number = 5
+
+result1 = factorial_loop(test_number)
+result2 = factorial_recursive(test_number)
+
+print(f"{test_number}! = {result1}")
+print(f"{test_number}! = {result2}")
+\`\`\`
+
+**输出结果：**
+\`\`\`
+5! = 120
+5! = 120
+\`\`\``;
+
+    async function runTest() {
+      const container = document.getElementById('test-container');
+
+      // Create test section
+      const testSection = document.createElement('div');
+      testSection.className = 'test-result';
+
+      const header = document.createElement('h2');
+      header.textContent = 'Markdown with Python Code Blocks';
+
+      const status = document.createElement('span');
+      status.className = 'status';
+      status.textContent = 'TESTING...';
+      header.appendChild(status);
+
+      testSection.appendChild(header);
+
+      const renderedDiv = document.createElement('div');
+      renderedDiv.className = 'rendered-content';
+      renderedDiv.textContent = 'Rendering...';
+      testSection.appendChild(renderedDiv);
+
+      container.appendChild(testSection);
+
+      // Render the markdown
+      try {
+        const renderer = getMessageRenderer();
+        const message = {
+          id: `test-${Date.now()}`,
+          content: markdownWithPythonCode,
+          sender: 'assistant',
+          sender_id: 'test-assistant',
+          sender_name: 'Test Assistant',
+          timestamp: new Date().toISOString(),
+          is_streaming: false
+        };
+
+        const result = await renderer.renderMessage(message);
+
+        if (result && result.refs && result.refs.contentZone) {
+          renderedDiv.innerHTML = '';
+          renderedDiv.appendChild(result.refs.contentZone);
+
+          // Verify syntax highlighting
+          const verification = document.createElement('div');
+          verification.className = 'verification';
+          verification.innerHTML = '<strong>Verification Results:</strong>';
+
+          const codeBlocks = renderedDiv.querySelectorAll('pre code');
+          const totalBlocks = codeBlocks.length;
+
+          let highlightedBlocks = 0;
+          codeBlocks.forEach(block => {
+            if (block.innerHTML.includes('hljs-')) {
+              highlightedBlocks++;
+            }
+          });
+
+          const allHighlighted = highlightedBlocks === totalBlocks && totalBlocks > 0;
+
+          // Check specific Python keywords
+          const hasKeywordHighlighting = renderedDiv.innerHTML.includes('hljs-keyword');
+          const hasFunctionHighlighting = renderedDiv.innerHTML.includes('hljs-title function_') ||
+                                          renderedDiv.innerHTML.includes('hljs-built_in');
+          const hasStringHighlighting = renderedDiv.innerHTML.includes('hljs-string');
+          const hasCommentHighlighting = renderedDiv.innerHTML.includes('hljs-comment');
+
+          verification.innerHTML += `
+            <div class="verification-item ${totalBlocks > 0 ? 'pass' : 'fail'}">
+              ✓ Code blocks found: ${totalBlocks}
+            </div>
+            <div class="verification-item ${allHighlighted ? 'pass' : 'fail'}">
+              ${allHighlighted ? '✓' : '✗'} Blocks with highlighting: ${highlightedBlocks}/${totalBlocks}
+            </div>
+            <div class="verification-item ${hasKeywordHighlighting ? 'pass' : 'fail'}">
+              ${hasKeywordHighlighting ? '✓' : '✗'} Keyword highlighting (def, if, for, return)
+            </div>
+            <div class="verification-item ${hasFunctionHighlighting ? 'pass' : 'fail'}">
+              ${hasFunctionHighlighting ? '✓' : '✗'} Function highlighting (def, print, range)
+            </div>
+            <div class="verification-item ${hasStringHighlighting ? 'pass' : 'fail'}">
+              ${hasStringHighlighting ? '✓' : '✗'} String highlighting ("text")
+            </div>
+            <div class="verification-item ${hasCommentHighlighting ? 'pass' : 'fail'}">
+              ${hasCommentHighlighting ? '✓' : '✗'} Comment highlighting ("""docstrings""", # comments)
+            </div>
+          `;
+
+          testSection.appendChild(verification);
+
+          // Update status
+          if (allHighlighted && hasKeywordHighlighting && hasFunctionHighlighting) {
+            status.className = 'status pass';
+            status.textContent = '✓ PASS';
+          } else {
+            status.className = 'status fail';
+            status.textContent = '✗ FAIL';
+          }
+
+          // Add toggle theme button
+          const themeBtn = document.createElement('button');
+          themeBtn.textContent = 'Toggle Dark Mode';
+          themeBtn.onclick = () => {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme') || 'light';
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', newTheme);
+            themeBtn.textContent = newTheme === 'light' ? 'Toggle Dark Mode' : 'Toggle Light Mode';
+          };
+          testSection.appendChild(themeBtn);
+
+        } else {
+          throw new Error('No content zone returned');
+        }
+      } catch (error) {
+        renderedDiv.innerHTML = `<div style="color: #E74C3C; font-family: monospace;">Error: ${error.message}</div>`;
+        status.className = 'status fail';
+        status.textContent = '✗ FAIL';
+      }
+    }
+
+    // Run test on load
+    window.addEventListener('load', () => {
+      setTimeout(runTest, 100);
+    });
+  </script>
+</body>
+</html>

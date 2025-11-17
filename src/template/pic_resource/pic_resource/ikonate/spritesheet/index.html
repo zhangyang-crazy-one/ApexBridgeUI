@@ -1,0 +1,60 @@
+<html lang="en" dir="ltr">
+
+  <head>
+    <meta charset="utf-8">
+    <title>Ikonate</title>
+    <style>
+      :root {
+        --grey--light: #fafaff;
+        --white: #ffffff;
+      }
+
+      body {
+        background: var(--grey--light);
+      }
+
+      .main {
+        width: 1152px;
+        text-align: center;
+        margin: 0 auto;
+      }
+
+      .main__item {
+        background: var(--white);
+        border-radius: 4px;
+        padding: 20px;
+        display: inline-block;
+        margin: 10px;
+      }
+
+      .main__item svg {
+          width: 64px;
+          height: 64px;
+          stroke: #141413;
+          stroke-width: 1.5;
+          stroke-linecap: square;
+          stroke-linejoin: miter;
+          fill: none;
+          color: #141413;
+  }</style>
+  </head>
+
+  <body>
+    <div class="main">
+      <div class="main__item"><svg>
+          <title id="clipIconTitle">Attachment (paper clip)</title>
+          <use xlink:href="./ikonate.svg#clip"></use>
+        </svg></div>
+      <div class="main__item"><svg>
+          <title id="clipboardIconTitle">Clipboard</title>
+          <use xlink:href="./ikonate.svg#clipboard"></use>
+        </svg></div>
+      <div class="main__item"><svg>
+          <title id="fileIconTitle">File</title>
+          <use xlink:href="./ikonate.svg#file"></use>
+        </svg></div>
+    </div>
+
+  </body>
+
+</html>

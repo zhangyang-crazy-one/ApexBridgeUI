@@ -1,0 +1,497 @@
+/**
+ * Audio Renderer Styles (CORE-029)
+ *
+ * Theme-aware styles for audio player with waveform visualization
+ * Follows Anthropic design system color palette
+ */
+
+/* Audio Renderer Container */
+.audio-renderer {
+  width: 100%;
+  max-width: 600px;
+  border-radius: var(--radius-md);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: border-color var(--transition-normal);
+}
+
+.audio-renderer:hover {
+  border-color: var(--border-hover);
+}
+
+/* Audio Header */
+.audio-header {
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.audio-title {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--text-primary);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.audio-metadata {
+  font-size: var(--font-size-xs);
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+  margin-left: var(--spacing-sm);
+}
+
+/* Waveform Visualization */
+.audio-waveform {
+  height: 120px;
+  background: var(--bg-primary);
+  position: relative;
+  cursor: pointer;
+  padding: var(--spacing-md);
+}
+
+.audio-waveform-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-sm);
+}
+
+.audio-waveform-progress {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(var(--active-bg-rgb, 20, 20, 19), 0.1);
+  pointer-events: none;
+  transition: width 0.1s linear;
+}
+
+/* Audio Controls */
+.audio-controls {
+  padding: var(--spacing-md);
+  background: var(--bg-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.audio-main-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.audio-play-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--active-bg);
+  color: var(--active-text);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--transition-fast), opacity var(--transition-fast);
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.audio-play-btn:hover {
+  transform: scale(1.05);
+}
+
+.audio-play-btn:active {
+  transform: scale(0.95);
+}
+
+.audio-play-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.audio-time {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  min-width: 90px;
+}
+
+/* Time Display - Use monospace font to prevent jumping */
+.audio-time-display {
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  min-width: 90px;
+  text-align: center;
+}
+
+.audio-time-current {
+  color: var(--text-primary);
+}
+
+.audio-time-separator {
+  margin: 0 4px;
+  color: var(--text-tertiary);
+}
+
+.audio-time-total {
+  color: var(--text-tertiary);
+}
+
+/* Audio Progress Bar */
+.audio-progress {
+  flex: 1;
+  height: 6px;
+  background: var(--border-color);
+  border-radius: 3px;
+  cursor: pointer;
+  position: relative;
+}
+
+/* Progress Container - Improved visibility */
+.audio-progress-container {
+  width: 100%;
+  padding: var(--spacing-xs) 0;
+}
+
+.audio-progress-bar {
+  width: 100%;
+  height: 6px;
+  background: var(--border-color);
+  border-radius: 3px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: height var(--transition-fast);
+}
+
+.audio-progress-bar:hover {
+  height: 8px;
+}
+
+.audio-progress-buffered {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: rgba(var(--active-bg-rgb, 20, 20, 19), 0.2);
+  border-radius: 3px;
+  transition: width 0.1s linear;
+}
+
+.audio-progress-played {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: var(--active-bg);
+  border-radius: 3px;
+  transition: width 0.1s linear;
+}
+
+.audio-progress-handle {
+  position: absolute;
+  right: -6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 12px;
+  height: 12px;
+  background: var(--active-bg);
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+  pointer-events: none;
+}
+
+.audio-progress-bar:hover .audio-progress-handle {
+  opacity: 1;
+}
+
+.audio-progress-thumb {
+  position: absolute;
+  right: -6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 12px;
+  height: 12px;
+  background: var(--active-bg);
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.audio-progress:hover .audio-progress-thumb {
+  opacity: 1;
+}
+
+/* Audio Controls Row - Improved spacing */
+.audio-controls-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+/* Audio Secondary Controls */
+.audio-secondary-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.audio-volume-control {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  flex: 0 0 120px;
+}
+
+.audio-volume-btn {
+  padding: 6px;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 16px;
+  transition: color var(--transition-fast);
+}
+
+.audio-volume-btn:hover {
+  color: var(--active-bg);
+}
+
+.audio-volume-slider {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--border-color);
+  cursor: pointer;
+  position: relative;
+}
+
+.audio-volume-bar {
+  height: 100%;
+  background: var(--active-bg);
+  border-radius: 2px;
+  transition: width 0.1s linear;
+}
+
+.audio-action-btns {
+  display: flex;
+  gap: var(--spacing-xs);
+  margin-left: auto;
+}
+
+.audio-action-btn {
+  padding: 6px 10px;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: var(--font-size-xs);
+  transition: all var(--transition-fast);
+}
+
+.audio-action-btn:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--border-hover);
+}
+
+/* SVG Icon Buttons - using inline SVG with currentColor */
+.audio-btn-icon {
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  vertical-align: middle;
+  color: var(--text-primary);  /* SVG will inherit this color via fill="currentColor" */
+  transition: color var(--transition-fast);
+}
+
+/* Speed Control */
+.audio-speed-control {
+  position: relative;
+}
+
+.audio-speed-btn {
+  padding: 6px 10px;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: var(--font-size-xs);
+  font-family: var(--font-mono);
+  transition: all var(--transition-fast);
+  min-width: 45px;
+}
+
+.audio-speed-btn:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--border-hover);
+}
+
+.audio-speed-menu {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  margin-bottom: 4px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  min-width: 80px;
+}
+
+.audio-speed-option {
+  display: block;
+  width: 100%;
+  padding: 6px 12px;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: var(--font-size-xs);
+  font-family: var(--font-mono);
+  text-align: left;
+  transition: background var(--transition-fast);
+}
+
+.audio-speed-option:hover {
+  background: var(--bg-secondary);
+}
+
+.audio-speed-option.selected {
+  background: var(--active-bg);
+  color: var(--active-text);
+}
+
+/* Visualization and Loop Buttons */
+.audio-viz-btn,
+.audio-loop-btn {
+  padding: 6px;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+}
+
+.audio-viz-btn:hover,
+.audio-loop-btn:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--border-hover);
+}
+
+.audio-viz-btn.active,
+.audio-loop-btn.active {
+  background: var(--active-bg);
+  border-color: var(--active-bg);
+}
+
+.audio-viz-btn.active .audio-btn-icon,
+.audio-loop-btn.active .audio-btn-icon {
+  filter: brightness(0) invert(1);
+}
+
+/* Download Button */
+.audio-download-btn {
+  padding: 4px 8px;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: var(--font-size-xs);
+  transition: all var(--transition-fast);
+}
+
+.audio-download-btn:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--border-hover);
+}
+
+/* Audio Actions Container */
+.audio-actions {
+  display: flex;
+  gap: var(--spacing-xs);
+  align-items: center;
+}
+
+/* Audio Label */
+.audio-label {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+/* Audio Loading State */
+.audio-loading {
+  padding: var(--spacing-lg);
+  text-align: center;
+  color: var(--text-tertiary);
+}
+
+.audio-loading::before {
+  content: '';
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border-color);
+  border-top-color: var(--active-bg);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  vertical-align: middle;
+  margin-right: var(--spacing-sm);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Audio Error State */
+.audio-renderer.error {
+  border-color: #E74C3C;
+}
+
+.audio-error {
+  padding: var(--spacing-md);
+  background: rgba(231, 76, 60, 0.1);
+  color: #E74C3C;
+  text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .audio-waveform {
+    height: 80px;
+  }
+
+  .audio-secondary-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .audio-action-btns {
+    margin-left: 0;
+    justify-content: center;
+  }
+}

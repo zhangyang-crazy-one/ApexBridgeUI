@@ -1,0 +1,505 @@
+/**
+ * Syntax Highlighter Styles (CORE-041)
+ *
+ * Theme-aware syntax highlighting styles for Canvas code editor
+ * Follows Anthropic design system color palette
+ */
+
+/* Container */
+.syntax-highlighter {
+  width: 100%;
+  border-radius: var(--radius-md);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  font-family: 'Monaco', 'Menlo', 'Consolas', 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* Header */
+.syntax-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.syntax-language {
+  font-size: var(--font-size-xs);
+  font-family: var(--font-heading);
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.syntax-copy-btn {
+  padding: 4px 8px;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 16px;
+  transition: all var(--transition-fast);
+}
+
+.syntax-copy-btn:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+/* 🔑 新增：HTML渲染按钮样式 */
+.code-render-btn {
+  padding: 4px 8px;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: var(--font-size-xs);
+  font-family: var(--font-heading);
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.code-render-btn:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--border-hover);
+}
+
+.code-render-btn:active {
+  background: var(--active-bg);
+  color: var(--active-text);
+  border-color: var(--active-bg);
+}
+
+.code-render-icon {
+  width: 14px;
+  height: 14px;
+  /* 🔑 修复问题1：Light模式下反转白色SVG图标为深色 */
+  filter: invert(1);
+}
+
+/* 🔑 修复问题1：Dark模式下保持白色SVG图标不变 */
+[data-theme="dark"] .code-render-icon {
+  filter: none;
+}
+
+/* 🔑 新增：HTML预览容器 */
+.html-preview-container {
+  display: none;
+  margin-top: var(--spacing-sm);
+  border-top: 1px solid var(--border-color);
+  padding-top: var(--spacing-sm);
+}
+
+.code-renderer.html-rendered .html-preview-container {
+  display: block;
+}
+
+.code-renderer.html-rendered .code-content {
+  display: none;
+}
+
+/* 预览容器内的HTML渲染器样式调整 */
+.html-preview-container .html-renderer {
+  border: none;
+  border-radius: 0;
+}
+
+/* Code Container */
+.syntax-code-container {
+  overflow: auto;
+  max-height: 600px;
+}
+
+.syntax-pre {
+  margin: 0;
+  padding: var(--spacing-md);
+  background: var(--bg-primary);
+}
+
+.syntax-code {
+  display: block;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  color: var(--text-primary);
+}
+
+/* Line */
+.syntax-line {
+  display: flex;
+  align-items: flex-start;
+  min-height: 1.6em;
+  transition: background-color var(--transition-fast);
+}
+
+.syntax-line:hover {
+  background: var(--bg-tertiary);
+}
+
+.syntax-line-highlighted {
+  background: rgba(255, 235, 59, 0.1);
+}
+
+.syntax-line-highlighted:hover {
+  background: rgba(255, 235, 59, 0.15);
+}
+
+/* Line Number */
+.syntax-line-number {
+  display: inline-block;
+  min-width: 3em;
+  padding-right: var(--spacing-md);
+  text-align: right;
+  color: var(--text-tertiary);
+  user-select: none;
+  font-size: 13px;
+}
+
+/* Line Content */
+.syntax-line-content {
+  flex: 1;
+  white-space: pre;
+  word-break: keep-all;
+}
+
+/* Truncation Notice */
+.syntax-truncated {
+  padding: var(--spacing-md);
+  color: var(--text-tertiary);
+  font-style: italic;
+  text-align: center;
+}
+
+/* Token Styles - Light Mode */
+.token-keyword {
+  color: #0000FF; /* Blue for keywords */
+  font-weight: 600;
+}
+
+.token-string {
+  color: #A31515; /* Red for strings */
+}
+
+.token-comment {
+  color: #008000; /* Green for comments */
+  font-style: italic;
+}
+
+.token-number {
+  color: #098658; /* Teal for numbers */
+}
+
+.token-operator {
+  color: #000000; /* Black for operators */
+}
+
+.token-function {
+  color: #795E26; /* Brown for functions */
+  font-weight: 500;
+}
+
+.token-class {
+  color: #267F99; /* Dark cyan for classes */
+  font-weight: 500;
+}
+
+.token-variable {
+  color: #001080; /* Dark blue for variables */
+}
+
+.token-punctuation {
+  color: #000000; /* Black for punctuation */
+}
+
+.token-tag {
+  color: #800000; /* Dark red for HTML tags */
+}
+
+.token-attribute {
+  color: #FF0000; /* Red for HTML attributes */
+}
+
+.token-property {
+  color: #0451A5; /* Blue for CSS properties */
+}
+
+.token-constant {
+  color: #0000FF; /* Blue for constants */
+  font-weight: 600;
+}
+
+.token-plain {
+  color: var(--text-primary);
+}
+
+/* Token Styles - Dark Mode */
+[data-theme="dark"] .token-keyword {
+  color: #569CD6; /* Light blue for keywords */
+}
+
+[data-theme="dark"] .token-string {
+  color: #CE9178; /* Light red for strings */
+}
+
+[data-theme="dark"] .token-comment {
+  color: #6A9955; /* Light green for comments */
+}
+
+[data-theme="dark"] .token-number {
+  color: #B5CEA8; /* Light teal for numbers */
+}
+
+[data-theme="dark"] .token-operator {
+  color: #D4D4D4; /* Light gray for operators */
+}
+
+[data-theme="dark"] .token-function {
+  color: #DCDCAA; /* Light yellow for functions */
+}
+
+[data-theme="dark"] .token-class {
+  color: #4EC9B0; /* Light cyan for classes */
+}
+
+[data-theme="dark"] .token-variable {
+  color: #9CDCFE; /* Light blue for variables */
+}
+
+[data-theme="dark"] .token-punctuation {
+  color: #D4D4D4; /* Light gray for punctuation */
+}
+
+[data-theme="dark"] .token-tag {
+  color: #569CD6; /* Light blue for HTML tags */
+}
+
+[data-theme="dark"] .token-attribute {
+  color: #9CDCFE; /* Light blue for HTML attributes */
+}
+
+[data-theme="dark"] .token-property {
+  color: #9CDCFE; /* Light blue for CSS properties */
+}
+
+[data-theme="dark"] .token-constant {
+  color: #569CD6; /* Light blue for constants */
+}
+
+/* Scrollbar Styling */
+.syntax-code-container::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.syntax-code-container::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-sm);
+}
+
+.syntax-code-container::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-fast);
+}
+
+.syntax-code-container::-webkit-scrollbar-thumb:hover {
+  background: var(--border-hover);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .syntax-highlighter {
+    font-size: 12px;
+  }
+
+  .syntax-line-number {
+    min-width: 2.5em;
+    padding-right: var(--spacing-sm);
+  }
+
+  .syntax-pre {
+    padding: var(--spacing-sm);
+  }
+}
+
+/* Accessibility */
+.syntax-highlighter:focus-within {
+  outline: 2px solid var(--active-bg);
+  outline-offset: 2px;
+}
+
+/* Print Styles */
+@media print {
+  .syntax-header {
+    display: none;
+  }
+
+  .syntax-code-container {
+    max-height: none;
+    overflow: visible;
+  }
+
+  .syntax-line:hover {
+    background: transparent;
+  }
+}
+
+/* ============================================================================
+   Highlight.js Syntax Highlighting Styles (for MarkdownRenderer)
+   ============================================================================ */
+
+/* Keyword Styles - Light Mode */
+.hljs-keyword {
+  color: #0000FF; /* Blue for keywords */
+  font-weight: 600;
+}
+
+.hljs-built_in {
+  color: #795E26; /* Brown for built-in functions */
+  font-weight: 500;
+}
+
+.hljs-literal {
+  color: #0000FF; /* Blue for literals (true, false, null) */
+  font-weight: 600;
+}
+
+.hljs-string {
+  color: #A31515; /* Red for strings */
+}
+
+.hljs-comment {
+  color: #008000; /* Green for comments */
+  font-style: italic;
+}
+
+.hljs-number {
+  color: #098658; /* Teal for numbers */
+}
+
+.hljs-title {
+  color: #795E26; /* Brown for titles */
+  font-weight: 500;
+}
+
+.hljs-title.function_ {
+  color: #795E26; /* Brown for function names */
+  font-weight: 500;
+}
+
+.hljs-title.class_ {
+  color: #267F99; /* Dark cyan for class names */
+  font-weight: 500;
+}
+
+.hljs-meta {
+  color: #0000FF; /* Blue for decorators/meta */
+}
+
+.hljs-operator {
+  color: #000000; /* Black for operators */
+}
+
+.hljs-punctuation {
+  color: #000000; /* Black for punctuation */
+}
+
+.hljs-variable {
+  color: #001080; /* Dark blue for variables */
+}
+
+.hljs-tag {
+  color: #800000; /* Dark red for HTML tags */
+}
+
+.hljs-attribute {
+  color: #FF0000; /* Red for HTML attributes */
+}
+
+.hljs-property {
+  color: #0451A5; /* Blue for CSS properties */
+}
+
+.hljs-constant {
+  color: #0000FF; /* Blue for constants */
+  font-weight: 600;
+}
+
+/* Keyword Styles - Dark Mode */
+[data-theme="dark"] .hljs-keyword {
+  color: #569CD6; /* Light blue for keywords */
+}
+
+[data-theme="dark"] .hljs-built_in {
+  color: #DCDCAA; /* Light yellow for built-in functions */
+}
+
+[data-theme="dark"] .hljs-literal {
+  color: #569CD6; /* Light blue for literals */
+}
+
+[data-theme="dark"] .hljs-string {
+  color: #CE9178; /* Light red for strings */
+}
+
+[data-theme="dark"] .hljs-comment {
+  color: #6A9955; /* Light green for comments */
+}
+
+[data-theme="dark"] .hljs-number {
+  color: #B5CEA8; /* Light teal for numbers */
+}
+
+[data-theme="dark"] .hljs-title {
+  color: #DCDCAA; /* Light yellow for titles */
+}
+
+[data-theme="dark"] .hljs-title.function_ {
+  color: #DCDCAA; /* Light yellow for function names */
+}
+
+[data-theme="dark"] .hljs-title.class_ {
+  color: #4EC9B0; /* Light cyan for class names */
+}
+
+[data-theme="dark"] .hljs-meta {
+  color: #569CD6; /* Light blue for decorators/meta */
+}
+
+[data-theme="dark"] .hljs-operator {
+  color: #D4D4D4; /* Light gray for operators */
+}
+
+[data-theme="dark"] .hljs-punctuation {
+  color: #D4D4D4; /* Light gray for punctuation */
+}
+
+[data-theme="dark"] .hljs-variable {
+  color: #9CDCFE; /* Light blue for variables */
+}
+
+[data-theme="dark"] .hljs-tag {
+  color: #569CD6; /* Light blue for HTML tags */
+}
+
+[data-theme="dark"] .hljs-attribute {
+  color: #9CDCFE; /* Light blue for HTML attributes */
+}
+
+[data-theme="dark"] .hljs-property {
+  color: #9CDCFE; /* Light blue for CSS properties */
+}
+
+[data-theme="dark"] .hljs-constant {
+  color: #569CD6; /* Light blue for constants */
+}

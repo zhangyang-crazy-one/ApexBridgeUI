@@ -1,0 +1,402 @@
+/**
+ * Choreographed Animation Sequences
+ *
+ * Implements staggered, synchronized entrance animations with:
+ * - Multi-stage emergence sequences
+ * - Staggered delays (50-80ms increments)
+ * - Elastic timing functions
+ * - GPU-accelerated transforms
+ *
+ * Design principle: Create flowing, memorable moments that avoid predictable AI aesthetics
+ */
+
+/* ========================================
+   Phase 5.1: Settings Modal - 9阶段涌现动画
+   ======================================== */
+
+/* Stage 0: Modal Container - 整体淡入 */
+@keyframes modalFadeIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.85) translateY(40px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.settings-modal {
+  animation: modalFadeIn 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Stage 1: Header - 从上滑入 */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.settings-header {
+  animation: slideDown 400ms cubic-bezier(0.34, 1.56, 0.64, 1) 100ms backwards;
+}
+
+/* Stages 2-5: Tabs - 错峰50ms从下滑入 */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.settings-tab:nth-child(1),
+.tab-btn:nth-child(1) {
+  animation: slideUp 400ms ease 200ms backwards;
+}
+
+.settings-tab:nth-child(2),
+.tab-btn:nth-child(2) {
+  animation: slideUp 400ms ease 250ms backwards;
+}
+
+.settings-tab:nth-child(3),
+.tab-btn:nth-child(3) {
+  animation: slideUp 400ms ease 300ms backwards;
+}
+
+.settings-tab:nth-child(4),
+.tab-btn:nth-child(4) {
+  animation: slideUp 400ms ease 350ms backwards;
+}
+
+.settings-tab:nth-child(5),
+.tab-btn:nth-child(5) {
+  animation: slideUp 400ms ease 400ms backwards;
+}
+
+/* Stages 6-8: Content Sections - 错峰80ms从左滑入 */
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.settings-section:nth-child(1) {
+  animation: fadeInRight 500ms ease 400ms backwards;
+}
+
+.settings-section:nth-child(2) {
+  animation: fadeInRight 500ms ease 480ms backwards;
+}
+
+.settings-section:nth-child(3) {
+  animation: fadeInRight 500ms ease 560ms backwards;
+}
+
+.settings-section:nth-child(4) {
+  animation: fadeInRight 500ms ease 640ms backwards;
+}
+
+/* Stage 9: Footer - 从下滑入 */
+.settings-footer {
+  animation: slideUp 400ms ease 640ms backwards;
+}
+
+/* ========================================
+   Phase 5.2: Agent/Group Editor - 弹簧式入场
+   ======================================== */
+
+@keyframes springIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.6) rotate(-3deg);
+  }
+  50% {
+    transform: scale(1.05) rotate(1deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+}
+
+/* 通用modal类 - 应用于其他modal窗口 */
+.agent-editor-modal,
+.group-editor-modal,
+.migration-wizard-modal,
+.custom-modal {
+  animation: springIn 600ms cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+/* Modal内容错峰涌现 */
+.modal .form-group:nth-child(1) { animation: fadeInRight 300ms ease 100ms backwards; }
+.modal .form-group:nth-child(2) { animation: fadeInRight 300ms ease 160ms backwards; }
+.modal .form-group:nth-child(3) { animation: fadeInRight 300ms ease 220ms backwards; }
+.modal .form-group:nth-child(4) { animation: fadeInRight 300ms ease 280ms backwards; }
+.modal .form-group:nth-child(5) { animation: fadeInRight 300ms ease 340ms backwards; }
+.modal .form-group:nth-child(6) { animation: fadeInRight 300ms ease 400ms backwards; }
+
+/* ========================================
+   Phase 5.3: Notifications - 堆叠涌现（错峰60ms）
+   ======================================== */
+
+@keyframes stackPop {
+  0% {
+    opacity: 0;
+    transform: translateX(60px) scale(0.8);
+  }
+  60% {
+    transform: translateX(-10px) scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+.notification-item {
+  animation: stackPop 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.notification-item:nth-child(1) { animation-delay: 0ms; }
+.notification-item:nth-child(2) { animation-delay: 60ms; }
+.notification-item:nth-child(3) { animation-delay: 120ms; }
+.notification-item:nth-child(4) { animation-delay: 180ms; }
+.notification-item:nth-child(5) { animation-delay: 240ms; }
+.notification-item:nth-child(6) { animation-delay: 300ms; }
+
+/* ========================================
+   Message List - 优化现有动画（已在chat.css实现）
+   ======================================== */
+
+/* 增强消息容器动画 - 确保错峰延迟 */
+.message-container {
+  animation: messageSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+@keyframes messageSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.message-container:nth-child(1) { animation-delay: 0ms; }
+.message-container:nth-child(2) { animation-delay: 80ms; }
+.message-container:nth-child(3) { animation-delay: 160ms; }
+.message-container:nth-child(4) { animation-delay: 240ms; }
+.message-container:nth-child(5) { animation-delay: 320ms; }
+.message-container:nth-child(6) { animation-delay: 400ms; }
+
+/* ========================================
+   Sidebar Items - 列表涌现动画
+   ======================================== */
+
+@keyframes listItemSlide {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.agent-item,
+.group-item,
+.sidebar-item {
+  animation: listItemSlide 300ms ease backwards;
+}
+
+.agent-item:nth-child(1),
+.group-item:nth-child(1),
+.sidebar-item:nth-child(1) { animation-delay: 0ms; }
+
+.agent-item:nth-child(2),
+.group-item:nth-child(2),
+.sidebar-item:nth-child(2) { animation-delay: 50ms; }
+
+.agent-item:nth-child(3),
+.group-item:nth-child(3),
+.sidebar-item:nth-child(3) { animation-delay: 100ms; }
+
+.agent-item:nth-child(4),
+.group-item:nth-child(4),
+.sidebar-item:nth-child(4) { animation-delay: 150ms; }
+
+.agent-item:nth-child(5),
+.group-item:nth-child(5),
+.sidebar-item:nth-child(5) { animation-delay: 200ms; }
+
+.agent-item:nth-child(6),
+.group-item:nth-child(6),
+.sidebar-item:nth-child(6) { animation-delay: 250ms; }
+
+/* ========================================
+   Feature Cards - 交错涌现
+   ======================================== */
+
+@keyframes featureReveal {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.feature-item {
+  animation: featureReveal 500ms cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+}
+
+.feature-item:nth-child(1) { animation-delay: 100ms; }
+.feature-item:nth-child(2) { animation-delay: 200ms; }
+.feature-item:nth-child(3) { animation-delay: 300ms; }
+.feature-item:nth-child(4) { animation-delay: 400ms; }
+
+/* ========================================
+   Plugin Subtabs - 波浪式展开
+   ======================================== */
+
+@keyframes waveExpand {
+  from {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  to {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+.plugin-subtab {
+  animation: waveExpand 300ms ease backwards;
+  transform-origin: left center;
+}
+
+.plugin-subtab:nth-child(1) { animation-delay: 0ms; }
+.plugin-subtab:nth-child(2) { animation-delay: 60ms; }
+.plugin-subtab:nth-child(3) { animation-delay: 120ms; }
+.plugin-subtab:nth-child(4) { animation-delay: 180ms; }
+
+/* ========================================
+   Attachment Preview - 弹出动画
+   ======================================== */
+
+@keyframes attachmentPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) rotate(-5deg);
+  }
+  60% {
+    transform: scale(1.1) rotate(2deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+}
+
+.attachment-preview-item,
+.attachment-item {
+  animation: attachmentPop 400ms cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+/* ========================================
+   Code Blocks - 打字机效果（可选）
+   ======================================== */
+
+@keyframes typewriter {
+  from {
+    max-height: 0;
+    opacity: 0;
+  }
+  to {
+    max-height: 1000px;
+    opacity: 1;
+  }
+}
+
+/* 仅在首次加载时应用打字机效果 */
+.message__content pre.first-render {
+  animation: typewriter 600ms ease-out;
+  overflow: hidden;
+}
+
+/* ========================================
+   Loading States - 脉动动画
+   ======================================== */
+
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: 200px 0;
+  }
+}
+
+.loading-skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--bg-secondary) 0%,
+    var(--bg-tertiary) 50%,
+    var(--bg-secondary) 100%
+  );
+  background-size: 200px 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* ========================================
+   Performance Optimization
+   ======================================== */
+
+/* GPU加速 - 提示浏览器 */
+.settings-modal,
+.agent-editor-modal,
+.group-editor-modal,
+.notification-item,
+.message-container,
+.feature-item {
+  will-change: transform, opacity;
+}
+
+/* 动画完成后移除will-change */
+.settings-modal.animation-complete,
+.agent-editor-modal.animation-complete,
+.notification-item.animation-complete,
+.message-container.animation-complete {
+  will-change: auto;
+}
+
+/* 禁用低端设备上的动画 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VCPChat - AI助手</title>
+  <link rel="stylesheet" href="../../styles/theme-claude.css">
+  <link rel="stylesheet" href="./assistant.css">
+</head>
+<body>
+  <!-- Main Application Container -->
+  <div id="app" class="app-container">
+
+    <!-- Left Sidebar: Agents & Topics List -->
+    <aside id="agents-sidebar" class="sidebar sidebar-left">
+      <!-- Sidebar Header -->
+      <div class="sidebar-header">
+        <h2 class="sidebar-title" data-i18n="conversations">对话</h2>
+        <button id="new-topic-btn" class="button-icon" data-i18n-title="new_conversation">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Agent Selector -->
+      <div class="agent-selector">
+        <select id="active-agent-select" class="agent-select">
+          <option value="" data-i18n="select_agent">选择智能体...</option>
+        </select>
+      </div>
+
+      <!-- Topics List -->
+      <div class="topics-list" id="topics-list">
+        <!-- Topics will be dynamically added here -->
+        <div class="empty-state">
+          <p class="text-secondary" data-i18n="no_conversations">暂无对话</p>
+          <p class="text-tertiary text-sm">点击 + 开始新对话</p>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Chat Area -->
+    <main class="chat-main">
+      <!-- Title Bar (Drag Area) -->
+      <div id="title-bar" class="title-bar" data-tauri-drag-region>
+        <div class="title-bar-left">
+          <span id="current-topic-title" class="title-bar-title">VCPChat</span>
+        </div>
+        <div class="title-bar-center">
+          <span id="current-agent-name" class="text-secondary text-sm"></span>
+        </div>
+        <div class="title-bar-right">
+          <button id="settings-btn" class="button-icon" title="Settings">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"/>
+            </svg>
+          </button>
+          <button id="minimize-btn" class="button-icon" title="Minimize">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M5 10h10"/>
+            </svg>
+          </button>
+          <button id="maximize-btn" class="button-icon" title="Maximize">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+              <rect x="5" y="5" width="10" height="10" stroke="currentColor" fill="none"/>
+            </svg>
+          </button>
+          <button id="close-btn" class="button-icon button-close" title="Close">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M6 6l8 8M14 6l-8 8"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Chat Messages Container -->
+      <div id="chat-container" class="chat-container">
+        <!-- Welcome Screen -->
+        <div id="welcome-screen" class="welcome-screen">
+          <div class="welcome-content">
+            <h1 data-i18n="welcome_title">欢迎使用VCPChat</h1>
+            <p class="text-secondary" data-i18n="welcome_subtitle">选择智能体开始对话</p>
+            <div class="welcome-features">
+              <div class="feature-card">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                </svg>
+                <h3 data-i18n="multi_agent_support">多智能体支持</h3>
+                <p class="text-tertiary" data-i18n="multi_agent_desc">与不同AI角色对话</p>
+              </div>
+              <div class="feature-card">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                  <circle cx="9" cy="7" r="4"/>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+                <h3 data-i18n="group_collaboration">群组协作</h3>
+                <p class="text-tertiary" data-i18n="group_collaboration_desc">多个智能体协同工作</p>
+              </div>
+              <div class="feature-card">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                  <path d="M2 17l10 5 10-5"/>
+                  <path d="M2 12l10 5 10-5"/>
+                </svg>
+                <h3 data-i18n="rich_content">富媒体内容</h3>
+                <p class="text-tertiary" data-i18n="rich_content_desc">Markdown、代码、图片等</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Messages will be dynamically added here -->
+        <div id="messages-list" class="messages-list hidden">
+          <!-- Chat messages rendered here -->
+        </div>
+      </div>
+
+      <!-- Message Input Area -->
+      <div class="input-area">
+        <div class="input-container">
+          <textarea
+            id="message-input"
+            class="message-input"
+            data-i18n-placeholder="type_message"
+            placeholder="输入消息... (Ctrl+Enter 发送)"
+            rows="3"
+            disabled
+          ></textarea>
+          <div class="input-actions">
+            <button id="attach-btn" class="button-icon" data-i18n-title="attach_file" disabled>
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M16.88 9.1A4 4 0 0 1 16 17H5a5 5 0 0 1-1-9.9V7a3 3 0 0 1 4.52-2.59A4.98 4.98 0 0 1 17 8c0 .38-.04.74-.12 1.1z"/>
+              </svg>
+            </button>
+            <button id="send-btn" class="button-primary button-send" disabled>
+              <span data-i18n="send">发送</span>
+              <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="input-status">
+          <span id="char-count" class="text-tertiary text-sm">0 <span data-i18n="char_count">字符</span></span>
+          <span id="streaming-indicator" class="streaming-indicator hidden">
+            <span class="pulse">●</span> <span data-i18n="message_streaming">AI正在响应...</span>
+          </span>
+        </div>
+      </div>
+    </main>
+
+    <!-- Right Sidebar: Notifications -->
+    <aside id="notifications-sidebar" class="sidebar sidebar-right">
+      <div class="sidebar-header">
+        <h2 class="sidebar-title" data-i18n="notifications">通知</h2>
+        <button id="clear-notifications-btn" class="button-icon" data-i18n-title="clear_all">
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9zM4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3z"/>
+          </svg>
+        </button>
+      </div>
+      <div class="notifications-list" id="notifications-list">
+        <div class="empty-state">
+          <p class="text-secondary" data-i18n="no_notifications">暂无通知</p>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Scripts -->
+  <script type="module" src="./assistant.ts"></script>
+</body>
+</html>

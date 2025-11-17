@@ -1,0 +1,523 @@
+/**
+ * LaTeX Renderer Styles
+ *
+ * Theme-aware styles for LaTeX mathematical expressions
+ * Follows Anthropic design system color palette
+ * Integrates with KaTeX library
+ */
+
+/* LaTeX Container */
+.latex-renderer {
+  width: 100%;
+  max-width: 100%;
+  border-radius: var(--radius-md);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: border-color var(--transition-normal);
+}
+
+.latex-renderer:hover {
+  border-color: var(--border-hover);
+}
+
+/* Inline Math (within text) */
+.latex-renderer.inline-math {
+  display: inline-block;
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin: 0 2px;
+  vertical-align: middle;
+}
+
+/* Display Math (block level) */
+.latex-renderer.display-math {
+  margin: var(--spacing-md) 0;
+}
+
+/* Header */
+.latex-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color var(--transition-normal);
+}
+
+.latex-title {
+  font-size: var(--font-size-xs);
+  font-family: var(--font-heading);
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.latex-actions {
+  display: flex;
+  gap: var(--spacing-xs);
+}
+
+.latex-copy-btn,
+.latex-source-toggle-btn {
+  padding: 4px 8px;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: var(--font-size-xs);
+  font-family: var(--font-heading);
+  transition: all var(--transition-fast);
+}
+
+.latex-copy-btn:hover,
+.latex-source-toggle-btn:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--border-hover);
+}
+
+.latex-copy-btn:active,
+.latex-source-toggle-btn:active {
+  background: var(--active-bg);
+  color: var(--active-text);
+  border-color: var(--active-bg);
+}
+
+.latex-source-toggle-btn.active {
+  background: var(--active-bg);
+  color: var(--active-text);
+  border-color: var(--active-bg);
+}
+
+/* LaTeX Content Container */
+.latex-content {
+  padding: var(--spacing-lg);
+  text-align: center;
+  overflow-x: auto;
+  overflow-y: hidden;
+  background: var(--bg-primary);
+  transition: background-color var(--transition-normal);
+}
+
+.latex-content.inline {
+  padding: 2px 4px;
+  text-align: left;
+  display: inline-block;
+}
+
+/* KaTeX Rendered Output */
+.latex-content .katex-display {
+  margin: 0;
+  padding: var(--spacing-md) 0;
+}
+
+.latex-content .katex {
+  font-size: 1.1em;
+  color: var(--text-primary);
+}
+
+/* Inline KaTeX */
+.latex-content.inline .katex {
+  font-size: 1em;
+}
+
+/* CRITICAL FIX: Reset KaTeX font-size and line-height in message content to prevent layout issues */
+/* The 1.1em multiplier and 1.6 line-height break KaTeX's em-based positioning calculations for superscripts/subscripts */
+
+/* Base KaTeX container reset */
+.message-content .katex,
+.markdown-content .katex,
+.message__content .katex,
+.message__content .markdown-content .katex {
+  font-size: 1em !important;
+  line-height: 1 !important;
+  font-family: 'KaTeX_Main', 'Times New Roman', serif !important;
+}
+
+/* CRITICAL: Reset line-height for ALL KaTeX descendants to prevent inheritance from .message__content */
+/* .message__content has line-height: 1.6 which breaks KaTeX's layout system */
+.message-content .katex *,
+.markdown-content .katex *,
+.message__content .katex *,
+.message__content .markdown-content .katex * {
+  line-height: 1 !important;
+}
+
+/* CRITICAL: Restore normal line-height for operators and their limits */
+/* Operators like integrals (∫), sums (∑) need proper vertical spacing for limits */
+.message-content .katex .mop,
+.message-content .katex .msubsup,
+.message-content .katex .msupsub,
+.message-content .katex .op-limits,
+.markdown-content .katex .mop,
+.markdown-content .katex .msubsup,
+.markdown-content .katex .msupsub,
+.markdown-content .katex .op-limits,
+.message__content .katex .mop,
+.message__content .katex .msubsup,
+.message__content .katex .msupsub,
+.message__content .katex .op-limits {
+  line-height: normal !important;
+}
+
+/* CRITICAL FIX: Reset line-height for KaTeX vertical list elements */
+/* The .vlist-t, .vlist-r, .vlist elements are used for vertical positioning of superscripts/subscripts */
+/* They MUST have their default line-height to prevent overlapping in integrals, sums, etc. */
+.message-content .katex .vlist-t,
+.message-content .katex .vlist-r,
+.message-content .katex .vlist,
+.markdown-content .katex .vlist-t,
+.markdown-content .katex .vlist-r,
+.markdown-content .katex .vlist,
+.message__content .katex .vlist-t,
+.message__content .katex .vlist-r,
+.message__content .katex .vlist {
+  line-height: 0 !important;
+}
+
+/* CRITICAL: Fix fraction line visibility */
+/* Default color is too light (rgb(229,229,229)), make it use current text color */
+.message-content .katex .frac-line,
+.markdown-content .katex .frac-line,
+.message__content .katex .frac-line {
+  border-bottom-color: currentColor !important;
+}
+
+/* CRITICAL: Reset only KaTeX text content elements - DO NOT touch layout elements */
+/*
+ * IMPORTANT: We ONLY reset text content elements (.mord, .mbin, .mrel, etc.)
+ * We DO NOT use wildcard (*) selector because it breaks KaTeX's layout system.
+ *
+ * KaTeX uses a complex table-based layout (.vlist-t, .vlist-r, .vlist) with
+ * precise positioning that depends on default CSS values. Any reset to these
+ * layout elements will break superscripts, subscripts, fractions, etc.
+ *
+ * Strategy: Explicitly list only the text content classes that need resetting.
+ *
+ * CRITICAL: DO NOT reset .mop (operators like ∫, ∑) margin!
+ * Operators need their margin-right to control spacing with limits/subscripts.
+ * KaTeX sets margin-right via inline styles (e.g., margin-right: 0.44445em for ∫)
+ * which is essential for proper display of limits, especially with wide symbols like ∞.
+ */
+.message__content .katex .mord,
+.message__content .katex .mbin,
+.message__content .katex .mrel,
+.message__content .katex .mopen,
+.message__content .katex .mclose,
+.message__content .katex .mpunct,
+.message__content .katex .minner,
+.message__content .katex .mspace,
+.message__content .katex .mathnormal,
+.message__content .katex .mathit,
+.message__content .katex .mathrm,
+.message__content .katex .mathbf,
+.message__content .katex .mathsf,
+.message__content .katex .mathtt,
+.markdown-content .katex .mord,
+.markdown-content .katex .mbin,
+.markdown-content .katex .mrel,
+.markdown-content .katex .mopen,
+.markdown-content .katex .mclose,
+.markdown-content .katex .mpunct,
+.markdown-content .katex .minner,
+.markdown-content .katex .mspace,
+.markdown-content .katex .mathnormal,
+.markdown-content .katex .mathit,
+.markdown-content .katex .mathrm,
+.markdown-content .katex .mathbf,
+.markdown-content .katex .mathsf,
+.markdown-content .katex .mathtt {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* DO NOT reset line-height or font-size for layout elements */
+/* Let KaTeX's CSS and inline styles control all layout elements */
+
+.message__content .katex .mord,
+.message__content .katex .mbin,
+.message__content .katex .mrel,
+.message__content .katex .mop,
+.markdown-content .katex .mord,
+.markdown-content .katex .mbin,
+.markdown-content .katex .mrel,
+.markdown-content .katex .mop {
+  vertical-align: baseline !important;
+}
+
+/* CRITICAL FIX: LaTeX in Markdown paragraphs */
+/* Markdown's p tag adds margins and line-height that break LaTeX positioning */
+.message__content .markdown-content p .katex,
+.message__content p .katex,
+.markdown-content p .katex {
+  display: inline-block;
+  vertical-align: -0.25em;  /* Adjusted from middle for better baseline alignment */
+  margin: 0 0.1em !important;  /* Small horizontal spacing */
+}
+
+/* CRITICAL FIX: Display math (block) in Markdown should have proper spacing */
+.message__content .katex-display,
+.markdown-content .katex-display {
+  margin: 0.75em 0 !important;
+  display: block !important;
+  text-align: center !important;
+}
+
+/* CRITICAL FIX: Ensure inline math stays inline */
+.message__content p .katex:not(.katex-display),
+.markdown-content p .katex:not(.katex-display) {
+  display: inline-block !important;
+  vertical-align: -0.25em !important;  /* Better alignment with text baseline */
+}
+
+/* CRITICAL: KaTeX HTML output structure preservation */
+.message__content .katex-html,
+.markdown-content .katex-html {
+  display: inline-block !important;
+  line-height: 1 !important;
+  vertical-align: inherit !important;
+}
+
+.message__content .katex .base,
+.markdown-content .katex .base {
+  position: relative !important;
+  display: inline-block !important;
+  white-space: nowrap !important;
+}
+
+/* LaTeX Source Code View */
+.latex-source {
+  padding: var(--spacing-md);
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-color);
+  font-family: 'Monaco', 'Menlo', 'Consolas', 'Courier New', monospace;
+  font-size: 13px;
+  color: var(--text-primary);
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.6;
+  transition: background-color var(--transition-normal);
+  display: none;
+}
+
+.latex-source.visible {
+  display: block;
+}
+
+/* Error State */
+.latex-renderer.error {
+  border-color: #E74C3C;
+}
+
+.latex-error {
+  padding: var(--spacing-md);
+  background: rgba(231, 76, 60, 0.1);
+  border-top: 1px solid rgba(231, 76, 60, 0.3);
+  color: #E74C3C;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
+}
+
+.latex-error-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.latex-error-message {
+  flex: 1;
+}
+
+/* Character Limit Warning */
+.latex-warning {
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: rgba(255, 193, 7, 0.1);
+  border-top: 1px solid rgba(255, 193, 7, 0.3);
+  color: #FFA000;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.latex-warning-icon {
+  font-size: 16px;
+}
+
+/* Loading State */
+.latex-loading {
+  padding: var(--spacing-lg);
+  text-align: center;
+  color: var(--text-tertiary);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+}
+
+.latex-loading::before {
+  content: '';
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin-right: var(--spacing-sm);
+  border: 2px solid var(--border-color);
+  border-top-color: var(--active-bg);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* KaTeX Theme Integration */
+[data-theme="light"] .katex {
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .katex {
+  color: var(--text-primary);
+}
+
+/* KaTeX Color Overrides for Theme */
+[data-theme="light"] .katex .mord,
+[data-theme="light"] .katex .mbin,
+[data-theme="light"] .katex .mrel,
+[data-theme="light"] .katex .mop {
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .katex .mord,
+[data-theme="dark"] .katex .mbin,
+[data-theme="dark"] .katex .mrel,
+[data-theme="dark"] .katex .mop {
+  color: var(--text-primary);
+}
+
+/* CRITICAL FIX: User message KaTeX visibility */
+/* User messages have dark background (--active-bg: #141413 in light mode) */
+/* So KaTeX must use light text color */
+.message-user .katex,
+.message-user .katex .mord,
+.message-user .katex .mbin,
+.message-user .katex .mrel,
+.message-user .katex .mop,
+.message-user .katex .mopen,
+.message-user .katex .mclose,
+.message-user .katex .mpunct,
+.message-user .katex .minner {
+  color: var(--active-text) !important;
+}
+
+/* In dark mode, user messages have light background */
+/* So KaTeX uses dark text */
+[data-theme="dark"] .message-user .katex,
+[data-theme="dark"] .message-user .katex .mord,
+[data-theme="dark"] .message-user .katex .mbin,
+[data-theme="dark"] .message-user .katex .mrel,
+[data-theme="dark"] .message-user .katex .mop,
+[data-theme="dark"] .message-user .katex .mopen,
+[data-theme="dark"] .message-user .katex .mclose,
+[data-theme="dark"] .message-user .katex .mpunct,
+[data-theme="dark"] .message-user .katex .minner {
+  color: var(--active-bg) !important;
+}
+
+/* KaTeX Fraction Line */
+.katex .frac-line {
+  border-bottom-color: var(--border-color);
+}
+
+/* KaTeX Square Root */
+.katex .sqrt > .root {
+  border-top-color: var(--border-color);
+}
+
+/* Matrix/Array Borders */
+.katex .arraycolsep {
+  border-color: var(--border-color);
+}
+
+/* Scrollable for Long Expressions */
+.latex-content::-webkit-scrollbar {
+  height: 8px;
+}
+
+.latex-content::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+  border-radius: 4px;
+}
+
+.latex-content::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+  transition: background-color var(--transition-fast);
+}
+
+.latex-content::-webkit-scrollbar-thumb:hover {
+  background: var(--border-hover);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .latex-content {
+    padding: var(--spacing-md);
+    font-size: 14px;
+  }
+
+  .latex-content .katex {
+    font-size: 1em;
+  }
+
+  .latex-source {
+    font-size: 12px;
+    padding: var(--spacing-sm);
+  }
+
+  .latex-copy-btn,
+  .latex-source-toggle-btn {
+    padding: 4px 6px;
+    font-size: 11px;
+  }
+}
+
+/* Accessibility: High Contrast Mode */
+@media (prefers-contrast: high) {
+  .latex-renderer {
+    border-width: 2px;
+  }
+
+  .latex-content .katex {
+    font-weight: 500;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .latex-header,
+  .latex-actions,
+  .latex-source {
+    display: none;
+  }
+
+  .latex-content {
+    padding: 0;
+  }
+
+  .latex-renderer {
+    border: none;
+    background: transparent;
+  }
+}

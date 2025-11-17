@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VCPChat - AI协作平台 (主题切换版)</title>
+  <style>
+    /**
+     * VCPChat Design System v3.0
+     * 完全基于 Anthropic 官方配色 + Light/Dark主题切换
+     * 修正：1. 优化布局  2. 移除所有emoji  3. 使用真实logo  4. 支持主题切换
+     */
+
+    /* ========== Reset ========== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* ========== Anthropic 配色系统 - Light Mode (默认) ========== */
+    :root {
+      /* 背景色 - 温暖米色系 */
+      --bg-primary: #FAF9F5;
+      --bg-secondary: #F0EEE6;
+      --bg-tertiary: #E8E6DD;
+
+      /* 文字色 */
+      --text-primary: #141413;
+      --text-secondary: #666666;
+      --text-tertiary: #999999;
+
+      /* 边框 */
+      --border-color: #E5E5E5;
+      --border-hover: #D5D3CB;
+
+      /* 激活/按钮 */
+      --active-bg: #141413;
+      --active-text: #FAF9F5;
+
+      /* 字体 */
+      --font-heading: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Microsoft YaHei", sans-serif;
+      --font-body: Georgia, "Times New Roman", Times, serif, "Microsoft YaHei";
+
+      /* 字号 */
+      --font-size-xs: 13px;
+      --font-size-sm: 15px;
+      --font-size-base: 17px;
+      --font-size-lg: 19px;
+      --font-size-xl: 22px;
+      --font-size-2xl: 26px;
+
+      /* 间距 */
+      --spacing-xs: 6px;
+      --spacing-sm: 10px;
+      --spacing-md: 16px;
+      --spacing-lg: 24px;
+      --spacing-xl: 36px;
+
+      /* 圆角 */
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+
+      /* 布局 */
+      --titlebar-height: 44px;
+      --sidebar-width: 260px;
+
+      /* SVG图标颜色 */
+      --icon-fill: #141413;
+    }
+
+    /* ========== Dark Mode 配色 ========== */
+    [data-theme="dark"] {
+      /* 背景色 - 深色系 */
+      --bg-primary: #1a1a1a;
+      --bg-secondary: #2a2a2a;
+      --bg-tertiary: #3a3a3a;
+
+      /* 文字色 - 反转 */
+      --text-primary: #e8e6e0;
+      --text-secondary: #a8a8a8;
+      --text-tertiary: #707070;
+
+      /* 边框 */
+      --border-color: #3a3a3a;
+      --border-hover: #4a4a4a;
+
+      /* 激活/按钮 - 保持深色强调 */
+      --active-bg: #e8e6e0;
+      --active-text: #141413;
+
+      /* SVG图标颜色 */
+      --icon-fill: #e8e6e0;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: var(--font-body);
+      font-size: var(--font-size-base);
+      line-height: 1.6;
+      color: var(--text-primary);
+      background-color: var(--bg-primary);
+      -webkit-font-smoothing: antialiased;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* ========== 标题栏 ========== */
+    .titlebar {
+      height: var(--titlebar-height);
+      background-color: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--spacing-md);
+      user-select: none;
+      z-index: 1000;
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+    .titlebar-left {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+    }
+
+    .titlebar-icon svg {
+      width: 28px;
+      height: 24px;
+    }
+
+    /* Blocknet Logo 主题适配 */
+    .titlebar-icon .logo-light {
+      fill: #8f8886;  /* 原始浅灰色 */
+      transition: fill 0.3s ease;
+    }
+
+    .titlebar-icon .logo-dark {
+      fill: #101341;  /* 原始深蓝色 */
+      transition: fill 0.3s ease;
+    }
+
+    /* Dark模式下反转Logo颜色 */
+    [data-theme="dark"] .titlebar-icon .logo-light {
+      fill: #b8b6b4;  /* 更亮的灰色 */
+    }
+
+    [data-theme="dark"] .titlebar-icon .logo-dark {
+      fill: #e8e6e0;  /* 浅色 */
+    }
+
+    .titlebar-logo {
+      font-family: var(--font-heading);
+      font-size: var(--font-size-lg);
+      font-weight: 500;
+      color: var(--text-primary);
+      letter-spacing: -0.3px;
+      transition: color 0.3s ease;
+    }
+
+    .titlebar-center {
+      flex: 1;
+      text-align: center;
+      font-family: var(--font-heading);
+      font-size: var(--font-size-xs);
+      color: var(--text-secondary);
+      transition: color 0.3s ease;
+    }
+
+    .titlebar-right {
+      display: flex;
+      gap: var(--spacing-xs);
+    }
+
+    /* 主题切换按钮 */
+    .theme-toggle {
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: transparent;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.15s;
+      color: var(--text-secondary);
+      font-size: 18px;
+      margin-right: var(--spacing-xs);
+    }
+
+    .theme-toggle:hover {
+      background-color: var(--bg-tertiary);
+    }
+
+    .window-control-btn {
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: transparent;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.15s;
+      color: var(--text-secondary);
+      font-family: var(--font-heading);
+      font-size: 16px;
+    }
+
+    .window-control-btn:hover {
+      background-color: var(--bg-tertiary);
+    }
+
+    .window-control-btn.close:hover {
+      background-color: #E74C3C;
+      color: white;
+    }
+
+    /* ========== 应用容器 ========== */
+    .app-container {
+      display: flex;
+      height: calc(100% - var(--titlebar-height));
+      width: 100%;
+      overflow: hidden;
+    }
+
+    /* ========== 侧边栏 ========== */
+    .sidebar {
+      width: var(--sidebar-width);
+      background-color: var(--bg-primary);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+    .sidebar-right {
+      border-right: none;
+      border-left: 1px solid var(--border-color);
+    }
+
+    .sidebar-header {
+      padding: var(--spacing-md);
+      background-color: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
+      font-family: var(--font-heading);
+      font-weight: 500;
+      font-size: var(--font-size-xs);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+    .sidebar-toggle {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      font-family: var(--font-heading);
+      transition: background 0.15s, color 0.3s ease;
+    }
+
+    .sidebar-toggle:hover {
+      background-color: var(--bg-tertiary);
+    }
+
+    .sidebar-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: var(--spacing-sm);
+    }
+
+    .sidebar-item {
+      padding: var(--spacing-sm) var(--spacing-md);
+      margin-bottom: 4px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: background 0.15s;
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+    }
+
+    .sidebar-item:hover {
+      background-color: var(--bg-tertiary);
+    }
+
+    .sidebar-item.active {
+      background-color: var(--active-bg);
+      color: var(--active-text);
+    }
+
+    .sidebar-item-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: var(--bg-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background-color 0.3s ease;
+    }
+
+    .sidebar-item-icon svg {
+      width: 18px;
+      height: 18px;
+      fill: var(--icon-fill);
+      transition: fill 0.3s ease;
+    }
+
+    .sidebar-item.active .sidebar-item-icon {
+      background-color: rgba(255, 255, 255, 0.15);
+    }
+
+    [data-theme="dark"] .sidebar-item.active .sidebar-item-icon {
+      background-color: rgba(0, 0, 0, 0.3);
+    }
+
+    .sidebar-item.active .sidebar-item-icon svg {
+      fill: var(--active-text);
+    }
+
+    [data-theme="dark"] .sidebar-item.active .sidebar-item-icon svg {
+      fill: var(--active-bg);
+    }
+
+    .sidebar-item-text {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .sidebar-item-title {
+      font-family: var(--font-heading);
+      font-weight: 500;
+      font-size: var(--font-size-xs);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: color 0.3s ease;
+    }
+
+    .sidebar-item-subtitle {
+      font-family: var(--font-heading);
+      font-size: 12px;
+      color: var(--text-tertiary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: color 0.3s ease;
+    }
+
+    .sidebar-item.active .sidebar-item-subtitle {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    [data-theme="dark"] .sidebar-item.active .sidebar-item-subtitle {
+      color: rgba(20, 20, 19, 0.7);
+    }
+
+    /* ========== 主内容区 ========== */
+    .main-content {
+      flex: 1;
+      background-color: var(--bg-primary);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.3s ease;
+    }
+
+    .welcome-screen {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: var(--spacing-xl) var(--spacing-lg);
+      width: 100%;
+    }
+
+    .welcome-header {
+      text-align: center;
+      margin-bottom: var(--spacing-xl);
+      padding-bottom: var(--spacing-lg);
+      border-bottom: 1px solid var(--border-color);
+      transition: border-color 0.3s ease;
+    }
+
+    .welcome-header h1 {
+      font-family: var(--font-heading);
+      font-size: 42px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: var(--spacing-md);
+      letter-spacing: -1px;
+      line-height: 1.1;
+      transition: color 0.3s ease;
+    }
+
+    .welcome-header p {
+      font-size: var(--font-size-lg);
+      color: var(--text-secondary);
+      margin-bottom: var(--spacing-xs);
+      transition: color 0.3s ease;
+    }
+
+    .welcome-header .version {
+      font-family: var(--font-heading);
+      font-size: var(--font-size-xs);
+      color: var(--text-tertiary);
+      margin-top: var(--spacing-md);
+      transition: color 0.3s ease;
+    }
+
+    .features {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-md);
+    }
+
+    .feature-item {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--spacing-lg);
+      padding: var(--spacing-lg);
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      transition: all 0.3s ease;
+    }
+
+    .feature-item:hover {
+      transform: translateX(4px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+      border-color: var(--border-hover);
+    }
+
+    [data-theme="dark"] .feature-item:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .feature-icon {
+      width: 52px;
+      height: 52px;
+      background-color: var(--bg-secondary);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background-color 0.3s ease;
+    }
+
+    .feature-icon svg {
+      width: 28px;
+      height: 28px;
+      fill: var(--icon-fill);
+      transition: fill 0.3s ease;
+    }
+
+    .feature-content {
+      flex: 1;
+    }
+
+    .feature-content h3 {
+      font-family: var(--font-heading);
+      font-size: var(--font-size-lg);
+      font-weight: 500;
+      margin-bottom: var(--spacing-xs);
+      color: var(--text-primary);
+      transition: color 0.3s ease;
+    }
+
+    .feature-content p {
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin: 0;
+      transition: color 0.3s ease;
+    }
+
+    /* ========== 滚动条 ========== */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background-color: var(--bg-primary);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background-color: var(--border-color);
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background-color: var(--border-hover);
+    }
+
+    /* ========== 主题切换提示 ========== */
+    .theme-notice {
+      position: fixed;
+      top: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: var(--active-bg);
+      color: var(--active-text);
+      padding: var(--spacing-sm) var(--spacing-lg);
+      border-radius: var(--radius-md);
+      font-family: var(--font-heading);
+      font-size: var(--font-size-xs);
+      font-weight: 500;
+      z-index: 10000;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      animation: slideDown 0.3s ease-out;
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+
+    /* ========== 响应式 ========== */
+    @media (max-width: 768px) {
+      .sidebar {
+        position: absolute;
+        height: 100%;
+        z-index: 100;
+      }
+
+      .welcome-header h1 {
+        font-size: 32px;
+      }
+
+      .feature-item {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 主题切换提示 -->
+  <div class="theme-notice">
+    <span>🎨</span>
+    <span>VCPChat v3.0 - 支持Light/Dark主题切换,点击右上角太阳/月亮图标切换</span>
+  </div>
+
+  <!-- 标题栏 -->
+  <div class="titlebar">
+    <div class="titlebar-left">
+      <div class="titlebar-icon">
+        <!-- Blocknet Logo - 支持主题切换 -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 547 470.5">
+          <path class="logo-light" d="M122.8 20.7L0 234l120.9 210.2 45.5-78.1-75.3-132.4 76.5-132.9-44.8-80.1z"/>
+          <path class="logo-dark" d="M146.8 0L281 235.3 143.7 470.5l268-.3L547 234.4 411.2.9 146.8 0zM365 77.9l92.3 156.7L365.7 392l-84.3-.3L371.3 235 281.9 78.6l83.1-.7z"/>
+        </svg>
+      </div>
+      <span class="titlebar-logo">VCPChat</span>
+    </div>
+    <div class="titlebar-center">
+      当前话题:与 Claude 的对话
+    </div>
+    <div class="titlebar-right">
+      <!-- 主题切换按钮 -->
+      <button class="theme-toggle" onclick="toggleTheme()" title="切换主题">
+        <span id="theme-icon">☀️</span>
+      </button>
+      <button class="window-control-btn minimize">−</button>
+      <button class="window-control-btn maximize">□</button>
+      <button class="window-control-btn close">×</button>
+    </div>
+  </div>
+
+  <!-- 主应用容器 -->
+  <div class="app-container">
+    <!-- 左侧边栏 -->
+    <aside class="sidebar sidebar-left">
+      <div class="sidebar-header">
+        <span>对话列表</span>
+        <button class="sidebar-toggle">‹</button>
+      </div>
+      <div class="sidebar-content">
+        <div class="sidebar-item active">
+          <div class="sidebar-item-icon">
+            <svg viewBox="0 0 1280 1024" xmlns="http://www.w3.org/2000/svg">
+              <path d="M640 0c35.4 0 64 28.6 64 64v128h240c79.6 0 144 64.4 144 144v544c0 79.6-64.4 144-144 144H336c-79.6 0-144-64.4-144-144V336c0-79.6 64.4-144 144-144h240V64c0-35.4 28.6-64 64-64z"/>
+            </svg>
+          </div>
+          <div class="sidebar-item-text">
+            <div class="sidebar-item-title">Claude</div>
+            <div class="sidebar-item-subtitle">AI 助手</div>
+          </div>
+        </div>
+        <div class="sidebar-item">
+          <div class="sidebar-item-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+            </svg>
+          </div>
+          <div class="sidebar-item-text">
+            <div class="sidebar-item-title">团队协作</div>
+            <div class="sidebar-item-subtitle">3个成员在线</div>
+          </div>
+        </div>
+        <div class="sidebar-item">
+          <div class="sidebar-item-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8 0-.29.02-.58.05-.86 2.36-1.05 4.23-2.98 5.21-5.37C11.07 8.33 14.05 10 17.42 10c.78 0 1.53-.09 2.25-.26.21.71.33 1.47.33 2.26 0 4.41-3.59 8-8 8z"/>
+            </svg>
+          </div>
+          <div class="sidebar-item-text">
+            <div class="sidebar-item-title">创意工坊</div>
+            <div class="sidebar-item-subtitle">头脑风暴</div>
+          </div>
+        </div>
+        <div class="sidebar-item">
+          <div class="sidebar-item-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+            </svg>
+          </div>
+          <div class="sidebar-item-text">
+            <div class="sidebar-item-title">数据分析</div>
+            <div class="sidebar-item-subtitle">项目统计</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- 主内容区 -->
+    <main class="main-content">
+      <div class="welcome-screen">
+        <div class="welcome-header">
+          <h1>欢迎使用 VCPChat</h1>
+          <p>新一代 AI 协作平台</p>
+          <p class="version">Version 1.0.0 - Anthropic Design System with Theme Toggle</p>
+        </div>
+
+        <div class="features">
+          <div class="feature-item">
+            <div class="feature-icon">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
+              </svg>
+            </div>
+            <div class="feature-content">
+              <h3>智能对话</h3>
+              <p>与 AI 进行自然流畅的对话,支持多轮上下文理解和实时响应。先进的语言模型确保每次交互都准确、高效、富有洞察力。</p>
+            </div>
+          </div>
+
+          <div class="feature-item">
+            <div class="feature-icon">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+              </svg>
+            </div>
+            <div class="feature-content">
+              <h3>协同画布</h3>
+              <p>实时代码编辑和协作,支持语法高亮和差异对比功能。与 AI 共同编写、审查和优化代码,提升开发效率。</p>
+            </div>
+          </div>
+
+          <div class="feature-item">
+            <div class="feature-icon">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+              </svg>
+            </div>
+            <div class="feature-content">
+              <h3>智能笔记</h3>
+              <p>富文本编辑器,支持从对话中快速保存和管理内容。无缝集成AI助手,让知识管理变得简单高效。</p>
+            </div>
+          </div>
+
+          <div class="feature-item">
+            <div class="feature-icon">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5C13 2.12 11.88 1 10.5 1S8 2.12 8 3.5V5H4c-1.1 0-1.99.9-1.99 2v3.8H3.5c1.49 0 2.7 1.21 2.7 2.7s-1.21 2.7-2.7 2.7H2V20c0 1.1.9 2 2 2h3.8v-1.5c0-1.49 1.21-2.7 2.7-2.7 1.49 0 2.7 1.21 2.7 2.7V22H17c1.1 0 2-.9 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5S21.88 11 20.5 11z"/>
+              </svg>
+            </div>
+            <div class="feature-content">
+              <h3>插件生态</h3>
+              <p>丰富的插件系统,扩展无限可能性和定制功能。通过模块化架构轻松集成各类工具和服务。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- 右侧边栏 -->
+    <aside class="sidebar sidebar-right">
+      <div class="sidebar-header">
+        <span>通知中心</span>
+        <button class="sidebar-toggle">›</button>
+      </div>
+      <div class="sidebar-content">
+        <div class="sidebar-item">
+          <div class="sidebar-item-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+            </svg>
+          </div>
+          <div class="sidebar-item-text">
+            <div class="sidebar-item-title">系统通知</div>
+            <div class="sidebar-item-subtitle">5分钟前</div>
+          </div>
+        </div>
+        <div class="sidebar-item">
+          <div class="sidebar-item-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+            </svg>
+          </div>
+          <div class="sidebar-item-text">
+            <div class="sidebar-item-title">新消息</div>
+            <div class="sidebar-item-subtitle">来自 AI 助手</div>
+          </div>
+        </div>
+        <div class="sidebar-item">
+          <div class="sidebar-item-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94L14.4 2.81c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+            </svg>
+          </div>
+          <div class="sidebar-item-text">
+            <div class="sidebar-item-title">更新可用</div>
+            <div class="sidebar-item-subtitle">点击查看详情</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    console.log('VCPChat v3.0 - Anthropic Design System with Theme Toggle');
+
+    // 主题管理
+    let currentTheme = 'light';
+
+    // 初始化主题
+    function initTheme() {
+      // 优先级: localStorage > 系统偏好 > 默认Light
+      const savedTheme = localStorage.getItem('vcpchat-theme');
+      const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const initialTheme = savedTheme || (systemDark ? 'dark' : 'light');
+
+      currentTheme = initialTheme;
+      document.documentElement.setAttribute('data-theme', currentTheme);
+      updateThemeIcon();
+
+      console.log(`初始主题: ${currentTheme}`);
+    }
+
+    // 切换主题
+    function toggleTheme() {
+      currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', currentTheme);
+      localStorage.setItem('vcpchat-theme', currentTheme);
+      updateThemeIcon();
+
+      console.log(`切换至: ${currentTheme} 模式`);
+
+      // 显示切换提示
+      showThemeNotice();
+    }
+
+    // 更新主题图标
+    function updateThemeIcon() {
+      const icon = document.getElementById('theme-icon');
+      if (icon) {
+        icon.textContent = currentTheme === 'light' ? '☀️' : '🌙';
+      }
+    }
+
+    // 显示主题切换提示
+    function showThemeNotice() {
+      const notice = document.querySelector('.theme-notice');
+      if (notice) {
+        const text = notice.querySelector('span:last-child');
+        text.textContent = `已切换至 ${currentTheme === 'light' ? 'Light' : 'Dark'} 模式`;
+
+        notice.style.opacity = '1';
+        notice.style.display = 'flex';
+
+        setTimeout(() => {
+          notice.style.transition = 'opacity 0.3s ease-out';
+          notice.style.opacity = '0';
+          setTimeout(() => {
+            notice.style.display = 'none';
+          }, 300);
+        }, 2000);
+      }
+    }
+
+    // 页面加载时初始化
+    document.addEventListener('DOMContentLoaded', () => {
+      initTheme();
+
+      // 5秒后自动隐藏初始提示
+      setTimeout(() => {
+        const notice = document.querySelector('.theme-notice');
+        if (notice) {
+          notice.style.transition = 'opacity 0.3s ease-out';
+          notice.style.opacity = '0';
+          setTimeout(() => notice.remove(), 300);
+        }
+      }, 5000);
+    });
+
+    // 监听系统主题变化
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+      if (!localStorage.getItem('vcpchat-theme')) {
+        currentTheme = e.matches ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', currentTheme);
+        updateThemeIcon();
+        console.log(`系统主题变化: ${currentTheme}`);
+      }
+    });
+  </script>
+</body>
+</html>

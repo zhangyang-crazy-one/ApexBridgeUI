@@ -1,0 +1,2093 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>企业数据架构 - DAMA Platform</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    /* ========== Reset & Base Styles ========== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* ========== Anthropic-inspired Design System ========== */
+    :root {
+      /* Colors - Warm Neutral Palette */
+      --bg-primary: #FAF9F5;        /* Warm white background */
+      --bg-secondary: #F0EEE6;      /* Light beige */
+      --bg-tertiary: #E8E6DD;       /* Darker beige */
+      --text-primary: #141413;      /* Deep black text */
+      --text-secondary: #666666;    /* Gray secondary text */
+      --text-tertiary: #999999;     /* Light gray text */
+      --border-color: #E5E5E5;      /* Light gray border */
+      --button-bg: #141413;         /* Black button */
+      --button-text: #FAF9F5;       /* White button text */
+      --primary-color: #2563eb;     /* Blue accent */
+      --primary-light: #dbeafe;     /* Light blue */
+
+      /* Typography - Anthropic-style */
+      --font-heading: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-body: Georgia, "Times New Roman", Times, serif;
+
+      /* Font Sizes - Large & Readable */
+      --font-size-sm: 14px;
+      --font-size-base: 16px;
+      --font-size-lg: 18px;
+      --font-size-xl: 20px;
+      --font-size-2xl: 24px;
+      --font-size-3xl: 28px;
+
+      /* Spacing */
+      --spacing-xs: 8px;
+      --spacing-sm: 12px;
+      --spacing-md: 20px;
+      --spacing-lg: 32px;
+      --spacing-xl: 48px;
+
+      /* Border Radius */
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+
+      /* Shadows */
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+
+    body {
+      font-family: var(--font-body);
+      font-size: var(--font-size-base);
+      line-height: 1.6;
+      color: var(--text-primary);
+      background-color: var(--bg-primary);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ========== Header / Navigation ========== */
+    .header {
+      background-color: var(--bg-secondary);
+      padding: var(--spacing-sm) var(--spacing-lg);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .header-container {
+      max-width: 1800px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--spacing-lg);
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      text-decoration: none;
+      color: var(--text-primary);
+      flex-shrink: 0;
+    }
+
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      filter: grayscale(100%) brightness(0);
+    }
+
+    .logo-text {
+      font-family: var(--font-heading);
+      font-size: var(--font-size-xl);
+      font-weight: 500;
+      letter-spacing: -0.5px;
+    }
+
+    .header-nav {
+      display: flex;
+      gap: var(--spacing-xs);
+      flex: 1;
+      justify-content: center;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+      padding: var(--spacing-xs) var(--spacing-sm);
+      font-family: var(--font-heading);
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+      text-decoration: none;
+      border-radius: var(--radius-sm);
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .nav-link:hover {
+      background-color: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .nav-link.active {
+      background-color: var(--button-bg);
+      color: var(--button-text);
+      font-weight: 500;
+    }
+
+    .nav-icon {
+      width: 18px;
+      height: 18px;
+      opacity: 0.7;
+    }
+
+    .nav-link.active .nav-icon {
+      opacity: 1;
+      filter: brightness(0) invert(1);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: var(--spacing-sm);
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .btn-header {
+      padding: var(--spacing-xs) var(--spacing-md);
+      font-family: var(--font-heading);
+      font-size: var(--font-size-sm);
+      font-weight: 500;
+      color: var(--text-primary);
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn-header:hover {
+      background-color: var(--bg-tertiary);
+    }
+
+    .btn-header.btn-primary {
+      background-color: var(--button-bg);
+      color: var(--button-text);
+      border-color: var(--button-bg);
+    }
+
+    .btn-header.btn-primary:hover {
+      opacity: 0.85;
+    }
+
+    /* ========== Architecture Workspace ========== */
+    .architecture-workspace {
+      display: grid;
+      grid-template-columns: 280px 1fr 380px;
+      height: calc(100vh - 80px);
+      gap: 0;
+    }
+
+    .layer-control {
+      background: var(--bg-primary);
+      border-right: 1px solid var(--border-color);
+      overflow-y: auto;
+      padding: var(--spacing-lg);
+    }
+
+    .architecture-canvas {
+      background: var(--bg-secondary);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .model-panel {
+      background: var(--bg-primary);
+      border-left: 1px solid var(--border-color);
+      overflow-y: auto;
+      padding: var(--spacing-lg);
+    }
+
+    #architecture-svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .layer-item {
+      padding: var(--spacing-md);
+      background: var(--bg-secondary);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--spacing-sm);
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 2px solid transparent;
+      font-family: var(--font-heading);
+    }
+
+    .layer-item:hover {
+      background: var(--bg-tertiary);
+      border-color: var(--border-color);
+    }
+
+    .layer-item.active {
+      background: var(--button-bg);
+      color: var(--button-text);
+      font-weight: 500;
+      border-color: var(--button-bg);
+    }
+
+    .layer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--spacing-xs);
+    }
+
+    .layer-icon {
+      width: 20px;
+      height: 20px;
+      margin-right: var(--spacing-xs);
+      opacity: 0.7;
+    }
+
+    .layer-item.active .layer-icon {
+      opacity: 1;
+      filter: brightness(0) invert(1);
+    }
+
+    .layer-toggle {
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+      border: 2px solid currentColor;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--font-size-sm);
+    }
+
+    .layer-description {
+      font-size: var(--font-size-sm);
+      opacity: 0.7;
+      margin-top: var(--spacing-xs);
+      font-family: var(--font-body);
+    }
+
+    /* 模型层样式 */
+    .model-layer-group {
+      fill: var(--bg-primary);
+      stroke: var(--border-color);
+      stroke-width: 2px;
+      rx: 12px;
+    }
+
+    .model-layer-label {
+      font-size: 18px;
+      font-weight: 500;
+      font-family: var(--font-heading);
+      fill: var(--text-primary);
+    }
+
+    /* 模型节点样式 */
+    .model-node {
+      fill: var(--bg-primary);
+      stroke: var(--text-primary);
+      stroke-width: 2px;
+      rx: 8px;
+      cursor: grab;
+      transition: all 0.2s;
+    }
+
+    .model-node:hover {
+      fill: var(--bg-tertiary);
+      stroke-width: 2.5px;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.08));
+    }
+
+    .model-node.selected {
+      fill: var(--button-bg);
+      stroke: var(--button-bg);
+      stroke-width: 3px;
+    }
+
+    .model-node.dragging {
+      cursor: grabbing;
+      opacity: 0.7;
+      filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3));
+    }
+
+    .model-group.dragging {
+      cursor: grabbing;
+    }
+
+    /* 调整尺寸手柄 */
+    .resize-handle {
+      fill: var(--button-bg);
+      stroke: var(--bg-primary);
+      stroke-width: 2px;
+      cursor: nwse-resize;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .model-group:hover .resize-handle {
+      opacity: 0.8;
+    }
+
+    .resize-handle:hover {
+      opacity: 1;
+      fill: var(--text-primary);
+    }
+
+    .resize-handle.resizing {
+      opacity: 1;
+    }
+
+    .model-text {
+      font-size: 14px;
+      font-weight: 500;
+      font-family: var(--font-heading);
+      fill: var(--text-primary);
+      text-anchor: middle;
+      pointer-events: none;
+    }
+
+    .model-text.selected {
+      fill: var(--button-text);
+    }
+
+    .model-count {
+      font-size: 12px;
+      font-family: var(--font-heading);
+      fill: var(--text-secondary);
+      text-anchor: middle;
+      pointer-events: none;
+    }
+
+    .model-count.selected {
+      fill: rgba(250, 249, 245, 0.9);
+    }
+
+    /* 关系线样式 */
+    .vertical-relation {
+      stroke: var(--text-primary);
+      stroke-width: 2px;
+      fill: none;
+      marker-end: url(#arrow-down);
+      opacity: 0.3;
+    }
+
+    .horizontal-relation {
+      stroke: var(--text-secondary);
+      stroke-width: 1.5px;
+      fill: none;
+      marker-end: url(#arrow-right);
+      opacity: 0.3;
+      stroke-dasharray: 5,5;
+    }
+
+    .zoom-controls {
+      position: absolute;
+      bottom: var(--spacing-md);
+      right: var(--spacing-md);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-xs);
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: var(--spacing-xs);
+      box-shadow: var(--shadow-md);
+    }
+
+    .zoom-btn {
+      width: 40px;
+      height: 40px;
+      border: none;
+      background: var(--bg-secondary);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-family: var(--font-heading);
+      font-size: 20px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-primary);
+    }
+
+    .zoom-btn:hover {
+      background: var(--button-bg);
+      color: var(--button-text);
+    }
+
+    .model-detail {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-md);
+      padding: var(--spacing-lg);
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .model-detail h4 {
+      font-size: var(--font-size-xl);
+      font-weight: 500;
+      font-family: var(--font-heading);
+      margin-bottom: var(--spacing-md);
+      color: var(--text-primary);
+    }
+
+    .detail-section {
+      margin-bottom: var(--spacing-md);
+    }
+
+    .detail-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .detail-section-title {
+      font-size: var(--font-size-sm);
+      font-weight: 500;
+      font-family: var(--font-heading);
+      color: var(--text-secondary);
+      margin-bottom: var(--spacing-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .detail-row {
+      display: flex;
+      padding: var(--spacing-sm) 0;
+      border-bottom: 1px solid var(--border-color);
+      font-size: var(--font-size-base);
+    }
+
+    .detail-row:last-child {
+      border-bottom: none;
+    }
+
+    .detail-label {
+      flex: 0 0 120px;
+      color: var(--text-secondary);
+      font-weight: 500;
+      font-family: var(--font-heading);
+    }
+
+    .detail-value {
+      flex: 1;
+      color: var(--text-primary);
+      font-family: var(--font-body);
+    }
+
+    .entity-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-sm);
+      margin-top: var(--spacing-sm);
+    }
+
+    .entity-item {
+      padding: var(--spacing-md);
+      background: var(--bg-primary);
+      border-radius: var(--radius-sm);
+      font-size: var(--font-size-base);
+      font-family: var(--font-body);
+      border-left: 3px solid var(--text-primary);
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .entity-item:hover {
+      background: var(--bg-tertiary);
+      transform: translateX(4px);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-sm);
+      margin-top: var(--spacing-sm);
+    }
+
+    .stat-card {
+      padding: var(--spacing-md);
+      background: var(--bg-primary);
+      border-radius: var(--radius-sm);
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: var(--font-size-3xl);
+      font-weight: 500;
+      font-family: var(--font-heading);
+      color: var(--primary-color);
+    }
+
+    .stat-label {
+      font-size: var(--font-size-sm);
+      font-family: var(--font-heading);
+      color: var(--text-secondary);
+      margin-top: var(--spacing-xs);
+    }
+  </style>
+</head>
+<body>
+  <!-- Header / Navigation -->
+  <header class="header">
+    <div class="header-container">
+      <a href="index.html" class="logo-container">
+        <img src="../../icon/hdlogo.com-measurable-data-token-mdt.svg" alt="DAMA Logo" class="logo-icon">
+        <span class="logo-text">DAMA Platform</span>
+      </a>
+
+      <nav class="header-nav">
+        <a href="index.html" class="nav-link">
+          <img src="../../icon/Emoji_instead/dashboard-4.svg" alt="首页" class="nav-icon">
+          <span>首页</span>
+        </a>
+        <a href="modeling.html" class="nav-link">
+          <img src="../../icon/Emoji_instead/data.svg" alt="数据建模" class="nav-icon">
+          <span>数据建模</span>
+        </a>
+        <a href="metadata.html" class="nav-link">
+          <img src="../../icon/Emoji_instead/database-3.svg" alt="元数据管理" class="nav-icon">
+          <span>元数据管理</span>
+        </a>
+        <a href="lineage.html" class="nav-link">
+          <img src="../../icon/Emoji_instead/code-fork-3.svg" alt="数据血缘" class="nav-icon">
+          <span>数据血缘</span>
+        </a>
+        <a href="data-flow-matrix.html" class="nav-link">
+          <img src="../../icon/Emoji_instead/refresh.svg" alt="数据流矩阵" class="nav-icon">
+          <span>数据流矩阵</span>
+        </a>
+        <a href="enterprise-data-architecture.html" class="nav-link active">
+          <img src="../../icon/Emoji_instead/ic_enterprice.svg" alt="企业架构" class="nav-icon">
+          <span>企业架构</span>
+        </a>
+        <a href="ai-assistant.html" class="nav-link">
+          <img src="../../icon/Emoji_instead/robot.svg" alt="AI助手" class="nav-icon">
+          <span>AI助手</span>
+        </a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="btn-header" onclick="resetLayout()">重置布局</button>
+        <button class="btn-header" onclick="exportDiagram()">导出PNG</button>
+        <button class="btn-header btn-primary" onclick="optimizeArchitecture()">AI优化建议</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Architecture Workspace -->
+  <div class="architecture-workspace">
+    <!-- Layer Control -->
+    <div class="layer-control">
+      <h3 style="margin-bottom: var(--spacing-lg); font-size: var(--font-size-2xl); font-weight: 500; font-family: var(--font-heading);">模型层次</h3>
+
+      <div class="layer-item active" onclick="toggleLayer(this, 'conceptual')">
+        <div class="layer-header">
+          <span><img src="../../icon/Emoji_instead/dashboard-4.svg" alt="概念模型" class="layer-icon">概念模型层</span>
+          <div class="layer-toggle">✓</div>
+        </div>
+        <div class="layer-description">企业级高层次抽象</div>
+      </div>
+
+      <div class="layer-item active" onclick="toggleLayer(this, 'subject')">
+        <div class="layer-header">
+          <span><img src="../../icon/Emoji_instead/database-3.svg" alt="主题域" class="layer-icon">主题域层</span>
+          <div class="layer-toggle">✓</div>
+        </div>
+        <div class="layer-description">业务主题域模型（12-20个）</div>
+      </div>
+
+      <div class="layer-item active" onclick="toggleLayer(this, 'logical')">
+        <div class="layer-header">
+          <span><img src="../../icon/Emoji_instead/code-12.svg" alt="逻辑模型" class="layer-icon">逻辑模型层</span>
+          <div class="layer-toggle">✓</div>
+        </div>
+        <div class="layer-description">3NF规范化模型</div>
+      </div>
+
+      <div class="layer-item active" onclick="toggleLayer(this, 'physical')">
+        <div class="layer-header">
+          <span><img src="../../icon/Emoji_instead/cpu-6.svg" alt="物理模型" class="layer-icon">物理模型层</span>
+          <div class="layer-toggle">✓</div>
+        </div>
+        <div class="layer-description">实际数据库表结构</div>
+      </div>
+
+      <div style="margin-top: var(--spacing-lg); padding-top: var(--spacing-lg); border-top: 1px solid var(--border-color);">
+        <h4 style="font-size: var(--font-size-lg); margin-bottom: var(--spacing-md); font-weight: 500; font-family: var(--font-heading);">架构统计</h4>
+        <div style="font-size: var(--font-size-base); font-family: var(--font-body); color: var(--text-secondary); line-height: 1.8;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: var(--spacing-xs);">
+            <span>主题域:</span>
+            <strong style="color: var(--text-primary); font-family: var(--font-heading);">15</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: var(--spacing-xs);">
+            <span>逻辑模型:</span>
+            <strong style="color: var(--text-primary); font-family: var(--font-heading);">15</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: var(--spacing-xs);">
+            <span>物理模型:</span>
+            <strong style="color: var(--text-primary); font-family: var(--font-heading);">45</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>总实体数:</span>
+            <strong style="color: var(--text-primary); font-family: var(--font-heading);">750+</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Architecture Canvas -->
+    <div class="architecture-canvas">
+      <svg id="architecture-svg">
+        <defs>
+          <!-- 向下箭头（垂直关系）- 箭头指向右侧，orient="auto"会自动旋转使其垂直于路径 -->
+          <marker id="arrow-down" viewBox="0 0 10 10" refX="10" refY="5"
+                  markerWidth="4" markerHeight="4" orient="auto">
+            <polygon points="0 0, 10 5, 0 10" fill="#141413" />
+          </marker>
+          <!-- 向右箭头（横向关系）- 箭头指向右侧，orient="auto"会自动旋转使其垂直于路径 -->
+          <marker id="arrow-right" viewBox="0 0 10 6" refX="10" refY="3"
+                  markerWidth="4" markerHeight="4" orient="auto">
+            <polygon points="0 0, 10 3, 0 6" fill="#666666" />
+          </marker>
+        </defs>
+      </svg>
+
+      <!-- Zoom Controls -->
+      <div class="zoom-controls">
+        <button class="zoom-btn" onclick="zoomIn()" title="放大">+</button>
+        <button class="zoom-btn" onclick="zoomOut()" title="缩小">−</button>
+        <button class="zoom-btn" onclick="resetZoom()" title="重置">⊙</button>
+      </div>
+    </div>
+
+    <!-- Model Panel -->
+    <div class="model-panel">
+      <h3 style="margin-bottom: var(--spacing-lg); font-size: var(--font-size-2xl); font-weight: 500; font-family: var(--font-heading);">模型详情</h3>
+
+      <div id="model-detail-content">
+        <div style="text-align: center; padding: var(--spacing-xl) var(--spacing-md); color: var(--text-tertiary);">
+          <img src="../../icon/Emoji_instead/data.svg" alt="数据" style="width: 64px; height: 64px; opacity: 0.3; margin-bottom: var(--spacing-md);">
+          <p style="font-size: var(--font-size-base); font-family: var(--font-body);">点击模型节点查看详细信息</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // DMBOK2 企业数据模型架构数据
+    const dataModelArchitecture = {
+      // 概念模型层（最顶层）
+      conceptual: {
+        id: 'conceptual',
+        name: '企业数据模型',
+        description: '企业级高层次数据抽象，定义核心业务概念及其关系',
+        y: 50,
+        height: 100,
+        entities: ['客户', '产品', '订单', '员工', '供应商', '财务', '库存', '营销']
+      },
+
+      // 主题域层（8个主题域）- 节点宽度140px，间距30px，总宽度=(140+30)*8-30=1330px
+      subjects: [
+        { id: 'customer', name: '客户主题域', entityCount: 52, x: 80, description: '客户信息、客户关系、客户行为' },
+        { id: 'product', name: '产品主题域', entityCount: 48, x: 250, description: '产品信息、产品分类、产品属性' },
+        { id: 'order', name: '订单主题域', entityCount: 65, x: 420, description: '订单管理、订单明细、订单状态' },
+        { id: 'finance', name: '财务主题域', entityCount: 58, x: 590, description: '财务核算、成本管理、资金流' },
+        { id: 'hr', name: '人力资源主题域', entityCount: 45, x: 760, description: '员工信息、组织架构、薪酬绩效' },
+        { id: 'supply', name: '供应链主题域', entityCount: 55, x: 930, description: '供应商、采购、库存管理' },
+        { id: 'marketing', name: '营销主题域', entityCount: 42, x: 1100, description: '营销活动、渠道管理、效果分析' },
+        { id: 'service', name: '服务主题域', entityCount: 38, x: 1270, description: '客户服务、工单管理、服务质量' }
+      ],
+
+      // 逻辑模型层（每个主题域对应一个逻辑模型）- 与主题域对齐
+      logical: [
+        { id: 'customer_logical', subjectId: 'customer', name: '客户逻辑模型', entityCount: 52, x: 80, normalization: '3NF' },
+        { id: 'product_logical', subjectId: 'product', name: '产品逻辑模型', entityCount: 48, x: 250, normalization: '3NF' },
+        { id: 'order_logical', subjectId: 'order', name: '订单逻辑模型', entityCount: 65, x: 420, normalization: '3NF' },
+        { id: 'finance_logical', subjectId: 'finance', name: '财务逻辑模型', entityCount: 58, x: 590, normalization: '3NF' },
+        { id: 'hr_logical', subjectId: 'hr', name: '人力资源逻辑模型', entityCount: 45, x: 760, normalization: '3NF' },
+        { id: 'supply_logical', subjectId: 'supply', name: '供应链逻辑模型', entityCount: 55, x: 930, normalization: '3NF' },
+        { id: 'marketing_logical', subjectId: 'marketing', name: '营销逻辑模型', entityCount: 42, x: 1100, normalization: '3NF' },
+        { id: 'service_logical', subjectId: 'service', name: '服务逻辑模型', entityCount: 38, x: 1270, normalization: '3NF' }
+      ],
+
+      // 物理模型层（每个逻辑模型对应3个物理模型）
+      // 奇数主题域（客户、产品、财务、营销）：上1下2
+      // 偶数主题域（订单、供应链、人力资源、服务）：上2下1
+      // 节点宽度90px，高度60px，水平间距25px，垂直间距10px
+      physical: [
+        // 客户主题域物理模型（奇数，上1下2，居中对齐x=80）
+        { id: 'customer_crm', logicalId: 'customer_logical', name: 'CRM数据库', x: 35, y: 0, tableCount: 18, platform: 'PostgreSQL' },
+        { id: 'customer_dw', logicalId: 'customer_logical', name: '客户数仓', x: 10, y: 70, tableCount: 22, platform: 'Hive' },
+        { id: 'customer_cache', logicalId: 'customer_logical', name: '客户缓存', x: 105, y: 70, tableCount: 12, platform: 'Redis' },
+
+        // 产品主题域物理模型（奇数，上1下2，居中对齐x=250）
+        { id: 'product_pim', logicalId: 'product_logical', name: 'PIM系统', x: 205, y: 0, tableCount: 16, platform: 'MySQL' },
+        { id: 'product_dw', logicalId: 'product_logical', name: '产品数仓', x: 180, y: 70, tableCount: 20, platform: 'Hive' },
+        { id: 'product_search', logicalId: 'product_logical', name: '产品搜索', x: 275, y: 70, tableCount: 12, platform: 'ES' },
+
+        // 订单主题域物理模型（偶数，上2下1，居中对齐x=420）
+        { id: 'order_oms', logicalId: 'order_logical', name: 'OMS系统', x: 360, y: 0, tableCount: 22, platform: 'PostgreSQL' },
+        { id: 'order_dw', logicalId: 'order_logical', name: '订单数仓', x: 475, y: 0, tableCount: 28, platform: 'Hive' },
+        { id: 'order_realtime', logicalId: 'order_logical', name: '实时订单', x: 417, y: 70, tableCount: 15, platform: 'Kafka' },
+
+        // 财务主题域物理模型（奇数，上1下2，居中对齐x=590）
+        { id: 'finance_erp', logicalId: 'finance_logical', name: 'ERP财务', x: 545, y: 0, tableCount: 20, platform: 'Oracle' },
+        { id: 'finance_dw', logicalId: 'finance_logical', name: '财务数仓', x: 520, y: 70, tableCount: 24, platform: 'Hive' },
+        { id: 'finance_report', logicalId: 'finance_logical', name: '财务报表', x: 615, y: 70, tableCount: 14, platform: 'PostgreSQL' },
+
+        // 人力资源主题域物理模型（偶数，上2下1，居中对齐x=760）
+        { id: 'hr_hris', logicalId: 'hr_logical', name: 'HRIS系统', x: 700, y: 0, tableCount: 15, platform: 'MySQL' },
+        { id: 'hr_dw', logicalId: 'hr_logical', name: 'HR数仓', x: 815, y: 0, tableCount: 18, platform: 'Hive' },
+        { id: 'hr_analytics', logicalId: 'hr_logical', name: 'HR分析', x: 757, y: 70, tableCount: 12, platform: 'ClickHouse' },
+
+        // 供应链主题域物理模型（偶数，上2下1，居中对齐x=930）
+        { id: 'supply_scm', logicalId: 'supply_logical', name: 'SCM系统', x: 870, y: 0, tableCount: 19, platform: 'PostgreSQL' },
+        { id: 'supply_dw', logicalId: 'supply_logical', name: '供应链数仓', x: 985, y: 0, tableCount: 23, platform: 'Hive' },
+        { id: 'supply_wms', logicalId: 'supply_logical', name: 'WMS系统', x: 927, y: 70, tableCount: 13, platform: 'MySQL' },
+
+        // 营销主题域物理模型（奇数，上1下2，居中对齐x=1100）
+        { id: 'marketing_ma', logicalId: 'marketing_logical', name: 'MA平台', x: 1055, y: 0, tableCount: 14, platform: 'MongoDB' },
+        { id: 'marketing_dw', logicalId: 'marketing_logical', name: '营销数仓', x: 1030, y: 70, tableCount: 18, platform: 'Hive' },
+        { id: 'marketing_cdp', logicalId: 'marketing_logical', name: 'CDP平台', x: 1125, y: 70, tableCount: 10, platform: 'PostgreSQL' },
+
+        // 服务主题域物理模型（偶数，上2下1，居中对齐x=1270）
+        { id: 'service_crm', logicalId: 'service_logical', name: '服务CRM', x: 1210, y: 0, tableCount: 13, platform: 'MySQL' },
+        { id: 'service_dw', logicalId: 'service_logical', name: '服务数仓', x: 1325, y: 0, tableCount: 16, platform: 'Hive' },
+        { id: 'service_ticket', logicalId: 'service_logical', name: '工单系统', x: 1267, y: 70, tableCount: 9, platform: 'PostgreSQL' }
+      ],
+
+      // 横向关系（主题域之间的关联）
+      horizontalRelations: [
+        { from: 'customer', to: 'order' },
+        { from: 'order', to: 'product' },
+        { from: 'order', to: 'finance' },
+        { from: 'customer', to: 'marketing' },
+        { from: 'customer', to: 'service' },
+        { from: 'product', to: 'supply' },
+        { from: 'hr', to: 'finance' }
+      ]
+    };
+
+    let svg, g, zoom;
+    let selectedModel = null;
+    let visibleLayers = new Set(['conceptual', 'subject', 'logical', 'physical']);
+
+    // 拖拽状态管理
+    const dragState = {
+      isDragging: false,
+      currentNode: null,
+      currentNodeId: null,
+      startX: 0,
+      startY: 0,
+      offsetX: 0,
+      offsetY: 0,
+      layerY: 0 // 物理层的Y坐标
+    };
+
+    // 调整尺寸状态管理
+    const resizeState = {
+      isResizing: false,
+      currentNode: null,
+      currentNodeId: null,
+      startX: 0,
+      startY: 0,
+      startWidth: 0,
+      startHeight: 0,
+      minWidth: 60,
+      minHeight: 40
+    };
+
+    // 存储用户自定义的布局（包括位置和尺寸）
+    let customLayout = {};
+
+    // 动态计算层高度的辅助函数
+    function calculateLayerHeight(layerType) {
+      if (layerType === 'conceptual') {
+        return 100; // 概念层固定高度
+      } else if (layerType === 'subject' || layerType === 'logical') {
+        return 140; // 主题域和逻辑层固定高度
+      } else if (layerType === 'physical') {
+        // 物理层需要容纳上下两行：顶部偏移50 + 上行60 + 间距10 + 下行60 + 底部padding20
+        return 200;
+      }
+      return 140;
+    }
+
+    // 计算整个画布的尺寸
+    function calculateCanvasSize() {
+      const width = 1560; // 容纳所有节点的宽度（1500内容 + 30左边距 + 30右边距）
+      let height = 50; // 顶部边距
+
+      if (visibleLayers.has('conceptual')) {
+        height += calculateLayerHeight('conceptual') + 50; // 层高度 + 层间距
+      }
+      if (visibleLayers.has('subject')) {
+        height += calculateLayerHeight('subject') + 60;
+      }
+      if (visibleLayers.has('logical')) {
+        height += calculateLayerHeight('logical') + 60;
+      }
+      if (visibleLayers.has('physical')) {
+        height += calculateLayerHeight('physical') + 50;
+      }
+
+      return { width, height };
+    }
+
+    // 更新SVG的viewBox以适应内容
+    function updateSVGViewBox() {
+      const { width, height } = calculateCanvasSize();
+      svg.attr('viewBox', `0 0 ${width} ${height}`)
+         .attr('preserveAspectRatio', 'xMidYMid meet');
+    }
+
+    function initArchitecture() {
+      svg = d3.select('#architecture-svg');
+      const width = svg.node().getBoundingClientRect().width;
+      const height = svg.node().getBoundingClientRect().height;
+
+      zoom = d3.zoom()
+        .scaleExtent([0.4, 2.5])
+        .on('zoom', (event) => {
+          g.attr('transform', event.transform);
+        });
+
+      svg.call(zoom);
+      g = svg.append('g');
+
+      // 设置初始viewBox
+      updateSVGViewBox();
+
+      renderArchitecture();
+    }
+
+    function renderArchitecture() {
+      g.selectAll('*').remove();
+
+      // 动态计算每层的Y坐标和高度
+      let currentY = 50; // 顶部边距
+      const layerY = {};
+      const layerHeight = {};
+
+      if (visibleLayers.has('conceptual')) {
+        layerY.conceptual = currentY;
+        layerHeight.conceptual = calculateLayerHeight('conceptual');
+        currentY += layerHeight.conceptual + 50; // 层高度 + 层间距
+      }
+
+      if (visibleLayers.has('subject')) {
+        layerY.subject = currentY;
+        layerHeight.subject = calculateLayerHeight('subject');
+        currentY += layerHeight.subject + 60;
+      }
+
+      if (visibleLayers.has('logical')) {
+        layerY.logical = currentY;
+        layerHeight.logical = calculateLayerHeight('logical');
+        currentY += layerHeight.logical + 60;
+      }
+
+      if (visibleLayers.has('physical')) {
+        layerY.physical = currentY;
+        layerHeight.physical = calculateLayerHeight('physical');
+        currentY += layerHeight.physical + 50;
+      }
+
+      // 1. 绘制概念模型层
+      if (visibleLayers.has('conceptual')) {
+        drawConceptualLayer(layerY.conceptual, layerHeight.conceptual);
+      }
+
+      // 2. 绘制主题域层
+      if (visibleLayers.has('subject')) {
+        drawSubjectLayer(layerY.subject, layerHeight.subject);
+      }
+
+      // 3. 绘制逻辑模型层
+      if (visibleLayers.has('logical')) {
+        drawLogicalLayer(layerY.logical, layerHeight.logical);
+      }
+
+      // 4. 绘制物理模型层
+      if (visibleLayers.has('physical')) {
+        drawPhysicalLayer(layerY.physical, layerHeight.physical);
+      }
+
+      // 5. 绘制垂直关系（层次间的分解关系）
+      drawVerticalRelations(layerY, layerHeight);
+
+      // 6. 绘制横向关系（同层模型间的关联）
+      if (visibleLayers.has('subject')) {
+        drawHorizontalRelations(layerY.subject, layerHeight.subject);
+      }
+
+      // 更新viewBox以适应内容
+      updateSVGViewBox();
+    }
+
+    function drawConceptualLayer(y, height) {
+      const data = dataModelArchitecture.conceptual;
+      const width = 1500;
+
+      // 层背景
+      g.append('rect')
+        .attr('class', 'model-layer-group')
+        .attr('x', 30)
+        .attr('y', y)
+        .attr('width', width)
+        .attr('height', height);
+
+      // 层标签
+      g.append('text')
+        .attr('class', 'model-layer-label')
+        .attr('x', 50)
+        .attr('y', y + 30)
+        .text('概念模型层');
+
+      // 应用自定义布局
+      const customPos = customLayout['conceptual'];
+      const defaultX = 565; // 默认居中
+      const defaultY = 0; // 相对于层的偏移
+      const nodeX = customPos ? customPos.x : defaultX;
+      const nodeY = y + 50 + (customPos ? customPos.y : defaultY);
+      const nodeWidth = customPos?.width || 400;
+      const nodeHeight = customPos?.height || 70;
+
+      // 概念模型节点（支持拖拽和尺寸调整）
+      const nodeG = g.append('g')
+        .attr('class', 'model-group')
+        .attr('data-id', data.id)
+        .attr('transform', `translate(0, 0)`)
+        .style('cursor', 'grab');
+
+      // 节点矩形
+      nodeG.append('rect')
+        .attr('class', 'model-node')
+        .attr('x', nodeX)
+        .attr('y', nodeY)
+        .attr('width', nodeWidth)
+        .attr('height', nodeHeight)
+        .attr('rx', 8)
+        .on('mousedown', function(event) {
+          startDrag(event, nodeG.node(), 'conceptual', nodeX, nodeY, y);
+        });
+
+      // 节点文字（居中）
+      nodeG.append('text')
+        .attr('class', 'model-text')
+        .attr('x', nodeX + nodeWidth / 2)
+        .attr('y', nodeY + nodeHeight / 2 + 5)
+        .text(data.name);
+
+      // 调整尺寸手柄（右下角）
+      nodeG.append('circle')
+        .attr('class', 'resize-handle')
+        .attr('cx', nodeX + nodeWidth)
+        .attr('cy', nodeY + nodeHeight)
+        .attr('r', 5)
+        .on('mousedown', function(event) {
+          event.stopPropagation();
+          startResize(event, nodeG.node(), 'conceptual', nodeX, nodeY, nodeWidth, nodeHeight, y);
+        });
+    }
+
+    function drawSubjectLayer(y, height) {
+      const subjects = dataModelArchitecture.subjects;
+      const width = 1500;
+
+      // 层背景
+      g.append('rect')
+        .attr('class', 'model-layer-group')
+        .attr('x', 30)
+        .attr('y', y)
+        .attr('width', width)
+        .attr('height', height);
+
+      // 层标签
+      g.append('text')
+        .attr('class', 'model-layer-label')
+        .attr('x', 50)
+        .attr('y', y + 30)
+        .text('主题域层');
+
+      // 主题域节点（支持拖拽和尺寸调整）
+      subjects.forEach(subject => {
+        // 应用自定义布局
+        const customPos = customLayout[subject.id];
+        const nodeX = customPos ? customPos.x : subject.x;
+        const nodeY = y + 50 + (customPos ? customPos.y : 0);
+        const nodeWidth = customPos?.width || 140;
+        const nodeHeight = customPos?.height || 80;
+
+        const nodeG = g.append('g')
+          .attr('class', 'model-group')
+          .attr('data-id', subject.id)
+          .attr('transform', `translate(0, 0)`)
+          .style('cursor', 'grab');
+
+        // 节点矩形
+        nodeG.append('rect')
+          .attr('class', 'model-node')
+          .attr('x', nodeX)
+          .attr('y', nodeY)
+          .attr('width', nodeWidth)
+          .attr('height', nodeHeight)
+          .attr('rx', 8)
+          .on('mousedown', function(event) {
+            startDrag(event, nodeG.node(), subject.id, nodeX, nodeY, y);
+          });
+
+        // 节点文字（居中）
+        nodeG.append('text')
+          .attr('class', 'model-text')
+          .attr('x', nodeX + nodeWidth / 2)
+          .attr('y', nodeY + nodeHeight / 2 - 5)
+          .text(subject.name);
+
+        nodeG.append('text')
+          .attr('class', 'model-count')
+          .attr('x', nodeX + nodeWidth / 2)
+          .attr('y', nodeY + nodeHeight / 2 + 15)
+          .text(`${subject.entityCount}个实体`);
+
+        // 调整尺寸手柄（右下角）
+        nodeG.append('circle')
+          .attr('class', 'resize-handle')
+          .attr('cx', nodeX + nodeWidth)
+          .attr('cy', nodeY + nodeHeight)
+          .attr('r', 5)
+          .on('mousedown', function(event) {
+            event.stopPropagation();
+            startResize(event, nodeG.node(), subject.id, nodeX, nodeY, nodeWidth, nodeHeight, y);
+          });
+      });
+    }
+
+    function drawLogicalLayer(y, height) {
+      const logicalModels = dataModelArchitecture.logical;
+      const width = 1500;
+
+      // 层背景
+      g.append('rect')
+        .attr('class', 'model-layer-group')
+        .attr('x', 30)
+        .attr('y', y)
+        .attr('width', width)
+        .attr('height', height);
+
+      // 层标签
+      g.append('text')
+        .attr('class', 'model-layer-label')
+        .attr('x', 50)
+        .attr('y', y + 30)
+        .text('逻辑模型层');
+
+      // 逻辑模型节点（支持拖拽和尺寸调整）
+      logicalModels.forEach(logical => {
+        // 应用自定义布局
+        const customPos = customLayout[logical.id];
+        const nodeX = customPos ? customPos.x : logical.x;
+        const nodeY = y + 50 + (customPos ? customPos.y : 0);
+        const nodeWidth = customPos?.width || 140;
+        const nodeHeight = customPos?.height || 80;
+
+        const nodeG = g.append('g')
+          .attr('class', 'model-group')
+          .attr('data-id', logical.id)
+          .attr('transform', `translate(0, 0)`)
+          .style('cursor', 'grab');
+
+        // 节点矩形
+        nodeG.append('rect')
+          .attr('class', 'model-node')
+          .attr('x', nodeX)
+          .attr('y', nodeY)
+          .attr('width', nodeWidth)
+          .attr('height', nodeHeight)
+          .attr('rx', 8)
+          .on('mousedown', function(event) {
+            startDrag(event, nodeG.node(), logical.id, nodeX, nodeY, y);
+          });
+
+        // 节点文字（居中）
+        nodeG.append('text')
+          .attr('class', 'model-text')
+          .attr('x', nodeX + nodeWidth / 2)
+          .attr('y', nodeY + nodeHeight / 2 - 5)
+          .text(logical.name);
+
+        nodeG.append('text')
+          .attr('class', 'model-count')
+          .attr('x', nodeX + nodeWidth / 2)
+          .attr('y', nodeY + nodeHeight / 2 + 15)
+          .text(`${logical.normalization} | ${logical.entityCount}实体`);
+
+        // 调整尺寸手柄（右下角）
+        nodeG.append('circle')
+          .attr('class', 'resize-handle')
+          .attr('cx', nodeX + nodeWidth)
+          .attr('cy', nodeY + nodeHeight)
+          .attr('r', 5)
+          .on('mousedown', function(event) {
+            event.stopPropagation();
+            startResize(event, nodeG.node(), logical.id, nodeX, nodeY, nodeWidth, nodeHeight, y);
+          });
+      });
+    }
+
+    function drawPhysicalLayer(y, height) {
+      const physicalModels = dataModelArchitecture.physical;
+      const width = 1500; // 扩大画布宽度
+
+      // 保存物理层的Y坐标，用于拖拽计算
+      dragState.layerY = y;
+
+      // 层背景
+      g.append('rect')
+        .attr('class', 'model-layer-group')
+        .attr('x', 30)
+        .attr('y', y)
+        .attr('width', width)
+        .attr('height', height);
+
+      // 层标签
+      g.append('text')
+        .attr('class', 'model-layer-label')
+        .attr('x', 50)
+        .attr('y', y + 30)
+        .text('物理模型层');
+
+      // 物理模型节点（支持上下两行布局 + 拖拽功能 + 尺寸调整）
+      physicalModels.forEach(physical => {
+        // 应用自定义布局（如果存在）
+        const customPos = customLayout[physical.id];
+        const nodeX = customPos ? customPos.x : physical.x;
+        const nodeY = y + 50 + (customPos ? customPos.y : (physical.y || 0));
+        const nodeWidth = customPos?.width || 90;
+        const nodeHeight = customPos?.height || 60;
+
+        const nodeG = g.append('g')
+          .attr('class', 'model-group')
+          .attr('data-id', physical.id)
+          .attr('transform', `translate(0, 0)`)
+          .style('cursor', 'grab');
+
+        // 节点矩形
+        nodeG.append('rect')
+          .attr('class', 'model-node')
+          .attr('x', nodeX)
+          .attr('y', nodeY)
+          .attr('width', nodeWidth)
+          .attr('height', nodeHeight)
+          .attr('rx', 6)
+          .on('mousedown', function(event) {
+            // 只有点击节点主体才触发拖拽
+            startDrag(event, nodeG.node(), physical.id, nodeX, nodeY, y);
+          });
+
+        // 节点文字（居中）
+        nodeG.append('text')
+          .attr('class', 'model-text')
+          .attr('x', nodeX + nodeWidth / 2)
+          .attr('y', nodeY + nodeHeight / 2 - 5)
+          .style('font-size', '11px')
+          .text(physical.name);
+
+        nodeG.append('text')
+          .attr('class', 'model-count')
+          .attr('x', nodeX + nodeWidth / 2)
+          .attr('y', nodeY + nodeHeight / 2 + 10)
+          .style('font-size', '10px')
+          .text(`${physical.tableCount}表`);
+
+        // 调整尺寸手柄（右下角）
+        nodeG.append('circle')
+          .attr('class', 'resize-handle')
+          .attr('cx', nodeX + nodeWidth)
+          .attr('cy', nodeY + nodeHeight)
+          .attr('r', 5)
+          .on('mousedown', function(event) {
+            event.stopPropagation(); // 阻止触发拖拽
+            startResize(event, nodeG.node(), physical.id, nodeX, nodeY, nodeWidth, nodeHeight, y);
+          });
+      });
+    }
+
+    function drawVerticalRelations(layerY, layerHeight) {
+      // 概念模型 → 主题域
+      if (visibleLayers.has('conceptual') && visibleLayers.has('subject')) {
+        dataModelArchitecture.subjects.forEach(subject => {
+          // 应用自定义布局
+          const conceptualCustom = customLayout['conceptual'];
+          const subjectCustom = customLayout[subject.id];
+
+          const conceptualX = conceptualCustom ? conceptualCustom.x : 565;
+          const conceptualWidth = conceptualCustom?.width || 400;
+          const conceptualHeight = conceptualCustom?.height || 70;
+
+          const subjectX = subjectCustom ? subjectCustom.x : subject.x;
+          const subjectWidth = subjectCustom?.width || 140;
+
+          const x1 = conceptualX + conceptualWidth / 2; // 概念模型中心
+          const y1 = layerY.conceptual + 50 + (conceptualCustom ? conceptualCustom.y : 0) + conceptualHeight; // 概念模型底部
+          const x2 = subjectX + subjectWidth / 2; // 主题域中心
+          const y2 = layerY.subject + 50 + (subjectCustom ? subjectCustom.y : 0); // 主题域顶部
+
+          g.append('path')
+            .attr('class', 'vertical-relation')
+            .attr('data-source', 'conceptual')
+            .attr('data-target', subject.id)
+            .attr('data-source-x', x1)
+            .attr('data-source-y', y1)
+            .attr('data-target-x', x2)
+            .attr('data-target-y', y2)
+            .attr('d', `M ${x1} ${y1} L ${x2} ${y2}`);
+        });
+      }
+
+      // 主题域 → 逻辑模型
+      if (visibleLayers.has('subject') && visibleLayers.has('logical')) {
+        dataModelArchitecture.logical.forEach(logical => {
+          const subject = dataModelArchitecture.subjects.find(s => s.id === logical.subjectId);
+          if (subject) {
+            // 应用自定义布局
+            const subjectCustom = customLayout[subject.id];
+            const logicalCustom = customLayout[logical.id];
+
+            const subjectX = subjectCustom ? subjectCustom.x : subject.x;
+            const subjectY = subjectCustom ? subjectCustom.y : 0;
+            const subjectWidth = subjectCustom?.width || 140;
+            const subjectHeight = subjectCustom?.height || 80;
+
+            const logicalX = logicalCustom ? logicalCustom.x : logical.x;
+            const logicalWidth = logicalCustom?.width || 140;
+
+            const x1 = subjectX + subjectWidth / 2; // 主题域中心
+            const y1 = layerY.subject + 50 + subjectY + subjectHeight; // 主题域底部
+            const x2 = logicalX + logicalWidth / 2; // 逻辑模型中心
+            const y2 = layerY.logical + 50 + (logicalCustom ? logicalCustom.y : 0); // 逻辑模型顶部
+
+            g.append('path')
+              .attr('class', 'vertical-relation')
+              .attr('data-source', subject.id)
+              .attr('data-target', logical.id)
+              .attr('data-source-x', x1)
+              .attr('data-source-y', y1)
+              .attr('data-target-x', x2)
+              .attr('data-target-y', y2)
+              .attr('d', `M ${x1} ${y1} L ${x2} ${y2}`);
+          }
+        });
+      }
+
+      // 逻辑模型 → 物理模型
+      if (visibleLayers.has('logical') && visibleLayers.has('physical')) {
+        dataModelArchitecture.physical.forEach(physical => {
+          const logical = dataModelArchitecture.logical.find(l => l.id === physical.logicalId);
+          if (logical) {
+            // 应用自定义布局
+            const logicalCustom = customLayout[logical.id];
+            const physicalCustom = customLayout[physical.id];
+
+            const logicalX = logicalCustom ? logicalCustom.x : logical.x;
+            const logicalY = logicalCustom ? logicalCustom.y : 0;
+            const logicalWidth = logicalCustom?.width || 140;
+            const logicalHeight = logicalCustom?.height || 80;
+
+            const physicalX = physicalCustom ? physicalCustom.x : physical.x;
+            const physicalY = physicalCustom ? physicalCustom.y : (physical.y || 0);
+            const physicalWidth = physicalCustom?.width || 90;
+
+            const x1 = logicalX + logicalWidth / 2; // 逻辑模型中心
+            const y1 = layerY.logical + 50 + logicalY + logicalHeight; // 逻辑模型底部
+            const x2 = physicalX + physicalWidth / 2; // 物理模型中心
+            const y2 = layerY.physical + 50 + physicalY; // 物理模型顶部
+
+            g.append('path')
+              .attr('class', 'vertical-relation')
+              .attr('data-source', logical.id)
+              .attr('data-target', physical.id)
+              .attr('data-source-x', x1)
+              .attr('data-source-y', y1)
+              .attr('data-target-x', x2)
+              .attr('data-target-y', y2)
+              .attr('d', `M ${x1} ${y1} L ${x2} ${y2}`);
+          }
+        });
+      }
+    }
+
+    function drawHorizontalRelations(y, layerHeight) {
+      dataModelArchitecture.horizontalRelations.forEach(rel => {
+        const fromSubject = dataModelArchitecture.subjects.find(s => s.id === rel.from);
+        const toSubject = dataModelArchitecture.subjects.find(s => s.id === rel.to);
+
+        if (fromSubject && toSubject) {
+          // 应用自定义布局
+          const fromCustom = customLayout[fromSubject.id];
+          const toCustom = customLayout[toSubject.id];
+
+          const fromX = fromCustom ? fromCustom.x : fromSubject.x;
+          const fromY = fromCustom ? fromCustom.y : 0;
+          const fromWidth = fromCustom?.width || 140;
+          const fromHeight = fromCustom?.height || 80;
+
+          const toX = toCustom ? toCustom.x : toSubject.x;
+          const toY = toCustom ? toCustom.y : 0;
+          const toWidth = toCustom?.width || 140;
+          const toHeight = toCustom?.height || 80;
+
+          const x1 = fromX + fromWidth; // 起点：源节点右边缘
+          const y1 = y + 50 + fromY + fromHeight / 2; // 起点：节点中心高度
+          const x2 = toX; // 终点：目标节点左边缘
+          const y2 = y + 50 + toY + toHeight / 2; // 终点：节点中心高度
+
+          g.append('path')
+            .attr('class', 'horizontal-relation')
+            .attr('data-source', fromSubject.id)
+            .attr('data-target', toSubject.id)
+            .attr('d', `M ${x1} ${y1} L ${x2} ${y2}`);
+        }
+      });
+    }
+
+    function selectModel(model, layerType) {
+      selectedModel = { model, layerType };
+
+      // 更新视觉选择
+      g.selectAll('.model-node').classed('selected', false);
+      g.selectAll('.model-text').classed('selected', false);
+      g.selectAll('.model-count').classed('selected', false);
+
+      g.selectAll(`.model-group[data-id="${model.id}"] .model-node`).classed('selected', true);
+      g.selectAll(`.model-group[data-id="${model.id}"] .model-text`).classed('selected', true);
+      g.selectAll(`.model-group[data-id="${model.id}"] .model-count`).classed('selected', true);
+
+      // 更新详情面板
+      updateModelDetailPanel(model, layerType);
+    }
+
+    function updateModelDetailPanel(model, layerType) {
+      const detailContent = document.getElementById('model-detail-content');
+
+      let detailHTML = '';
+
+      if (layerType === 'conceptual') {
+        detailHTML = `
+          <div class="model-detail">
+            <h4>📊 ${model.name}</h4>
+            <div class="detail-section">
+              <div class="detail-section-title">模型描述</div>
+              <div class="detail-row">
+                <div class="detail-value">${model.description}</div>
+              </div>
+            </div>
+            <div class="detail-section">
+              <div class="detail-section-title">核心业务概念</div>
+              <div class="entity-list">
+                ${model.entities.map(e => `<div class="entity-item">${e}</div>`).join('')}
+              </div>
+            </div>
+            <div class="detail-section">
+              <div class="detail-section-title">架构统计</div>
+              <div class="stats-grid">
+                <div class="stat-card">
+                  <div class="stat-value">15</div>
+                  <div class="stat-label">主题域</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-value">750+</div>
+                  <div class="stat-label">总实体</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (layerType === 'subject') {
+        detailHTML = `
+          <div class="model-detail">
+            <h4>📦 ${model.name}</h4>
+            <div class="detail-section">
+              <div class="detail-section-title">基本信息</div>
+              <div class="detail-row">
+                <div class="detail-label">主题域ID</div>
+                <div class="detail-value">${model.id}</div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-label">实体数量</div>
+                <div class="detail-value">${model.entityCount}个</div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-label">描述</div>
+                <div class="detail-value">${model.description}</div>
+              </div>
+            </div>
+            <div class="detail-section">
+              <div class="detail-section-title">关联关系</div>
+              <div class="detail-row">
+                <div class="detail-label">上游模型</div>
+                <div class="detail-value">企业数据模型</div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-label">下游模型</div>
+                <div class="detail-value">${model.name.replace('主题域', '逻辑模型')}</div>
+              </div>
+            </div>
+            <div class="detail-section">
+              <div class="detail-section-title">数据治理</div>
+              <div class="detail-row">
+                <div class="detail-label">数据负责人</div>
+                <div class="detail-value">张三</div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-label">术语覆盖率</div>
+                <div class="detail-value">92%</div>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (layerType === 'logical') {
+        detailHTML = `
+          <div class="model-detail">
+            <h4>🔷 ${model.name}</h4>
+            <div class="detail-section">
+              <div class="detail-section-title">基本信息</div>
+              <div class="detail-row">
+                <div class="detail-label">模型ID</div>
+                <div class="detail-value">${model.id}</div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-label">规范化级别</div>
+                <div class="detail-value">${model.normalization}</div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-label">实体数量</div>
+                <div class="detail-value">${model.entityCount}个</div>
+              </div>
+            </div>
+            <div class="detail-section">
+              <div class="detail-section-title">模型关系</div>
+              <div class="detail-row">
+                <div class="detail-label">所属主题域</div>
+                <div class="detail-value">${model.subjectId}</div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-label">物理实现</div>
+                <div class="detail-value">3个数据库</div>
+              </div>
+            </div>
+            <div class="detail-section">
+              <div class="detail-section-title">质量指标</div>
+              <div class="stats-grid">
+                <div class="stat-card">
+                  <div class="stat-value">98%</div>
+                  <div class="stat-label">完整性</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-value">95%</div>
+                  <div class="stat-label">一致性</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (layerType === 'physical') {
+        detailHTML = `
+          <div class="model-detail">
+            <h4>💾 ${model.name}</h4>
+            <div class="detail-section">
+              <div class="detail-section-title">基本信息</div>
+              <div class="detail-row">
+                <div class="detail-label">物理模型ID</div>
+                <div class="detail-value">${model.id}</div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-label">数据库平台</div>
+                <div class="detail-value">${model.platform}</div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-label">表数量</div>
+                <div class="detail-value">${model.tableCount}张</div>
+              </div>
+            </div>
+            <div class="detail-section">
+              <div class="detail-section-title">模型关系</div>
+              <div class="detail-row">
+                <div class="detail-label">逻辑模型</div>
+                <div class="detail-value">${model.logicalId}</div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-label">应用系统</div>
+                <div class="detail-value">${model.name}</div>
+              </div>
+            </div>
+            <div class="detail-section">
+              <div class="detail-section-title">运维信息</div>
+              <div class="detail-row">
+                <div class="detail-label">数据量</div>
+                <div class="detail-value">1.2TB</div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-label">更新频率</div>
+                <div class="detail-value">实时</div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      detailContent.innerHTML = detailHTML;
+    }
+
+    function toggleLayer(element, layerId) {
+      element.classList.toggle('active');
+
+      if (visibleLayers.has(layerId)) {
+        visibleLayers.delete(layerId);
+        element.querySelector('.layer-toggle').textContent = '';
+      } else {
+        visibleLayers.add(layerId);
+        element.querySelector('.layer-toggle').textContent = '✓';
+      }
+
+      renderArchitecture();
+      updateSVGViewBox(); // 切换层时更新viewBox
+    }
+
+    function zoomIn() {
+      svg.transition().call(zoom.scaleBy, 1.3);
+    }
+
+    function zoomOut() {
+      svg.transition().call(zoom.scaleBy, 0.7);
+    }
+
+    function resetZoom() {
+      svg.transition().call(zoom.transform, d3.zoomIdentity);
+    }
+
+    function exportDiagram() {
+      alert('导出PNG功能开发中...');
+    }
+
+    function optimizeArchitecture() {
+      alert('AI优化建议功能开发中...');
+    }
+
+    // ========== 拖拽功能 ==========
+
+    function startDrag(event, node, nodeId, currentX, currentY, layerY) {
+      event.stopPropagation();
+
+      dragState.isDragging = true;
+      dragState.currentNode = node;
+      dragState.currentNodeId = nodeId;
+      dragState.startX = event.clientX;
+      dragState.startY = event.clientY;
+      dragState.offsetX = 0;
+      dragState.offsetY = 0;
+      dragState.layerY = layerY; // 保存层的Y坐标
+
+      // 添加拖拽样式
+      d3.select(node).classed('dragging', true);
+      d3.select(node).select('.model-node').classed('dragging', true);
+
+      // 添加全局事件监听
+      d3.select('body')
+        .on('mousemove.drag', onDrag)
+        .on('mouseup.drag', endDrag);
+    }
+
+    function onDrag(event) {
+      if (!dragState.isDragging) return;
+
+      // 计算偏移量
+      dragState.offsetX = event.clientX - dragState.startX;
+      dragState.offsetY = event.clientY - dragState.startY;
+
+      // 更新节点位置（使用transform）
+      d3.select(dragState.currentNode)
+        .attr('transform', `translate(${dragState.offsetX}, ${dragState.offsetY})`);
+
+      // 实时更新所有相关连接线
+      updateAllConnectionLines(dragState.currentNodeId);
+    }
+
+    function endDrag(event) {
+      if (!dragState.isDragging) return;
+
+      // 检查是否是点击（拖拽距离很小）
+      const distance = Math.sqrt(dragState.offsetX ** 2 + dragState.offsetY ** 2);
+      const isClick = distance < 5;
+
+      // 查找节点数据（支持所有层）
+      let nodeData = null;
+      let nodeType = null;
+      let defaultX = 0;
+      let defaultY = 0;
+
+      if (dragState.currentNodeId === 'conceptual') {
+        nodeData = dataModelArchitecture.conceptual;
+        nodeType = 'conceptual';
+        defaultX = 565;
+        defaultY = 0;
+      } else {
+        // 查找主题域
+        nodeData = dataModelArchitecture.subjects.find(s => s.id === dragState.currentNodeId);
+        if (nodeData) {
+          nodeType = 'subject';
+          defaultX = nodeData.x;
+          defaultY = 0;
+        } else {
+          // 查找逻辑模型
+          nodeData = dataModelArchitecture.logical.find(l => l.id === dragState.currentNodeId);
+          if (nodeData) {
+            nodeType = 'logical';
+            defaultX = nodeData.x;
+            defaultY = 0;
+          } else {
+            // 查找物理模型
+            nodeData = dataModelArchitecture.physical.find(p => p.id === dragState.currentNodeId);
+            if (nodeData) {
+              nodeType = 'physical';
+              defaultX = nodeData.x;
+              defaultY = nodeData.y || 0;
+            }
+          }
+        }
+      }
+
+      if (nodeData && !isClick) {
+        // 只有在真正拖拽时才保存位置
+        const customPos = customLayout[dragState.currentNodeId] || { x: defaultX, y: defaultY };
+        const newX = customPos.x + dragState.offsetX;
+        const newY = customPos.y + dragState.offsetY;
+
+        // 保存新位置到自定义布局（保留原有的width和height）
+        customLayout[dragState.currentNodeId] = {
+          ...customLayout[dragState.currentNodeId],
+          x: newX,
+          y: newY
+        };
+
+        // 保存到localStorage
+        saveLayout();
+      }
+
+      // 移除拖拽样式
+      d3.select(dragState.currentNode).classed('dragging', false);
+      d3.select(dragState.currentNode).select('.model-node').classed('dragging', false);
+
+      // 如果是点击，触发选择事件
+      if (isClick && nodeData) {
+        selectModel(nodeData, nodeType);
+      } else if (!isClick) {
+        // 只有在真正拖拽时才重新渲染
+        renderArchitecture();
+      }
+
+      // 清除拖拽状态
+      dragState.isDragging = false;
+      dragState.currentNode = null;
+      dragState.currentNodeId = null;
+
+      // 移除全局事件监听
+      d3.select('body')
+        .on('mousemove.drag', null)
+        .on('mouseup.drag', null);
+    }
+
+    // 通用的连接线更新函数（支持所有层）
+    function updateAllConnectionLines(nodeId) {
+      if (!nodeId) return;
+
+      // 获取节点信息和位置
+      let nodeData = null;
+      let defaultX = 0;
+      let defaultY = 0;
+      let defaultWidth = 0;
+      let layerY = 0;
+
+      // 判断节点类型并获取默认值
+      if (nodeId === 'conceptual') {
+        nodeData = dataModelArchitecture.conceptual;
+        defaultX = 565;
+        defaultY = 0;
+        defaultWidth = 400;
+        layerY = dragState.layerY;
+      } else {
+        const subject = dataModelArchitecture.subjects.find(s => s.id === nodeId);
+        if (subject) {
+          nodeData = subject;
+          defaultX = subject.x;
+          defaultY = 0;
+          defaultWidth = 140;
+          layerY = dragState.layerY;
+        } else {
+          const logical = dataModelArchitecture.logical.find(l => l.id === nodeId);
+          if (logical) {
+            nodeData = logical;
+            defaultX = logical.x;
+            defaultY = 0;
+            defaultWidth = 140;
+            layerY = dragState.layerY;
+          } else {
+            const physical = dataModelArchitecture.physical.find(p => p.id === nodeId);
+            if (physical) {
+              nodeData = physical;
+              defaultX = physical.x;
+              defaultY = physical.y || 0;
+              defaultWidth = 90;
+              layerY = dragState.layerY;
+            }
+          }
+        }
+      }
+
+      if (!nodeData) return;
+
+      // 计算当前节点的实际位置
+      const customPos = customLayout[nodeId] || { x: defaultX, y: defaultY };
+      const nodeWidth = customPos.width || defaultWidth;
+      const currentX = customPos.x + dragState.offsetX + nodeWidth / 2; // 节点中心X
+      const currentY = layerY + 50 + customPos.y + dragState.offsetY; // 节点顶部Y（作为target）
+      const currentBottomY = layerY + 50 + customPos.y + dragState.offsetY + (customPos.height || 60); // 节点底部Y（作为source）
+
+      // 更新以当前节点为目标的垂直连接线
+      g.selectAll(`.vertical-relation[data-target="${nodeId}"]`)
+        .attr('d', function() {
+          const path = d3.select(this);
+          const x1 = parseFloat(path.attr('data-source-x'));
+          const y1 = parseFloat(path.attr('data-source-y'));
+          return `M ${x1} ${y1} L ${currentX} ${currentY}`;
+        });
+
+      // 更新以当前节点为源的垂直连接线
+      g.selectAll(`.vertical-relation[data-source="${nodeId}"]`)
+        .attr('d', function() {
+          const path = d3.select(this);
+          const x2 = parseFloat(path.attr('data-target-x'));
+          const y2 = parseFloat(path.attr('data-target-y'));
+          return `M ${currentX} ${currentBottomY} L ${x2} ${y2}`;
+        });
+
+      // 更新水平连接线（主题域之间）
+      g.selectAll(`.horizontal-relation[data-source="${nodeId}"]`)
+        .attr('d', function() {
+          const path = d3.select(this);
+          const targetId = path.attr('data-target');
+          const targetSubject = dataModelArchitecture.subjects.find(s => s.id === targetId);
+          if (!targetSubject) return path.attr('d');
+
+          const targetCustomPos = customLayout[targetId];
+          const targetX = targetCustomPos ? targetCustomPos.x : targetSubject.x;
+          const targetWidth = targetCustomPos?.width || 140;
+          const targetY = layerY + 50 + (targetCustomPos ? targetCustomPos.y : 0);
+          const targetHeight = targetCustomPos?.height || 80;
+
+          const x1 = currentX + nodeWidth / 2; // 当前节点右边缘
+          const y1 = currentY + (customPos.height || 80) / 2; // 当前节点中心Y
+          const x2 = targetX; // 目标节点左边缘
+          const y2 = targetY + targetHeight / 2; // 目标节点中心Y
+
+          return `M ${x1} ${y1} L ${x2} ${y2}`;
+        });
+
+      g.selectAll(`.horizontal-relation[data-target="${nodeId}"]`)
+        .attr('d', function() {
+          const path = d3.select(this);
+          const sourceId = path.attr('data-source');
+          const sourceSubject = dataModelArchitecture.subjects.find(s => s.id === sourceId);
+          if (!sourceSubject) return path.attr('d');
+
+          const sourceCustomPos = customLayout[sourceId];
+          const sourceX = sourceCustomPos ? sourceCustomPos.x : sourceSubject.x;
+          const sourceWidth = sourceCustomPos?.width || 140;
+          const sourceY = layerY + 50 + (sourceCustomPos ? sourceCustomPos.y : 0);
+          const sourceHeight = sourceCustomPos?.height || 80;
+
+          const x1 = sourceX + sourceWidth; // 源节点右边缘
+          const y1 = sourceY + sourceHeight / 2; // 源节点中心Y
+          const x2 = currentX - nodeWidth / 2; // 当前节点左边缘
+          const y2 = currentY + (customPos.height || 80) / 2; // 当前节点中心Y
+
+          return `M ${x1} ${y1} L ${x2} ${y2}`;
+        });
+    }
+
+    // ========== 调整尺寸功能 ==========
+
+    function startResize(event, node, nodeId, currentX, currentY, currentWidth, currentHeight, layerY) {
+      event.stopPropagation();
+
+      resizeState.isResizing = true;
+      resizeState.currentNode = node;
+      resizeState.currentNodeId = nodeId;
+      resizeState.startX = event.clientX;
+      resizeState.startY = event.clientY;
+      resizeState.startWidth = currentWidth;
+      resizeState.startHeight = currentHeight;
+      resizeState.layerY = layerY; // 保存层的Y坐标
+
+      // 添加调整样式
+      d3.select(node).select('.resize-handle').classed('resizing', true);
+
+      // 添加全局事件监听
+      d3.select('body')
+        .on('mousemove.resize', onResize)
+        .on('mouseup.resize', endResize);
+    }
+
+    function onResize(event) {
+      if (!resizeState.isResizing) return;
+
+      // 计算新尺寸
+      const deltaX = event.clientX - resizeState.startX;
+      const deltaY = event.clientY - resizeState.startY;
+
+      let newWidth = Math.max(resizeState.minWidth, resizeState.startWidth + deltaX);
+      let newHeight = Math.max(resizeState.minHeight, resizeState.startHeight + deltaY);
+
+      // 获取节点信息（支持所有层）
+      let defaultX = 0;
+      let defaultY = 0;
+
+      if (resizeState.currentNodeId === 'conceptual') {
+        defaultX = 565;
+        defaultY = 0;
+      } else {
+        const subject = dataModelArchitecture.subjects.find(s => s.id === resizeState.currentNodeId);
+        if (subject) {
+          defaultX = subject.x;
+          defaultY = 0;
+        } else {
+          const logical = dataModelArchitecture.logical.find(l => l.id === resizeState.currentNodeId);
+          if (logical) {
+            defaultX = logical.x;
+            defaultY = 0;
+          } else {
+            const physical = dataModelArchitecture.physical.find(p => p.id === resizeState.currentNodeId);
+            if (physical) {
+              defaultX = physical.x;
+              defaultY = physical.y || 0;
+            }
+          }
+        }
+      }
+
+      // 更新节点尺寸（直接修改DOM，性能更好）
+      const nodeG = d3.select(resizeState.currentNode);
+      const customPos = customLayout[resizeState.currentNodeId] || { x: defaultX, y: defaultY };
+      const nodeX = customPos.x;
+      const nodeY = resizeState.layerY + 50 + customPos.y;
+
+      // 更新矩形尺寸
+      nodeG.select('.model-node')
+        .attr('width', newWidth)
+        .attr('height', newHeight);
+
+      // 更新文字位置（居中）
+      nodeG.select('.model-text')
+        .attr('x', nodeX + newWidth / 2)
+        .attr('y', nodeY + newHeight / 2 - 5);
+
+      nodeG.select('.model-count')
+        .attr('x', nodeX + newWidth / 2)
+        .attr('y', nodeY + newHeight / 2 + 10);
+
+      // 更新调整手柄位置
+      nodeG.select('.resize-handle')
+        .attr('cx', nodeX + newWidth)
+        .attr('cy', nodeY + newHeight);
+
+      // 更新连接线（因为节点中心位置变了）
+      updateConnectionLinesForResize(resizeState.currentNodeId, nodeX, nodeY, newWidth, newHeight);
+    }
+
+    function endResize(event) {
+      if (!resizeState.isResizing) return;
+
+      // 计算最终尺寸
+      const deltaX = event.clientX - resizeState.startX;
+      const deltaY = event.clientY - resizeState.startY;
+
+      const newWidth = Math.max(resizeState.minWidth, resizeState.startWidth + deltaX);
+      const newHeight = Math.max(resizeState.minHeight, resizeState.startHeight + deltaY);
+
+      // 获取节点默认位置（支持所有层）
+      let defaultX = 0;
+      let defaultY = 0;
+
+      if (resizeState.currentNodeId === 'conceptual') {
+        defaultX = 565;
+        defaultY = 0;
+      } else {
+        const subject = dataModelArchitecture.subjects.find(s => s.id === resizeState.currentNodeId);
+        if (subject) {
+          defaultX = subject.x;
+          defaultY = 0;
+        } else {
+          const logical = dataModelArchitecture.logical.find(l => l.id === resizeState.currentNodeId);
+          if (logical) {
+            defaultX = logical.x;
+            defaultY = 0;
+          } else {
+            const physical = dataModelArchitecture.physical.find(p => p.id === resizeState.currentNodeId);
+            if (physical) {
+              defaultX = physical.x;
+              defaultY = physical.y || 0;
+            }
+          }
+        }
+      }
+
+      // 保存新尺寸到自定义布局
+      const customPos = customLayout[resizeState.currentNodeId] || { x: defaultX, y: defaultY };
+
+      customLayout[resizeState.currentNodeId] = {
+        ...customPos,
+        width: newWidth,
+        height: newHeight
+      };
+
+      // 保存到localStorage
+      saveLayout();
+
+      // 移除调整样式
+      d3.select(resizeState.currentNode).select('.resize-handle').classed('resizing', false);
+
+      // 重新渲染（应用新尺寸）
+      renderArchitecture();
+
+      // 清除调整状态
+      resizeState.isResizing = false;
+      resizeState.currentNode = null;
+      resizeState.currentNodeId = null;
+
+      // 移除全局事件监听
+      d3.select('body')
+        .on('mousemove.resize', null)
+        .on('mouseup.resize', null);
+    }
+
+    function updateConnectionLinesForResize(nodeId, nodeX, nodeY, nodeWidth, nodeHeight) {
+      // 更新连接线（节点中心位置和底部位置都可能变化）
+      const currentX = nodeX + nodeWidth / 2; // 节点中心X
+      const currentY = nodeY; // 节点顶部Y（作为target）
+      const currentBottomY = nodeY + nodeHeight; // 节点底部Y（作为source）
+
+      // 更新以当前节点为目标的垂直连接线
+      g.selectAll(`.vertical-relation[data-target="${nodeId}"]`)
+        .attr('d', function() {
+          const path = d3.select(this);
+          const x1 = parseFloat(path.attr('data-source-x'));
+          const y1 = parseFloat(path.attr('data-source-y'));
+          return `M ${x1} ${y1} L ${currentX} ${currentY}`;
+        });
+
+      // 更新以当前节点为源的垂直连接线
+      g.selectAll(`.vertical-relation[data-source="${nodeId}"]`)
+        .attr('d', function() {
+          const path = d3.select(this);
+          const x2 = parseFloat(path.attr('data-target-x'));
+          const y2 = parseFloat(path.attr('data-target-y'));
+          return `M ${currentX} ${currentBottomY} L ${x2} ${y2}`;
+        });
+
+      // 更新水平连接线
+      const centerY = nodeY + nodeHeight / 2;
+
+      g.selectAll(`.horizontal-relation[data-source="${nodeId}"]`)
+        .attr('d', function() {
+          const path = d3.select(this);
+          const targetId = path.attr('data-target');
+          const targetSubject = dataModelArchitecture.subjects.find(s => s.id === targetId);
+          if (!targetSubject) return path.attr('d');
+
+          const targetCustomPos = customLayout[targetId];
+          const targetX = targetCustomPos ? targetCustomPos.x : targetSubject.x;
+          const targetWidth = targetCustomPos?.width || 140;
+          const targetY = resizeState.layerY + 50 + (targetCustomPos ? targetCustomPos.y : 0);
+          const targetHeight = targetCustomPos?.height || 80;
+
+          const x1 = currentX + nodeWidth / 2;
+          const y1 = centerY;
+          const x2 = targetX;
+          const y2 = targetY + targetHeight / 2;
+
+          return `M ${x1} ${y1} L ${x2} ${y2}`;
+        });
+
+      g.selectAll(`.horizontal-relation[data-target="${nodeId}"]`)
+        .attr('d', function() {
+          const path = d3.select(this);
+          const sourceId = path.attr('data-source');
+          const sourceSubject = dataModelArchitecture.subjects.find(s => s.id === sourceId);
+          if (!sourceSubject) return path.attr('d');
+
+          const sourceCustomPos = customLayout[sourceId];
+          const sourceX = sourceCustomPos ? sourceCustomPos.x : sourceSubject.x;
+          const sourceWidth = sourceCustomPos?.width || 140;
+          const sourceY = resizeState.layerY + 50 + (sourceCustomPos ? sourceCustomPos.y : 0);
+          const sourceHeight = sourceCustomPos?.height || 80;
+
+          const x1 = sourceX + sourceWidth;
+          const y1 = sourceY + sourceHeight / 2;
+          const x2 = currentX - nodeWidth / 2;
+          const y2 = centerY;
+
+          return `M ${x1} ${y1} L ${x2} ${y2}`;
+        });
+    }
+
+    function saveLayout() {
+      try {
+        localStorage.setItem('dama-architecture-layout', JSON.stringify(customLayout));
+        console.log('布局已保存到本地存储');
+      } catch (e) {
+        console.error('保存布局失败:', e);
+      }
+    }
+
+    function loadLayout() {
+      try {
+        const saved = localStorage.getItem('dama-architecture-layout');
+        if (saved) {
+          customLayout = JSON.parse(saved);
+          console.log('已加载自定义布局');
+        }
+      } catch (e) {
+        console.error('加载布局失败:', e);
+        customLayout = {};
+      }
+    }
+
+    function resetLayout() {
+      if (confirm('确定要重置为默认布局吗？这将清除所有自定义位置和尺寸。')) {
+        customLayout = {};
+        localStorage.removeItem('dama-architecture-layout');
+        renderArchitecture();
+        console.log('布局已重置（位置和尺寸恢复默认）');
+      }
+    }
+
+    // Initialize
+    window.addEventListener('DOMContentLoaded', function() {
+      loadLayout(); // 加载保存的布局
+      initArchitecture();
+      console.log('企业数据模型架构已加载 - DMBOK2标准');
+    });
+  </script>
+</body>
+</html>

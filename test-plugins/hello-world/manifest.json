@@ -1,0 +1,55 @@
+{
+  "manifestVersion": "1.0.0",
+  "name": "hello-world",
+  "displayName": "Hello World Plugin",
+  "version": "1.0.0",
+  "description": "A test plugin demonstrating all Plugin APIs: FileSystem, Network, Storage, and Events",
+  "author": "VCP Team",
+  "main": "index.js",
+  "activationEvents": [
+    "onCommand:hello.run",
+    "onStartupFinished"
+  ],
+  "permissions": [
+    "filesystem.read:AppData/hello-world/*",
+    "filesystem.write:AppData/hello-world/*",
+    "network.request:*.jsonplaceholder.typicode.com",
+    "storage.read",
+    "storage.write",
+    "system.notify",
+    "ui.registerCommand"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "identifier": "hello.run",
+        "title": "Run Hello World Tests",
+        "description": "Run the Hello World plugin and test all APIs"
+      },
+      {
+        "identifier": "hello.testFileSystem",
+        "title": "Test FileSystem API",
+        "description": "Test FileSystem API operations"
+      },
+      {
+        "identifier": "hello.testNetwork",
+        "title": "Test Network API",
+        "description": "Test Network API with JSONPlaceholder"
+      },
+      {
+        "identifier": "hello.testStorage",
+        "title": "Test Storage API",
+        "description": "Test Storage API operations"
+      },
+      {
+        "identifier": "hello.testEvents",
+        "title": "Test Events API",
+        "description": "Test Event Bus functionality"
+      }
+    ]
+  },
+  "engines": {
+    "vcp": "^1.0.0"
+  },
+  "dependencies": {}
+}

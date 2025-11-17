@@ -1,0 +1,590 @@
+/**
+ * Attachment Preview Styles (CORE-016)
+ * Anthropic-compliant attachment thumbnail and preview styles
+ */
+
+/* Attachment Preview Container */
+.attachment-preview {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  background-color: var(--bg-tertiary);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  transition: all var(--transition-fast);
+  max-width: 280px;
+  cursor: default;
+}
+
+.attachment-preview:hover {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-hover);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Thumbnail Container */
+.attachment-preview__thumbnail {
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-secondary);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  transition: border-color var(--transition-fast);
+}
+
+.attachment-preview:hover .attachment-preview__thumbnail {
+  border-color: var(--border-hover);
+}
+
+/* Thumbnail Image (actual image thumbnails) */
+.attachment-preview__thumbnail-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform var(--transition-normal);
+}
+
+.attachment-preview:hover .attachment-preview__thumbnail-img {
+  transform: scale(1.05);
+}
+
+/* File Type Icon (SVG icons for non-images) */
+.attachment-preview__thumbnail svg {
+  width: 32px;
+  height: 32px;
+  stroke: var(--text-secondary);
+  transition: stroke var(--transition-fast);
+}
+
+.attachment-preview:hover .attachment-preview__thumbnail svg {
+  stroke: var(--text-primary);
+}
+
+/* File Info Container */
+.attachment-preview__info {
+  flex: 1;
+  min-width: 0; /* Allow text truncation */
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Filename */
+.attachment-preview__filename {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--text-primary);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: color var(--transition-fast);
+}
+
+/* File Size */
+.attachment-preview__filesize {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  color: var(--text-tertiary);
+  transition: color var(--transition-fast);
+}
+
+.attachment-preview:hover .attachment-preview__filesize {
+  color: var(--text-secondary);
+}
+
+/* Remove Button */
+.attachment-preview__remove {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background-color: rgba(20, 20, 19, 0.05);
+  color: var(--text-secondary);
+  cursor: pointer;
+  opacity: 0;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.attachment-preview:hover .attachment-preview__remove {
+  opacity: 1;
+}
+
+.attachment-preview__remove:hover {
+  background-color: #E74C3C;
+  color: white;
+  transform: scale(1.1);
+}
+
+.attachment-preview__remove:active {
+  transform: scale(0.95);
+}
+
+.attachment-preview__remove svg {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  stroke-width: 2;
+}
+
+/* Loading State */
+.attachment-preview--loading {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.attachment-preview--loading .attachment-preview__thumbnail::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 100%
+  );
+  animation: loading-shimmer 1.5s infinite;
+}
+
+@keyframes loading-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Error State */
+.attachment-preview--error {
+  border-color: #E74C3C;
+  background-color: rgba(231, 76, 60, 0.05);
+}
+
+.attachment-preview--error .attachment-preview__thumbnail {
+  border-color: #E74C3C;
+  background-color: rgba(231, 76, 60, 0.1);
+}
+
+.attachment-preview--error .attachment-preview__filename {
+  color: #E74C3C;
+}
+
+/* Compact Mode (smaller previews for inline display) */
+.attachment-preview--compact {
+  max-width: 180px;
+  padding: var(--spacing-xs);
+}
+
+.attachment-preview--compact .attachment-preview__thumbnail {
+  width: 48px;
+  height: 48px;
+}
+
+.attachment-preview--compact .attachment-preview__thumbnail svg {
+  width: 24px;
+  height: 24px;
+}
+
+.attachment-preview--compact .attachment-preview__filename {
+  font-size: var(--font-size-xs);
+}
+
+.attachment-preview--compact .attachment-preview__filesize {
+  font-size: 11px;
+}
+
+/* Dark Mode Adjustments */
+[data-theme="dark"] .attachment-preview__thumbnail {
+  background-color: var(--bg-tertiary);
+}
+
+[data-theme="dark"] .attachment-preview__remove {
+  background-color: rgba(232, 230, 224, 0.1);
+}
+
+[data-theme="dark"] .attachment-preview__remove:hover {
+  background-color: #E74C3C;
+  color: white;
+}
+
+/* Accessibility */
+.attachment-preview__remove:focus-visible {
+  outline: 2px solid var(--active-bg);
+  outline-offset: 2px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .attachment-preview {
+    max-width: 100%;
+  }
+
+  .attachment-preview__thumbnail {
+    width: 56px;
+    height: 56px;
+  }
+
+  .attachment-preview__thumbnail svg {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+/* Attachment Grid (for multiple attachments) */
+.attachment-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-sm);
+}
+
+@media (max-width: 768px) {
+  .attachment-preview-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ========== Message Attachments Styles ========== */
+
+/* Attachments Zone in Messages */
+.message__attachments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-sm) 0;
+}
+
+/* Individual Attachment Item */
+.attachment-item {
+  max-width: 500px;
+  width: 100%;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  transition: all var(--transition-fast);
+}
+
+.attachment-item:hover {
+  border-color: var(--border-hover);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Image Attachment */
+.attachment-image {
+  display: flex;
+  flex-direction: column;
+  max-height: 400px;
+}
+
+.attachment-image__img {
+  width: 100%;
+  max-width: 100%;
+  max-height: 350px;
+  height: auto;
+  object-fit: contain;
+  background: var(--bg-tertiary);
+  cursor: zoom-in;
+  transition: transform var(--transition-normal);
+  display: block;
+}
+
+.attachment-image__img:hover {
+  transform: scale(1.01);
+}
+
+/* Video Attachment */
+.attachment-video {
+  display: flex;
+  flex-direction: column;
+  max-height: 400px;
+}
+
+.attachment-video__player {
+  width: 100%;
+  max-width: 100%;
+  max-height: 350px;
+  height: auto;
+  background: #000;
+  display: block;
+}
+
+/* Audio Attachment */
+.attachment-audio {
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacing-md);
+}
+
+.attachment-audio__player {
+  width: 100%;
+}
+
+/* PDF Attachment */
+.attachment-pdf {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  max-width: 400px;
+  transition: border-color var(--transition-fast);
+}
+
+.attachment-pdf:hover {
+  border-color: var(--border-hover);
+}
+
+/* PDF Preview Section */
+.attachment-pdf__preview-section {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  min-height: 60px;
+}
+
+/* PDF Thumbnail Image */
+.attachment-pdf__thumbnail {
+  width: 100%;
+  height: auto;
+  max-height: 300px;
+  object-fit: contain;
+  cursor: pointer;
+  transition: transform var(--transition-fast);
+  display: block;
+}
+
+.attachment-pdf__thumbnail:hover {
+  transform: scale(1.02);
+}
+
+/* PDF Icon (fallback when no thumbnail) */
+.attachment-pdf__icon {
+  padding: var(--spacing-lg);
+  color: #dc2626; /* Red color for PDF */
+  flex-shrink: 0;
+}
+
+.attachment-pdf__icon svg {
+  display: block;
+}
+
+/* PDF Info Section */
+.attachment-pdf__info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+
+.attachment-filename {
+  font-weight: 500;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.875rem;
+}
+
+.attachment-filesize {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+/* Download Button */
+.attachment-download-btn {
+  align-self: flex-start;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: var(--color-primary);
+  color: white;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: background var(--transition-fast);
+  cursor: pointer;
+}
+
+.attachment-download-btn:hover {
+  background: var(--color-primary-hover);
+}
+
+/* Document Attachment */
+.attachment-document {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+}
+
+.attachment-document__icon {
+  flex-shrink: 0;
+  color: var(--text-secondary);
+}
+
+.attachment-document__info {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Attachment Caption/Filename */
+.attachment-caption,
+.attachment-filename {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: var(--bg-tertiary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Attachment File Size */
+.attachment-filesize {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  color: var(--text-tertiary);
+  margin-top: 4px;
+}
+
+/* Download Button */
+.attachment-download-btn {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: var(--active-bg);
+  color: var(--active-text);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: all var(--transition-fast);
+}
+
+.attachment-download-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.attachment-download-btn:active {
+  transform: translateY(0);
+}
+
+/* Image Viewer Overlay */
+.image-viewer-overlay {
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Dark Mode Adjustments */
+[data-theme="dark"] .attachment-item {
+  background: var(--bg-tertiary);
+}
+
+[data-theme="dark"] .attachment-caption,
+[data-theme="dark"] .attachment-filename {
+  background: var(--bg-secondary);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .attachment-item {
+    max-width: 100%;
+  }
+
+  .attachment-image {
+    max-height: 300px;
+  }
+
+  .attachment-image__img,
+  .attachment-video__player {
+    max-height: 250px;
+  }
+}
+
+@media (max-width: 480px) {
+  .attachment-image {
+    max-height: 250px;
+  }
+
+  .attachment-image__img,
+  .attachment-video__player {
+    max-height: 200px;
+  }
+}
+
+/* ============================================
+   Audio Renderer in Attachments
+   ============================================ */
+
+/* Attachment audio renderer container */
+.attachment-audio .attachment-audio-renderer {
+  width: 100%;
+  margin-bottom: var(--spacing-xs);
+}
+
+/* Reduce waveform height in attachments */
+.attachment-audio .audio-waveform {
+  height: 60px;
+}
+
+/* Compact controls for attachments */
+.attachment-audio .audio-controls-row {
+  gap: var(--spacing-xs);
+}
+
+/* Smaller buttons in attachments */
+.attachment-audio .audio-play-btn,
+.attachment-audio .audio-viz-btn,
+.attachment-audio .audio-loop-btn,
+.attachment-audio .audio-speed-btn {
+  padding: 4px 8px;
+  font-size: var(--font-size-xs);
+}
+
+/* Hide metadata in attachments (already shown in caption) */
+.attachment-audio .audio-metadata {
+  display: none;
+}
+
+/* Adjust caption position */
+.attachment-audio .attachment-caption {
+  margin-top: var(--spacing-xs);
+}

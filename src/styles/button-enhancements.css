@@ -1,0 +1,408 @@
+/**
+ * Button Enhancements - Rich Micro-interactions
+ *
+ * Implements bold, creative button interactions with:
+ * - Three-layer shadows for depth
+ * - Scale transforms for tactile feedback
+ * - Ripple effects for visual confirmation
+ * - Border scan animations
+ * - Rotation and pulse effects
+ * - Sliding underlines
+ * - Elastic toggle animations
+ *
+ * Design principle: Avoid AI aesthetics through extreme contrasts and choreographed animations
+ */
+
+/* ========================================
+   Phase 3.1: Primary Buttons - 三层阴影 + 缩放 + 水波纹
+   ======================================== */
+
+.btn-primary,
+.settings-save-btn,
+#send-button {
+  position: relative;
+  overflow: hidden;
+  background: var(--active-bg);
+  color: var(--active-text);
+  font-weight: var(--font-heading-black);
+  font-size: var(--font-size-sm);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+
+  /* 三层阴影 - 立体感 */
+  box-shadow:
+    0 1px 2px rgba(10, 10, 9, 0.1),
+    0 4px 8px rgba(10, 10, 9, 0.15),
+    0 8px 16px rgba(10, 10, 9, 0.2);
+
+  transition:
+    transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 200ms ease;
+}
+
+.btn-primary:hover,
+.settings-save-btn:hover:not(:disabled),
+#send-button:hover:not(:disabled) {
+  /* 悬停缩放 */
+  transform: translateY(-2px) scale(1.02);
+
+  /* 阴影加深 */
+  box-shadow:
+    0 2px 4px rgba(10, 10, 9, 0.15),
+    0 8px 16px rgba(10, 10, 9, 0.25),
+    0 16px 32px rgba(10, 10, 9, 0.3);
+}
+
+.btn-primary:active,
+.settings-save-btn:active:not(:disabled),
+#send-button:active:not(:disabled) {
+  /* 按下缩放 */
+  transform: translateY(0) scale(0.98);
+  box-shadow:
+    0 1px 2px rgba(10, 10, 9, 0.2),
+    0 2px 4px rgba(10, 10, 9, 0.25);
+}
+
+/* 水波纹效果 */
+.btn-primary::before,
+.settings-save-btn::before,
+#send-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(250, 249, 245, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
+  pointer-events: none;
+}
+
+.btn-primary:active::before,
+.settings-save-btn:active::before,
+#send-button:active::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* ========================================
+   Phase 3.2: Secondary Buttons - 边框扫描动画
+   ======================================== */
+
+.btn-secondary,
+.settings-reset-btn {
+  position: relative;
+  background: transparent;
+  border: 2px solid var(--border-color);
+  font-weight: var(--font-heading-black);
+  color: var(--text-primary);
+  overflow: hidden;
+
+  transition:
+    transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    border-color 200ms ease,
+    color 200ms ease;
+}
+
+/* 边框扫描动画 */
+.btn-secondary::before,
+.settings-reset-btn::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -100%;
+  width: 100%;
+  height: calc(100% + 4px);
+  background: linear-gradient(90deg, transparent, var(--active-bg), transparent);
+  transition: left 0.5s ease;
+  pointer-events: none;
+}
+
+.btn-secondary:hover::before,
+.settings-reset-btn:hover::before {
+  left: 100%;
+}
+
+.btn-secondary:hover,
+.settings-reset-btn:hover {
+  border-color: var(--active-bg);
+  color: var(--active-bg);
+  transform: translateX(4px);
+}
+
+.btn-secondary:active,
+.settings-reset-btn:active {
+  transform: translateX(2px) scale(0.97);
+}
+
+/* ========================================
+   Phase 3.3: Icon Buttons - 旋转 + 脉冲
+   ======================================== */
+
+.btn-icon,
+.settings-close,
+.window-control-btn,
+.titlebar-icon-btn {
+  position: relative;
+  transition:
+    transform 300ms cubic-bezier(0.68, -0.55, 0.27, 1.55),
+    background 200ms ease;
+}
+
+.btn-icon:hover,
+.settings-close:hover,
+.titlebar-icon-btn:hover {
+  background: var(--bg-tertiary);
+  transform: rotate(90deg) scale(1.1);
+}
+
+/* Window control buttons - 不旋转,只缩放 */
+.window-control-btn:hover {
+  transform: scale(1.1);
+}
+
+/* 脉冲效果 */
+.btn-icon:active::after,
+.settings-close:active::after,
+.titlebar-icon-btn:active::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--active-bg);
+  opacity: 0.3;
+  transform: translate(-50%, -50%) scale(0);
+  animation: pulse 0.5s ease-out;
+  pointer-events: none;
+}
+
+@keyframes pulse {
+  to {
+    transform: translate(-50%, -50%) scale(2);
+    opacity: 0;
+  }
+}
+
+/* ========================================
+   Phase 3.4: Tab Buttons - 下划线滑动
+   ======================================== */
+
+.settings-tab,
+.tab-btn,
+.sidebar-tab-button {
+  position: relative;
+  font-weight: var(--font-heading-thin);
+  transition:
+    color 200ms ease,
+    transform 150ms ease;
+}
+
+/* 下划线滑动效果 */
+.settings-tab::after,
+.tab-btn::after,
+.sidebar-tab-button::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  width: 0;
+  height: 3px;
+  background: var(--active-bg);
+  transform: translateX(-50%);
+  transition: width 300ms cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+.settings-tab:hover::after,
+.tab-btn:hover::after,
+.sidebar-tab-button:hover::after {
+  width: 80%;
+}
+
+.settings-tab.active,
+.tab-btn.active,
+.sidebar-tab-button.active {
+  font-weight: var(--font-heading-black);
+  color: var(--active-bg);
+}
+
+.settings-tab.active::after,
+.tab-btn.active::after,
+.sidebar-tab-button.active::after {
+  width: 100%;
+}
+
+/* Tab icons - 添加过渡 */
+.settings-tab svg,
+.tab-btn svg {
+  transition: transform 200ms ease;
+}
+
+.settings-tab.active svg,
+.tab-btn.active svg {
+  transform: scale(1.15);
+}
+
+/* ========================================
+   Phase 3.5: Toggle Switches - 弹性动画
+   ======================================== */
+
+.toggle-slider {
+  background: var(--bg-tertiary);
+  border: 2px solid var(--border-color);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+  transition:
+    background 300ms ease,
+    border-color 300ms ease,
+    box-shadow 200ms ease;
+}
+
+.toggle-slider::before {
+  background: white;
+  box-shadow:
+    0 2px 4px rgba(10, 10, 9, 0.2),
+    0 4px 8px rgba(10, 10, 9, 0.1);
+
+  /* 弹性动画 - 超过目标再回弹 */
+  transition: transform 400ms cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+.toggle-switch-container input:checked ~ .toggle-slider {
+  background: var(--active-bg);
+  border-color: var(--active-bg);
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.2),
+    0 0 0 4px rgba(20, 20, 19, 0.1);
+}
+
+.toggle-switch-container input:checked ~ .toggle-slider::before {
+  transform: translateX(20px);
+}
+
+/* ========================================
+   Additional Button Enhancements
+   ======================================== */
+
+/* Danger buttons - 保持红色特征,添加微交互 */
+.btn-danger {
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 200ms ease,
+    filter 200ms ease;
+
+  box-shadow:
+    0 1px 2px rgba(231, 76, 60, 0.2),
+    0 4px 8px rgba(231, 76, 60, 0.25);
+}
+
+.btn-danger:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow:
+    0 2px 4px rgba(231, 76, 60, 0.3),
+    0 8px 16px rgba(231, 76, 60, 0.35);
+}
+
+.btn-danger:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Agent/Group items - 滑动动画 */
+.agent-item,
+.group-item,
+.sidebar-item {
+  transition:
+    transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    background 150ms ease;
+}
+
+.agent-item:hover,
+.group-item:hover,
+.sidebar-item:hover {
+  transform: translateX(6px);
+}
+
+.agent-item:active,
+.group-item:active,
+.sidebar-item:active {
+  transform: translateX(3px) scale(0.98);
+}
+
+/* Keyboard shortcut buttons - 3D 按键效果 */
+kbd.shortcut-kbd span {
+  transition:
+    transform 100ms ease,
+    box-shadow 100ms ease;
+  box-shadow:
+    0 1px 0 var(--border-color),
+    0 2px 0 var(--border-hover),
+    0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+kbd.shortcut-kbd span:active {
+  transform: translateY(2px);
+  box-shadow:
+    0 0 0 var(--border-color),
+    0 0 0 var(--border-hover),
+    0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* Feature cards - 深度悬停效果 */
+.feature-item {
+  transition:
+    transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 300ms ease;
+}
+
+.feature-item:hover {
+  transform: translateX(8px) translateY(-4px);
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.08),
+    0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+/* ========================================
+   Focus States - Accessibility
+   ======================================== */
+
+/* 高对比度焦点指示器 */
+.btn-primary:focus-visible,
+.btn-secondary:focus-visible,
+.btn-icon:focus-visible,
+.settings-tab:focus-visible,
+.toggle-switch-container input:focus-visible ~ .toggle-slider {
+  outline: 3px solid var(--active-bg);
+  outline-offset: 4px;
+}
+
+/* Tab键焦点顺序视觉指示 */
+.settings-tab:focus-visible,
+.btn-primary:focus-visible {
+  box-shadow:
+    0 0 0 4px var(--bg-primary),
+    0 0 0 7px var(--active-bg);
+}
+
+/* ========================================
+   Performance Optimization
+   ======================================== */
+
+/* GPU加速 - 使用 will-change 提示浏览器 */
+.btn-primary,
+.btn-secondary,
+.btn-icon,
+.settings-tab,
+.toggle-slider::before {
+  will-change: transform;
+}
+
+/* 禁用streaming消息动画 */
+.message.streaming .btn-primary,
+.message.streaming .btn-secondary {
+  transition: none;
+}

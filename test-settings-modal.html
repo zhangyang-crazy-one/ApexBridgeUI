@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings Modal Layout Test</title>
+
+  <!-- Main Styles -->
+  <link rel="stylesheet" href="/src/styles/main.css">
+  <link rel="stylesheet" href="/src/styles/settings.css">
+
+  <style>
+    body {
+      margin: 0;
+      padding: var(--spacing-xl);
+      background: var(--bg-secondary);
+      font-family: var(--font-body);
+    }
+
+    .test-container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .test-header {
+      margin-bottom: var(--spacing-xl);
+      padding: var(--spacing-lg);
+      background: var(--bg-primary);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-color);
+    }
+
+    .test-title {
+      font-family: var(--font-heading);
+      font-size: var(--font-size-2xl);
+      color: var(--text-primary);
+      margin: 0 0 var(--spacing-sm) 0;
+    }
+
+    .test-subtitle {
+      font-family: var(--font-body);
+      font-size: var(--font-size-base);
+      color: var(--text-secondary);
+      margin: 0;
+    }
+
+    .test-controls {
+      display: flex;
+      gap: var(--spacing-md);
+      margin-top: var(--spacing-md);
+    }
+
+    .theme-toggle-btn,
+    .open-settings-btn {
+      padding: var(--spacing-sm) var(--spacing-md);
+      font-family: var(--font-heading);
+      font-size: var(--font-size-sm);
+      color: var(--text-primary);
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .theme-toggle-btn:hover,
+    .open-settings-btn:hover {
+      background: var(--bg-tertiary);
+      border-color: var(--border-hover);
+    }
+
+    .open-settings-btn {
+      background: var(--active-bg);
+      color: var(--active-text);
+      border-color: var(--active-bg);
+    }
+
+    .open-settings-btn:hover {
+      opacity: 0.9;
+    }
+
+    .main-content {
+      padding: var(--spacing-lg);
+      background: var(--bg-primary);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-color);
+    }
+
+    .status-indicator {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: var(--spacing-xs);
+    }
+
+    .status-success {
+      background-color: #28a745;
+    }
+
+    .status-error {
+      background-color: #dc3545;
+    }
+
+    .status-warning {
+      background-color: #ffc107;
+    }
+
+    .checklist {
+      list-style: none;
+      padding: 0;
+      margin: var(--spacing-lg) 0;
+    }
+
+    .checklist li {
+      padding: var(--spacing-sm) 0;
+      color: var(--text-secondary);
+      font-size: var(--font-size-sm);
+      display: flex;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <div class="test-header">
+      <h1 class="test-title">Settings Modal Layout Test</h1>
+      <p class="test-subtitle">
+        Verify Settings modal displays as a centered overlay with proper backdrop
+      </p>
+      <div class="test-controls">
+        <button class="theme-toggle-btn" id="themeToggleBtn">
+          Toggle Theme (Current: <span id="currentTheme">Light</span>)
+        </button>
+        <button class="open-settings-btn" id="openSettingsBtn">
+          Open Settings Modal
+        </button>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <h2 style="font-family: var(--font-heading); color: var(--text-primary); margin-top: 0;">
+        Expected Behavior:
+      </h2>
+      <ul class="checklist">
+        <li>
+          <span class="status-indicator status-success"></span>
+          Settings modal should appear as a centered overlay
+        </li>
+        <li>
+          <span class="status-indicator status-success"></span>
+          Background should have semi-transparent black backdrop (rgba(20, 20, 19, 0.6))
+        </li>
+        <li>
+          <span class="status-indicator status-success"></span>
+          Backdrop should have 4px blur effect
+        </li>
+        <li>
+          <span class="status-indicator status-success"></span>
+          Modal should be 800px max-width, 90vh max-height
+        </li>
+        <li>
+          <span class="status-indicator status-success"></span>
+          Modal should have rounded corners (14px border-radius)
+        </li>
+        <li>
+          <span class="status-indicator status-success"></span>
+          Modal should have drop shadow (0 8px 32px rgba(0, 0, 0, 0.2))
+        </li>
+        <li>
+          <span class="status-indicator status-success"></span>
+          Modal should animate with scale from 0.9 to 1.0 (300ms)
+        </li>
+        <li>
+          <span class="status-indicator status-success"></span>
+          Clicking backdrop should close modal
+        </li>
+        <li>
+          <span class="status-indicator status-success"></span>
+          Pressing ESC key should close modal
+        </li>
+        <li>
+          <span class="status-indicator status-success"></span>
+          Close button (X) should close modal
+        </li>
+      </ul>
+
+      <h2 style="font-family: var(--font-heading); color: var(--text-primary); margin-top: var(--spacing-xl);">
+        Test Instructions:
+      </h2>
+      <ol style="color: var(--text-secondary); font-size: var(--font-size-sm); line-height: 1.8;">
+        <li>Click "Open Settings Modal" button above</li>
+        <li>Verify modal appears in the CENTER of the screen (not at bottom)</li>
+        <li>Verify modal has a dark backdrop covering the entire page</li>
+        <li>Try clicking outside the modal (on the dark backdrop) - it should close</li>
+        <li>Open again, try pressing ESC key - it should close</li>
+        <li>Open again, try clicking the X button - it should close</li>
+        <li>Toggle theme and repeat tests to verify dark mode styling</li>
+      </ol>
+
+      <h2 style="font-family: var(--font-heading); color: var(--text-primary); margin-top: var(--spacing-xl);">
+        If Modal Appears at Bottom (BUG):
+      </h2>
+      <ul style="color: var(--text-secondary); font-size: var(--font-size-sm); line-height: 1.8;">
+        <li><strong style="color: var(--text-primary);">Root Cause:</strong> Missing CSS file link in index.html</li>
+        <li><strong style="color: var(--text-primary);">Solution:</strong> Add <code>&lt;link rel="stylesheet" href="/src/styles/settings.css" /&gt;</code> to index.html</li>
+        <li><strong style="color: var(--text-primary);">Verify:</strong> Check browser DevTools → Network tab for 404 errors on settings.css</li>
+        <li><strong style="color: var(--text-primary);">Inspect:</strong> Check if .settings-overlay has position: fixed and z-index: 9999</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    // Theme toggle functionality
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    const currentThemeSpan = document.getElementById('currentTheme');
+
+    function toggleTheme() {
+      const html = document.documentElement;
+      const currentTheme = html.getAttribute('data-theme') || 'light';
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+
+      html.setAttribute('data-theme', newTheme);
+      localStorage.setItem('vcpchat-theme', newTheme);
+
+      currentThemeSpan.textContent = newTheme.charAt(0).toUpperCase() + newTheme.slice(1);
+
+      console.log('[Test] Theme switched to:', newTheme);
+    }
+
+    themeToggleBtn.addEventListener('click', toggleTheme);
+
+    // Load saved theme on start
+    const savedTheme = localStorage.getItem('vcpchat-theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    currentThemeSpan.textContent = savedTheme.charAt(0).toUpperCase() + savedTheme.slice(1);
+
+    // Create and show settings modal
+    function showSettingsModal() {
+      // Remove existing modal if present
+      const existingOverlay = document.querySelector('.settings-overlay');
+      if (existingOverlay) {
+        existingOverlay.remove();
+      }
+
+      // Create overlay
+      const overlay = document.createElement('div');
+      overlay.className = 'settings-overlay';
+
+      // Create modal
+      const modal = document.createElement('div');
+      modal.className = 'settings-modal';
+      modal.innerHTML = `
+        <div class="settings-header">
+          <h2 class="settings-title">Settings</h2>
+          <button class="settings-close" aria-label="Close settings">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M15.8 5.2l-1-1L10 9 5.2 4.2l-1 1L9 10l-4.8 4.8 1 1L10 11l4.8 4.8 1-1L11 10z"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="settings-tabs" role="tablist">
+          <button class="settings-tab active" role="tab" aria-selected="true" data-tab="global">
+            <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M10 3a7 7 0 100 14 7 7 0 000-14zm-1 11.5v-2h2v2H9zm0-4v-5h2v5H9z"/>
+            </svg>
+            <span>Global</span>
+          </button>
+          <button class="settings-tab" role="tab" aria-selected="false" data-tab="plugins">
+            <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M3 5h4v4H3V5zm0 6h4v4H3v-4zm6-6h4v4H9V5zm0 6h4v4H9v-4z"/>
+            </svg>
+            <span>Plugins</span>
+          </button>
+          <button class="settings-tab" role="tab" aria-selected="false" data-tab="theme">
+            <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M10 2a6 6 0 100 12 6 6 0 000-12zm0 11V3a5 5 0 010 10z"/>
+            </svg>
+            <span>Theme</span>
+          </button>
+          <button class="settings-tab" role="tab" aria-selected="false" data-tab="language">
+            <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M10 2a8 8 0 100 16 8 8 0 000-16zM9 14H7a7 7 0 010-8h2v8zm2 0V6h2a7 7 0 010 8h-2z"/>
+            </svg>
+            <span>Language</span>
+          </button>
+        </div>
+
+        <div class="settings-content">
+          <div class="settings-section">
+            <h3>Test Settings Modal Layout</h3>
+            <p class="settings-description">
+              This is a test modal to verify the Settings overlay and modal are correctly positioned and styled.
+              If you can see this modal centered on the screen with a dark backdrop, the layout is working correctly.
+            </p>
+
+            <div class="settings-field">
+              <label for="test-input">Test Input</label>
+              <input type="text" id="test-input" placeholder="Try typing here...">
+            </div>
+
+            <div class="settings-field-checkbox">
+              <input type="checkbox" id="test-checkbox">
+              <label for="test-checkbox">Test checkbox option</label>
+            </div>
+
+            <p class="settings-description">
+              <strong>Expected Layout:</strong><br>
+              • Modal should be centered horizontally and vertically<br>
+              • Dark backdrop should cover entire viewport<br>
+              • Modal should have rounded corners and drop shadow<br>
+              • Backdrop should blur background content
+            </p>
+          </div>
+        </div>
+
+        <div class="settings-footer">
+          <button class="settings-reset-btn">Reset to Defaults</button>
+          <div class="settings-footer-right">
+            <span class="settings-status"></span>
+            <button class="settings-save-btn">Save Changes</button>
+          </div>
+        </div>
+      `;
+
+      overlay.appendChild(modal);
+
+      // Close handlers
+      function closeModal() {
+        overlay.remove();
+        console.log('[Test] Modal closed');
+      }
+
+      // Click backdrop to close
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+          closeModal();
+        }
+      });
+
+      // Close button
+      modal.querySelector('.settings-close')?.addEventListener('click', closeModal);
+
+      // ESC key
+      function handleKeydown(e) {
+        if (e.key === 'Escape') {
+          closeModal();
+          document.removeEventListener('keydown', handleKeydown);
+        }
+      }
+      document.addEventListener('keydown', handleKeydown);
+
+      // Tab switching (for demo)
+      modal.querySelectorAll('.settings-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          modal.querySelectorAll('.settings-tab').forEach(t => {
+            t.classList.remove('active');
+            t.setAttribute('aria-selected', 'false');
+          });
+          tab.classList.add('active');
+          tab.setAttribute('aria-selected', 'true');
+        });
+      });
+
+      // Append to body
+      document.body.appendChild(overlay);
+
+      console.log('[Test] Modal opened');
+      console.log('[Test] Check if modal is centered and has backdrop');
+    }
+
+    // Open Settings button handler
+    const openSettingsBtn = document.getElementById('openSettingsBtn');
+    openSettingsBtn.addEventListener('click', showSettingsModal);
+
+    console.log('[Test] Settings Modal Layout Test loaded');
+    console.log('[Test] Click "Open Settings Modal" to test');
+  </script>
+</body>
+</html>

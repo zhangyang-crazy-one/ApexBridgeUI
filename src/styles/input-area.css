@@ -1,0 +1,112 @@
+/**
+ * Input Area Styles
+ * Auto-resizing textarea with file attachments
+ */
+
+.input-area-container {
+  background-color: var(--bg-secondary);
+  border-top: 1px solid var(--border-color);
+  transition: background-color var(--transition-normal), border-color var(--transition-normal);
+}
+
+.input-area-row {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: flex-end;
+}
+
+.input-area-textarea {
+  transition: border-color var(--transition-fast), background-color var(--transition-normal);
+}
+
+.input-area-textarea:focus {
+  outline: none;
+  border-color: var(--active-bg);
+}
+
+.input-area-textarea:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.input-area-textarea::-webkit-scrollbar {
+  width: 6px;
+}
+
+.input-area-textarea::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.input-area-textarea::-webkit-scrollbar-thumb {
+  background-color: var(--border-color);
+  border-radius: 3px;
+}
+
+.input-area-send-btn:hover {
+  filter: brightness(1.1);
+}
+
+.input-area-send-btn:active {
+  transform: scale(0.95);
+}
+
+.input-area-send-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.input-area-stop-btn:active {
+  transform: scale(0.95);
+}
+
+.input-area-attach-btn:hover {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.input-area-attach-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Attachments */
+.input-area-attachments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) 0;
+  margin-bottom: var(--spacing-sm);
+}
+
+.attachment-preview {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background-color: var(--bg-tertiary);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  font-size: var(--font-size-sm);
+  max-width: 200px;
+  transition: all var(--transition-fast);
+}
+
+.attachment-preview:hover {
+  border-color: var(--border-hover);
+  background-color: var(--bg-secondary);
+}
+
+.attachment-preview button {
+  transition: all var(--transition-fast);
+}
+
+.attachment-preview button:hover {
+  color: #E74C3C;
+  transform: scale(1.2);
+}
+
+/* Drag & drop indicator */
+.input-area-textarea.drag-over {
+  border-color: var(--active-bg);
+  background-color: var(--bg-tertiary);
+}

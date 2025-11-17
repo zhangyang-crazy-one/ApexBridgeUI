@@ -1,0 +1,1082 @@
+/**
+ * Settings UI Styles (CORE-058)
+ *
+ * Styling for Settings Modal with Tabbed Interface
+ *
+ * Architecture:
+ * - Overlay: Full-screen semi-transparent backdrop
+ * - Modal: Centered container with fixed width/height
+ * - Header: Title and close button
+ * - Tabs: Horizontal tab navigation
+ * - Content: Scrollable form content
+ * - Footer: Reset button, status message, save button
+ *
+ * Design System: Anthropic/Claude.ai warm beige aesthetic
+ * - Colors: CSS variables from main.css
+ * - Typography: Sans-serif for UI, Georgia for descriptions
+ * - Transitions: 300ms ease-in-out for all state changes
+ * - Icons: Inline SVG with CSS variable fills
+ */
+
+/* ===== Overlay ===== */
+
+.settings-overlay,
+.settings-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(20, 20, 19, 0.5); /* Reduced opacity from 0.6 to 0.5 for better visibility */
+  /* backdrop-filter: blur(4px); */ /* Removed: May cause rendering issues in some browsers */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+
+  /* Initially hidden */
+  opacity: 0;
+  pointer-events: none;
+  /* Include all global transition properties plus opacity to avoid conflicts */
+  transition: background-color var(--transition-normal),
+              border-color var(--transition-normal),
+              color var(--transition-normal),
+              fill var(--transition-normal),
+              opacity 0.3s ease;
+}
+
+/* Active state - show modal */
+.settings-overlay.show,
+.settings-modal-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ===== Modal Container ===== */
+
+.settings-modal {
+  position: relative; /* Ensure proper stacking context */
+  background-color: var(--bg-primary);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  /* Add a visible border to ensure modal is distinguishable from background */
+  border: 2px solid var(--border-color);
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  animation: slideIn var(--transition-normal);
+  z-index: 1; /* Ensure modal is above overlay background */
+}
+
+/* 几何网格背景纹理 */
+.settings-modal::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background:
+    /* 对角线网格 - 45度交叉 */
+    linear-gradient(45deg, transparent 48%, rgba(20, 20, 19, 0.02) 49%, rgba(20, 20, 19, 0.02) 51%, transparent 52%),
+    linear-gradient(-45deg, transparent 48%, rgba(20, 20, 19, 0.02) 49%, rgba(20, 20, 19, 0.02) 51%, transparent 52%);
+  background-size: 24px 24px;
+  border-radius: var(--radius-lg);
+  pointer-events: none;
+  opacity: 0.6;
+  z-index: 0;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ===== Header ===== */
+
+.settings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-lg) var(--spacing-lg) var(--spacing-md);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.settings-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-2xl);
+  font-weight: 500;
+  color: var(--text-primary);
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.settings-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--spacing-xs);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  transition: all var(--transition-fast);
+}
+
+.settings-close:hover {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.settings-close img {
+  display: block;
+  width: 18px;
+  height: 18px;
+  opacity: 0.7;
+  transition: opacity var(--transition-fast);
+}
+
+.settings-close:hover img {
+  opacity: 1;
+}
+
+/* ===== Tabs ===== */
+
+.settings-tabs {
+  display: flex;
+  gap: var(--spacing-xs);
+  padding: 0 var(--spacing-lg);
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--bg-secondary);
+}
+
+.settings-tab,
+.tab-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  border-bottom: 2px solid transparent;
+  transition: all var(--transition-normal);
+  position: relative;
+  top: 1px; /* Align with bottom border */
+}
+
+.settings-tab svg,
+.tab-btn svg {
+  fill: currentColor;
+  transition: fill var(--transition-normal);
+}
+
+.settings-tab:hover,
+.tab-btn:hover {
+  color: var(--text-primary);
+}
+
+.settings-tab.active,
+.tab-btn.active {
+  color: var(--active-bg);
+  border-bottom-color: var(--active-bg);
+}
+
+[data-theme="dark"] .settings-tab.active,
+[data-theme="dark"] .tab-btn.active {
+  color: var(--active-text);
+  border-bottom-color: var(--active-text);
+}
+
+/* ===== Tab Content ===== */
+
+.settings-tab-content {
+  position: relative;
+}
+
+.tab-pane {
+  display: none; /* Hide all tab panes by default */
+}
+
+.tab-pane.active {
+  display: block; /* Show only the active tab pane */
+  position: relative; /* Ensure proper stacking context */
+  z-index: 1; /* Ensure active pane is visible */
+}
+
+/* ===== Content Area ===== */
+
+.settings-content {
+  flex: 1;
+  overflow-y: auto;
+  /* Increased padding from var(--spacing-lg) (24px) to var(--spacing-xl) * 1.5 for better whitespace */
+  padding: var(--spacing-xl) calc(var(--spacing-xl) * 1.5); /* 36px 54px */
+  position: relative; /* Ensure proper stacking context */
+  z-index: 1; /* Ensure content is above other elements */
+}
+
+.settings-section {
+  /* Increased margin from var(--spacing-xl) (36px) to calc(var(--spacing-xl) * 1.33) for better section separation */
+  margin-bottom: calc(var(--spacing-xl) * 1.33); /* 48px */
+  position: relative; /* Ensure proper stacking context */
+  z-index: 1; /* Ensure sections are visible */
+}
+
+.settings-section:last-child {
+  margin-bottom: 0;
+}
+
+.settings-section h3 {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  font-weight: 500;
+  color: var(--text-primary);
+  margin: 0 0 var(--spacing-md) 0;
+  letter-spacing: -0.3px;
+  position: relative; /* Ensure h3 is visible */
+  z-index: 2; /* Higher than section */
+}
+
+.settings-description {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin: 0 0 var(--spacing-md) 0;
+}
+
+.settings-placeholder {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-style: italic;
+  color: var(--text-tertiary);
+  margin: var(--spacing-lg) 0;
+}
+
+/* ===== Form Fields ===== */
+
+.settings-field {
+  margin-bottom: var(--spacing-md);
+  position: relative; /* Ensure proper stacking context */
+  z-index: 1; /* Ensure fields are visible */
+}
+
+.settings-field label {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative; /* Ensure labels are visible */
+  z-index: 2; /* Higher than field */
+}
+
+.settings-field input[type="text"],
+.settings-field input[type="url"],
+.settings-field input[type="password"],
+.settings-field select {
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  transition: all var(--transition-fast);
+}
+
+.settings-field input[type="text"]:focus,
+.settings-field input[type="url"]:focus,
+.settings-field input[type="password"]:focus,
+.settings-field select:focus {
+  outline: none;
+  border-color: var(--border-hover);
+  background-color: var(--bg-secondary);
+}
+
+.settings-field input[type="range"] {
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--bg-tertiary);
+  outline: none;
+  -webkit-appearance: none;
+}
+
+.settings-field input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--active-bg);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.settings-field input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.settings-field input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--active-bg);
+  cursor: pointer;
+  border: none;
+  transition: all var(--transition-fast);
+}
+
+.settings-field input[type="range"]::-moz-range-thumb:hover {
+  transform: scale(1.2);
+}
+
+/* ===== Toggle Switch ===== */
+
+/* Main row container for a label and its control */
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-sm) 0; /* Consistent vertical padding */
+}
+
+/* The text label on the left */
+.toggle-text-label {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  color: var(--text-primary);
+  flex-grow: 1; /* Allow it to take up available space */
+}
+
+/* Container for the actual switch on the right */
+.toggle-switch-container {
+  position: relative;
+  display: inline-block;
+}
+
+/* Hide the actual checkbox */
+.toggle-switch-container input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: relative; /* Override absolute positioning from plugin-manager.css */
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.toggle-slider:before {
+  content: "";
+  position: absolute;
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  border-radius: 50%;
+  transition: all var(--transition-fast);
+}
+
+.toggle-switch-container input[type="checkbox"]:checked ~ .toggle-slider {
+  background-color: var(--active-bg);
+  border-color: var(--active-bg);
+}
+
+.toggle-switch-container input[type="checkbox"]:checked ~ .toggle-slider:before {
+  transform: translateX(20px);
+}
+
+.toggle-text {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  color: var(--text-primary);
+}
+
+/* ===== Checkbox Fields ===== */
+
+.settings-field-checkbox {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+}
+
+.settings-field-checkbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+  cursor: pointer;
+  margin: 0;
+  transition: all var(--transition-fast);
+}
+
+.settings-field-checkbox input[type="checkbox"]:checked {
+  background-color: var(--active-bg);
+  border-color: var(--active-bg);
+}
+
+.settings-field-checkbox label {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  color: var(--text-primary);
+  margin: 0;
+  cursor: pointer;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+/* ===== Radio Fields ===== */
+
+.settings-field-radio {
+  margin-bottom: var(--spacing-md);
+}
+
+.settings-field-radio input[type="radio"] {
+  display: none;
+}
+
+.settings-field-radio label {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  color: var(--text-primary);
+  text-transform: none;
+  letter-spacing: normal;
+  margin: 0;
+}
+
+.settings-field-radio label:hover {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-hover);
+}
+
+.settings-field-radio input[type="radio"]:checked + label {
+  background-color: var(--active-bg);
+  border-color: var(--active-bg);
+  color: var(--active-text);
+}
+
+[data-theme="dark"] .settings-field-radio input[type="radio"]:checked + label {
+  background-color: var(--active-bg);
+  color: var(--active-text);
+}
+
+.settings-field-radio label svg {
+  flex-shrink: 0;
+  fill: currentColor;
+  transition: fill var(--transition-normal);
+}
+
+.language-flag {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+/* ===== Theme Preview ===== */
+
+.theme-preview {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-lg);
+  background-color: var(--bg-secondary);
+}
+
+.theme-preview-content {
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-normal);
+}
+
+.theme-preview-content[data-theme="light"] {
+  background-color: #FAF9F5;
+  color: #141413;
+}
+
+.theme-preview-content[data-theme="dark"] {
+  background-color: #1a1a1a;
+  color: #e8e6e0;
+}
+
+.preview-text-primary {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  margin: 0 0 var(--spacing-sm) 0;
+}
+
+.theme-preview-content[data-theme="light"] .preview-text-primary {
+  color: #141413;
+}
+
+.theme-preview-content[data-theme="dark"] .preview-text-primary {
+  color: #e8e6e0;
+}
+
+.preview-text-secondary {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  margin: 0 0 var(--spacing-md) 0;
+}
+
+.theme-preview-content[data-theme="light"] .preview-text-secondary {
+  color: #666666;
+}
+
+.theme-preview-content[data-theme="dark"] .preview-text-secondary {
+  color: #a8a8a8;
+}
+
+.preview-button {
+  display: inline-block;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  transition: all var(--transition-fast);
+}
+
+.theme-preview-content[data-theme="light"] .preview-button {
+  background-color: #141413;
+  color: #FAF9F5;
+}
+
+.theme-preview-content[data-theme="dark"] .preview-button {
+  background-color: #e8e6e0;
+  color: #141413;
+}
+
+/* ===== Footer ===== */
+
+.settings-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-top: 1px solid var(--border-color);
+  background-color: var(--bg-secondary);
+}
+
+.settings-footer-right {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.settings-status {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  transition: color var(--transition-fast);
+}
+
+.settings-status.success {
+  color: #28a745;
+}
+
+.settings-status.error {
+  color: #dc3545;
+}
+
+.settings-reset-btn,
+.settings-save-btn {
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.settings-reset-btn {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.settings-reset-btn:hover {
+  background-color: var(--bg-tertiary);
+  border-color: var(--border-hover);
+}
+
+.settings-save-btn {
+  background-color: var(--active-bg);
+  color: var(--active-text);
+  border-color: var(--active-bg);
+}
+
+.settings-save-btn:hover {
+  opacity: 0.9;
+}
+
+.settings-save-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ===== Responsive ===== */
+
+@media (max-width: 768px) {
+  .settings-modal {
+    width: 95%;
+    max-height: 95vh;
+  }
+
+  .settings-tabs {
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .settings-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .settings-tab {
+    flex-shrink: 0;
+  }
+
+  .settings-field-radio label {
+    font-size: var(--font-size-sm);
+  }
+
+  .language-flag {
+    font-size: 20px;
+  }
+}
+
+/* ===== Accessibility ===== */
+
+.settings-tab:focus-visible,
+.settings-close:focus-visible,
+.settings-field input:focus-visible,
+.settings-field select:focus-visible,
+.settings-field-checkbox input:focus-visible,
+.settings-reset-btn:focus-visible,
+.settings-save-btn:focus-visible {
+  outline: 2px solid var(--active-bg);
+  outline-offset: 2px;
+}
+
+/* ===== Dark Mode Overrides ===== */
+
+[data-theme="dark"] .settings-overlay {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+[data-theme="dark"] .settings-modal {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+}
+
+/* ========================================
+   Plugin Sub-tabs
+   ======================================== */
+
+.plugin-subtabs {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0;
+}
+
+.plugin-subtab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  position: relative;
+  top: 1px;
+}
+
+.plugin-subtab svg {
+  color: var(--icon-fill);
+  opacity: 0.7;
+  transition: opacity var(--transition-fast);
+}
+
+.plugin-subtab:hover {
+  color: var(--text-primary);
+  background: var(--bg-secondary);
+}
+
+.plugin-subtab:hover svg {
+  opacity: 1;
+}
+
+.plugin-subtab.active {
+  color: var(--text-primary);
+  border-bottom-color: var(--active-bg);
+}
+
+.plugin-subtab.active svg {
+  opacity: 1;
+  color: var(--active-bg);
+}
+
+#plugin-content-container {
+  min-height: 400px;
+}
+
+
+
+/* ========================================
+   Beautified Tab Styles
+   ======================================== */
+
+.tab-btn-beautified {
+  position: relative;
+  padding: 12px 20px;
+  border-bottom: 2px solid transparent; /* Add a subtle bottom border */
+  transition: all 0.3s ease; /* Override global transition for custom animation */
+}
+
+.tab-btn-beautified .tab-icon {
+  width: 22px;
+  height: 22px;
+  margin-right: 8px;
+  filter: grayscale(100%); /* Inactive icons are grayscale */
+  opacity: 0.7;
+  transition: all 0.3s ease;
+}
+
+.tab-btn-beautified:hover {
+  background-color: var(--bg-tertiary);
+  border-bottom-color: var(--border-hover);
+}
+
+.tab-btn-beautified:hover .tab-icon {
+  filter: grayscale(0%);
+  opacity: 1;
+}
+
+.tab-btn-beautified.active {
+  color: var(--active-bg);
+  border-bottom-color: var(--active-bg);
+  background-color: var(--bg-secondary);
+}
+
+.tab-btn-beautified.active .tab-icon {
+  filter: grayscale(0%);
+  opacity: 1;
+  transform: scale(1.1); /* Add a subtle scaling effect for the active icon */
+}
+
+[data-theme="dark"] .tab-btn-beautified.active {
+  color: var(--active-text);
+  border-bottom-color: var(--active-text);
+}
+
+
+
+/* ========================================
+   Unified Tab Content Styles
+   ======================================== */
+
+/* Section Titles and Descriptions */
+.settings-section h3 {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  font-weight: 600; /* Bolder for better hierarchy */
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-sm);
+  padding-bottom: var(--spacing-xs);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.settings-description {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-lg);
+}
+
+/* Unified Form Field Styles */
+.settings-field input[type="text"],
+.settings-field input[type="url"],
+.settings-field input[type="password"],
+.settings-field select {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  transition: all var(--transition-normal);
+}
+
+.settings-field input[type="text"]:hover,
+.settings-field input[type="url"]:hover,
+.settings-field input[type="password"]:hover,
+.settings-field select:hover {
+  border-color: var(--border-hover);
+}
+
+.settings-field input[type="text"]:focus,
+.settings-field input[type="url"]:focus,
+.settings-field input[type="password"]:focus,
+.settings-field select:focus {
+  border-color: var(--active-bg);
+  box-shadow: 0 0 0 2px rgba(20, 20, 19, 0.1);
+}
+
+[data-theme="dark"] .settings-field input[type="text"]:focus,
+[data-theme="dark"] .settings-field input[type="url"]:focus,
+[data-theme="dark"] .settings-field input[type="password"]:focus,
+[data-theme="dark"] .settings-field select:focus {
+  box-shadow: 0 0 0 2px rgba(232, 230, 224, 0.1);
+}
+
+/* Toggle Switch Beautification */
+.toggle-slider {
+  border: none;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.toggle-slider:before {
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+/* Range Slider Beautification */
+.settings-field input[type="range"]::-webkit-slider-thumb {
+  border: 2px solid var(--bg-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.settings-field input[type="range"]::-moz-range-thumb {
+  border: 2px solid var(--bg-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Radio Button Beautification */
+.settings-field-radio label {
+  border-radius: var(--radius-md);
+  transition: all var(--transition-normal);
+}
+
+.settings-field-radio label:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.settings-field-radio input[type="radio"]:checked + label {
+  box-shadow: 0 0 0 2px var(--active-bg);
+}
+
+[data-theme="dark"] .settings-field-radio input[type="radio"]:checked + label {
+  box-shadow: 0 0 0 2px var(--active-text);
+}
+
+
+
+/* ========================================
+   Unified Content & Form Styles
+   ======================================== */
+
+/* Unified description text */
+.settings-field-description {
+  font-family: var(--font-body);
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  margin-top: var(--spacing-xs);
+  line-height: 1.5;
+}
+
+/* Extend unified styles to number inputs */
+.settings-field input[type="number"] {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  transition: all var(--transition-normal);
+}
+
+.settings-field input[type="number"]:hover {
+  border-color: var(--border-hover);
+}
+
+.settings-field input[type="number"]:focus {
+  border-color: var(--active-bg);
+  box-shadow: 0 0 0 2px rgba(20, 20, 19, 0.1);
+}
+
+[data-theme="dark"] .settings-field input[type="number"]:focus {
+  box-shadow: 0 0 0 2px rgba(232, 230, 224, 0.1);
+}
+
+/* Layout for combined input fields */
+.slider-with-value, .input-with-unit {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.slider-with-value input, .input-with-unit input {
+  flex: 1;
+}
+
+.slider-value, .input-unit {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  min-width: 40px; /* Ensure consistent width */
+  text-align: right;
+}
+
+/* Button Group Styling */
+.button-group {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.button-group .btn {
+  flex: 1;
+}
+
+/* Shortcuts List Styling */
+.shortcuts-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-lg);
+}
+
+.shortcut-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md);
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-normal);
+}
+
+.shortcut-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-hover);
+}
+
+.shortcut-label {
+  font-family: var(--font-heading);
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.shortcut-keys {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+kbd.shortcut-kbd {
+  display: flex;
+  gap: 4px;
+}
+
+kbd.shortcut-kbd span {
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-bottom-width: 2px;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  color: var(--text-primary);
+}
+
+kbd.shortcut-kbd .key-separator {
+  border: none;
+  background: none;
+  padding: 4px 0;
+  color: var(--text-tertiary);
+}
+
+.edit-shortcut-btn {
+  color: var(--text-secondary);
+}
+
+.edit-shortcut-btn:hover {
+  color: var(--text-primary);
+  background-color: var(--bg-tertiary);
+}
+
+/* Shortcut Capture Modal Styling */
+.shortcut-capture-modal {
+  position: fixed; /* Changed from absolute to fixed */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(20, 20, 19, 0.5);
+  z-index: 10000; /* Ensure it's on top */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.capture-content {
+  background-color: var(--bg-primary);
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+  width: 90%;
+  max-width: 400px;
+}
+
+.captured-keys {
+  margin: var(--spacing-lg) 0;
+  padding: var(--spacing-lg);
+  border: 2px dashed var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-xl);
+  font-family: var(--font-heading);
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.conflict-warning {
+  color: var(--accent-red, #EF4444);
+  margin-top: var(--spacing-md);
+  font-size: var(--font-size-sm);
+}

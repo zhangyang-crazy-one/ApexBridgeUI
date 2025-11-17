@@ -1,0 +1,170 @@
+/**
+ * Connection Status Indicator Styles (CORE-062)
+ *
+ * Styling for Connection Status Indicator Component
+ *
+ * Design System: Anthropic/Claude.ai warm beige aesthetic
+ */
+
+/* ===== Connection Status Button ===== */
+
+.connection-status-indicator {
+  position: relative;
+  display: inline-flex;
+}
+
+.connection-status-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background-color: transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.connection-status-btn:hover {
+  background-color: var(--bg-tertiary);
+}
+
+.connection-icon circle {
+  transition: fill var(--transition-normal);
+}
+
+/* ===== Connection Status Tooltip ===== */
+
+.connection-status-tooltip {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  min-width: 240px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition: all var(--transition-normal);
+  z-index: 1000;
+}
+
+.connection-status-tooltip.active {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* ===== Tooltip Header ===== */
+
+.connection-status-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.connection-status-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.connection-test-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background-color: transparent;
+  color: var(--text-secondary);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.connection-test-btn:hover {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.connection-test-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.connection-test-btn svg {
+  animation: rotate 2s linear infinite paused;
+}
+
+.connection-test-btn:disabled svg {
+  animation-play-state: running;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ===== Tooltip Body ===== */
+
+.connection-status-body {
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.connection-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+}
+
+.connection-label {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.connection-value {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+}
+
+/* ===== Dark Mode ===== */
+
+[data-theme="dark"] .connection-status-tooltip {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+/* ===== Accessibility ===== */
+
+.connection-status-btn:focus-visible,
+.connection-test-btn:focus-visible {
+  outline: 2px solid var(--active-bg);
+  outline-offset: 2px;
+}
+
+/* ===== Mobile ===== */
+
+@media (max-width: 768px) {
+  .connection-status-tooltip {
+    right: auto;
+    left: 0;
+  }
+}

@@ -1,0 +1,320 @@
+/**
+ * Image Renderer Styles
+ *
+ * Theme-aware styles for interactive image viewer
+ * Follows Anthropic design system color palette
+ */
+
+/* Image Viewer Container */
+.image-renderer {
+  width: 100%;
+  max-width: 100%;
+  border-radius: var(--radius-md);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: border-color var(--transition-normal);
+}
+
+.image-renderer:hover {
+  border-color: var(--border-hover);
+}
+
+/* Header */
+.image-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color var(--transition-normal);
+}
+
+.image-title {
+  font-size: var(--font-size-xs);
+  font-family: var(--font-heading);
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Toolbar */
+.image-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  flex-wrap: wrap;
+  transition: background-color var(--transition-normal);
+}
+
+.image-toolbar-btn {
+  padding: 6px 12px;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: var(--font-size-xs);
+  font-family: var(--font-heading);
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.image-toolbar-btn:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--border-hover);
+}
+
+.image-toolbar-btn:active {
+  background: var(--active-bg);
+  color: var(--active-text);
+  border-color: var(--active-bg);
+}
+
+.image-toolbar-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Zoom Percentage Display */
+.image-zoom-display {
+  padding: 6px 12px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
+  font-family: var(--font-heading);
+  font-weight: 500;
+  min-width: 60px;
+  text-align: center;
+  transition: all var(--transition-normal);
+}
+
+/* Image Container */
+.image-container {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  background: var(--bg-primary);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  transition: background-color var(--transition-normal);
+}
+
+.image-container:active {
+  cursor: grabbing;
+}
+
+.image-container.dragging {
+  cursor: grabbing;
+}
+
+/* Image Content */
+.image-content {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  user-select: none;
+  transition: transform var(--transition-normal), opacity var(--transition-normal);
+}
+
+.image-content.image-loading {
+  opacity: 0.5;
+}
+
+.image-content.image-loaded {
+  opacity: 1;
+}
+
+.image-content.image-error {
+  opacity: 0.3;
+}
+
+/* Lazy Image Loading States */
+.lazy-image {
+  position: relative;
+}
+
+.lazy-image.image-pending::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--bg-secondary) 0%,
+    var(--bg-tertiary) 50%,
+    var(--bg-secondary) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.lazy-image.image-loading::after {
+  content: 'Loading...';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--text-tertiary);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+}
+
+/* Image Info */
+.image-info {
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-color);
+  font-size: var(--font-size-xs);
+  font-family: var(--font-heading);
+  color: var(--text-secondary);
+  display: flex;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+  transition: background-color var(--transition-normal);
+}
+
+.image-info-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.image-info-label {
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.image-info-value {
+  color: var(--text-primary);
+}
+
+/* Full Screen Mode */
+.image-fullscreen-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(20, 20, 19, 0.95);
+  backdrop-filter: blur(8px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn var(--transition-normal);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.image-fullscreen-content {
+  max-width: 95vw;
+  max-height: 95vh;
+  object-fit: contain;
+}
+
+.image-fullscreen-close {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  width: 40px;
+  height: 40px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+}
+
+.image-fullscreen-close:hover {
+  background: var(--active-bg);
+  color: var(--active-text);
+  border-color: var(--active-bg);
+}
+
+/* Error State */
+.image-error-message {
+  padding: var(--spacing-lg);
+  text-align: center;
+  color: var(--text-tertiary);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+}
+
+.image-error-icon {
+  font-size: 48px;
+  opacity: 0.3;
+  margin-bottom: var(--spacing-sm);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .image-container {
+    height: 300px;
+  }
+
+  .image-toolbar {
+    gap: 4px;
+  }
+
+  .image-toolbar-btn {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+
+  .image-zoom-display {
+    padding: 4px 8px;
+    min-width: 50px;
+  }
+
+  .image-info {
+    font-size: 11px;
+  }
+}
+
+/* Dark Mode Adjustments */
+[data-theme="dark"] .image-container {
+  background: #1a1a1a;
+}
+
+[data-theme="dark"] .image-fullscreen-overlay {
+  background: rgba(0, 0, 0, 0.95);
+}

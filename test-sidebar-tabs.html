@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Sidebar Tabs</title>
+  <link rel="stylesheet" href="/src/styles/main.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    #test-container {
+      width: 300px;
+      height: 100vh;
+      border-right: 1px solid var(--border-color);
+    }
+  </style>
+</head>
+<body>
+  <div id="test-container">
+    <!-- Sidebar Tabs Navigation -->
+    <div class="sidebar-tabs">
+      <button class="sidebar-tab-button active" data-tab="agents">助手</button>
+      <button class="sidebar-tab-button" data-tab="topics">话题</button>
+      <button class="sidebar-tab-button" data-tab="settings">设置</button>
+    </div>
+
+    <!-- Agents Tab Content -->
+    <div id="tab-content-agents" class="sidebar-tab-content active">
+      <div style="padding: 16px;">
+        <h3>助手列表</h3>
+        <p>这是助手标签页内容</p>
+      </div>
+    </div>
+
+    <!-- Topics Tab Content -->
+    <div id="tab-content-topics" class="sidebar-tab-content">
+      <div style="padding: 16px;">
+        <h3>话题列表</h3>
+        <p>这是话题标签页内容</p>
+      </div>
+    </div>
+
+    <!-- Settings Tab Content -->
+    <div id="tab-content-settings" class="sidebar-tab-content">
+      <div style="padding: 16px;">
+        <h3>设置</h3>
+        <p>这是设置标签页内容</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Simple tab switching test
+    const tabButtons = document.querySelectorAll('.sidebar-tab-button');
+    const tabContents = document.querySelectorAll('.sidebar-tab-content');
+
+    console.log('Tab buttons found:', tabButtons.length);
+    console.log('Tab contents found:', tabContents.length);
+
+    tabButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const tab = button.dataset.tab;
+        console.log('Clicked tab:', tab);
+
+        // Remove active from all
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+        tabContents.forEach(content => content.classList.remove('active'));
+
+        // Add active to selected
+        button.classList.add('active');
+        const selectedContent = document.getElementById(`tab-content-${tab}`);
+        if (selectedContent) {
+          selectedContent.classList.add('active');
+          console.log('Activated tab:', tab);
+        } else {
+          console.error('Tab content not found:', tab);
+        }
+      });
+    });
+
+    console.log('✓ Tab event listeners bound successfully');
+  </script>
+</body>
+</html>

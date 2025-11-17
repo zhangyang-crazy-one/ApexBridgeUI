@@ -1,0 +1,18 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=VCPChat
+GenericName=AI Chat Application
+Comment=Advanced AI collaboration platform with multi-agent support
+Exec=vcpchat %U
+Icon=vcpchat
+Terminal=false
+Categories=Office;Chat;Productivity;Network;
+Keywords=AI;Chat;Assistant;Collaboration;
+StartupNotify=true
+MimeType=text/plain;text/markdown;
+Actions=NewWindow;
+
+[Desktop Action NewWindow]
+Name=New Window
+Exec=vcpchat --new-window

@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VCPChat UI Preview - 统一设计系统</title>
+  <style>
+    /**
+     * VCPChat Unified Design System
+     * 基于 template/pic_resource/templates/styles/common.css 的设计规范
+     * 支持 Light/Dark 主题切换
+     */
+
+    /* ========== CSS Reset ========== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* ========== Design System - Light Theme (Default) ========== */
+    :root {
+      /* Color Palette - Light Mode */
+      --primary-color: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #dbeafe;
+      --secondary-color: #64748b;
+      --secondary-light: #e2e8f0;
+      --success-color: #10b981;
+      --warning-color: #f59e0b;
+      --danger-color: #ef4444;
+      --info-color: #3b82f6;
+
+      /* Neutral Colors - Light Mode */
+      --bg-primary: #ffffff;
+      --bg-secondary: #f8fafc;
+      --bg-tertiary: #f1f5f9;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-tertiary: #94a3b8;
+      --border-color: #e2e8f0;
+      --border-hover: #cbd5e1;
+
+      /* Shadows */
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+
+      /* Spacing */
+      --spacing-xs: 0.25rem;
+      --spacing-sm: 0.5rem;
+      --spacing-md: 1rem;
+      --spacing-lg: 1.5rem;
+      --spacing-xl: 2rem;
+
+      /* Typography */
+      --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      --font-size-xs: 0.75rem;
+      --font-size-sm: 0.875rem;
+      --font-size-base: 1rem;
+      --font-size-lg: 1.125rem;
+      --font-size-xl: 1.25rem;
+
+      /* Layout */
+      --titlebar-height: 40px;
+      --sidebar-width: 280px;
+      --resize-handle-width: 4px;
+
+      /* Transitions */
+      --transition-fast: 150ms ease-in-out;
+      --transition-base: 200ms ease-in-out;
+
+      /* Border Radius */
+      --radius-sm: 0.25rem;
+      --radius-md: 0.375rem;
+      --radius-lg: 0.5rem;
+
+      /* SVG Icon Colors */
+      --icon-color: #2c2c2c;
+      --icon-path: url("data:image/svg+xml,%3Csvg viewBox='0 0 1280 1024' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M640 0c35.4 0 64 28.6 64 64v128h240c79.6 0 144 64.4 144 144v544c0 79.6-64.4 144-144 144H336c-79.6 0-144-64.4-144-144V336c0-79.6 64.4-144 144-144h240V64c0-35.4 28.6-64 64-64z' fill='%232c2c2c'/%3E%3C/svg%3E");
+    }
+
+    /* ========== Dark Theme ========== */
+    [data-theme="dark"] {
+      /* Color Palette - Dark Mode */
+      --primary-color: #3b82f6;
+      --primary-hover: #2563eb;
+      --primary-light: #1e3a8a;
+      --secondary-color: #94a3b8;
+      --secondary-light: #334155;
+
+      /* Neutral Colors - Dark Mode */
+      --bg-primary: #0f172a;
+      --bg-secondary: #1e293b;
+      --bg-tertiary: #334155;
+      --text-primary: #f1f5f9;
+      --text-secondary: #cbd5e1;
+      --text-tertiary: #94a3b8;
+      --border-color: #334155;
+      --border-hover: #475569;
+
+      /* Shadows - Dark Mode */
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+
+      /* SVG Icon Colors - Dark Mode */
+      --icon-color: #f1f5f9;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: var(--font-family);
+      font-size: var(--font-size-base);
+      line-height: 1.5;
+      color: var(--text-primary);
+      background-color: var(--bg-secondary);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      transition: background-color var(--transition-base), color var(--transition-base);
+    }
+
+    /* ========== Custom Title Bar ========== */
+    .titlebar {
+      height: var(--titlebar-height);
+      background-color: var(--bg-primary);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--spacing-md);
+      user-select: none;
+      position: relative;
+      z-index: 1000;
+      transition: background-color var(--transition-base), border-color var(--transition-base);
+    }
+
+    .titlebar-left {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+    }
+
+    .titlebar-icon {
+      width: 24px;
+      height: 24px;
+      background-image: var(--icon-path);
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      filter: brightness(0) saturate(100%);
+      transition: filter var(--transition-base);
+    }
+
+    [data-theme="dark"] .titlebar-icon {
+      filter: brightness(0) saturate(100%) invert(1);
+    }
+
+    .titlebar-logo {
+      font-size: var(--font-size-base);
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
+      transition: color var(--transition-base);
+    }
+
+    .titlebar-center {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+      transition: color var(--transition-base);
+    }
+
+    .titlebar-right {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+    }
+
+    /* Theme Toggle Button */
+    .theme-toggle {
+      width: 32px;
+      height: 32px;
+      border: none;
+      background-color: transparent;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color var(--transition-fast);
+      color: var(--text-secondary);
+      font-size: 18px;
+    }
+
+    .theme-toggle:hover {
+      background-color: var(--bg-tertiary);
+    }
+
+    .window-controls {
+      display: flex;
+      gap: var(--spacing-xs);
+    }
+
+    .window-control-btn {
+      width: 32px;
+      height: 32px;
+      border: none;
+      background-color: transparent;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color var(--transition-fast);
+      color: var(--text-secondary);
+      font-size: 16px;
+    }
+
+    .window-control-btn:hover {
+      background-color: var(--bg-tertiary);
+    }
+
+    .window-control-btn.close:hover {
+      background-color: var(--danger-color);
+      color: white;
+    }
+
+    /* ========== Main Application Container ========== */
+    .app-container {
+      display: flex;
+      height: calc(100% - var(--titlebar-height));
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ========== Sidebars ========== */
+    .sidebar {
+      background-color: var(--bg-primary);
+      border-right: 1px solid var(--border-color);
+      overflow-y: auto;
+      overflow-x: hidden;
+      transition: width var(--transition-base), background-color var(--transition-base), border-color var(--transition-base);
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-left {
+      width: var(--sidebar-width);
+      order: 1;
+    }
+
+    .sidebar-right {
+      width: var(--sidebar-width);
+      order: 5;
+      border-right: none;
+      border-left: 1px solid var(--border-color);
+    }
+
+    .sidebar.collapsed {
+      width: 0;
+      border: none;
+    }
+
+    .sidebar-header {
+      padding: var(--spacing-md);
+      border-bottom: 1px solid var(--border-color);
+      font-weight: 600;
+      font-size: var(--font-size-sm);
+      color: var(--text-primary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: border-color var(--transition-base), color var(--transition-base);
+    }
+
+    .sidebar-toggle {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: var(--spacing-xs) var(--spacing-sm);
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      transition: background-color var(--transition-fast), color var(--transition-base);
+    }
+
+    .sidebar-toggle:hover {
+      background-color: var(--bg-tertiary);
+    }
+
+    .sidebar-content {
+      flex: 1;
+      padding: var(--spacing-sm);
+    }
+
+    .sidebar-item {
+      padding: var(--spacing-sm) var(--spacing-md);
+      margin-bottom: var(--spacing-xs);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: background-color var(--transition-fast);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+    }
+
+    .sidebar-item:hover {
+      background-color: var(--bg-tertiary);
+    }
+
+    .sidebar-item.active {
+      background-color: var(--primary-light);
+      color: var(--primary-color);
+    }
+
+    [data-theme="dark"] .sidebar-item.active {
+      background-color: var(--primary-light);
+      color: var(--text-primary);
+    }
+
+    .sidebar-item-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: var(--bg-tertiary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+      transition: background-color var(--transition-base);
+    }
+
+    .sidebar-item-icon svg {
+      width: 18px;
+      height: 18px;
+      fill: var(--icon-color);
+      transition: fill var(--transition-base);
+    }
+
+    .sidebar-item.active .sidebar-item-icon {
+      background-color: var(--primary-color);
+    }
+
+    .sidebar-item.active .sidebar-item-icon svg {
+      fill: white;
+    }
+
+    .sidebar-item-text {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .sidebar-item-title {
+      font-weight: 500;
+      font-size: var(--font-size-sm);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: color var(--transition-base);
+    }
+
+    .sidebar-item-subtitle {
+      font-size: var(--font-size-xs);
+      color: var(--text-tertiary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: color var(--transition-base);
+    }
+
+    /* ========== Resize Handles ========== */
+    .resize-handle {
+      width: var(--resize-handle-width);
+      background-color: transparent;
+      cursor: col-resize;
+      flex-shrink: 0;
+      position: relative;
+      transition: background-color var(--transition-fast);
+    }
+
+    .resize-handle:hover {
+      background-color: var(--primary-color);
+    }
+
+    .resize-handle-left {
+      order: 2;
+    }
+
+    .resize-handle-right {
+      order: 4;
+    }
+
+    /* ========== Main Content Area ========== */
+    .main-content {
+      flex: 1;
+      background-color: var(--bg-secondary);
+      overflow-y: auto;
+      overflow-x: hidden;
+      order: 3;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      transition: background-color var(--transition-base);
+    }
+
+    /* ========== Welcome Screen ========== */
+    .welcome-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      text-align: center;
+      padding: var(--spacing-xl);
+    }
+
+    .welcome-screen h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: var(--spacing-md);
+      transition: color var(--transition-base);
+    }
+
+    .welcome-screen p {
+      font-size: var(--font-size-lg);
+      color: var(--text-secondary);
+      margin-bottom: var(--spacing-sm);
+      transition: color var(--transition-base);
+    }
+
+    .welcome-screen .version {
+      font-size: var(--font-size-sm);
+      color: var(--text-tertiary);
+      font-weight: 500;
+      margin-top: var(--spacing-lg);
+      opacity: 0.8;
+      transition: color var(--transition-base);
+    }
+
+    .features {
+      margin-top: var(--spacing-xl);
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--spacing-md);
+      width: 100%;
+      max-width: 800px;
+    }
+
+    .feature-card {
+      background-color: var(--bg-primary);
+      padding: var(--spacing-lg);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-color);
+      text-align: left;
+      transition: all var(--transition-base);
+    }
+
+    .feature-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--border-hover);
+    }
+
+    .feature-card-icon {
+      width: 40px;
+      height: 40px;
+      margin-bottom: var(--spacing-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-md);
+      background-color: var(--primary-light);
+    }
+
+    [data-theme="dark"] .feature-card-icon {
+      background-color: var(--bg-tertiary);
+    }
+
+    .feature-card-icon svg {
+      width: 24px;
+      height: 24px;
+      fill: var(--primary-color);
+      transition: fill var(--transition-base);
+    }
+
+    .feature-card h3 {
+      font-size: var(--font-size-base);
+      font-weight: 600;
+      margin-bottom: var(--spacing-sm);
+      color: var(--text-primary);
+      transition: color var(--transition-base);
+    }
+
+    .feature-card p {
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+      margin: 0;
+      line-height: 1.6;
+      transition: color var(--transition-base);
+    }
+
+    /* ========== Scrollbar Styling ========== */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background-color: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background-color: var(--border-color);
+      border-radius: 4px;
+      transition: background-color var(--transition-base);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background-color: var(--border-hover);
+    }
+
+    /* ========== UI Preview Notice ========== */
+    .preview-notice {
+      position: fixed;
+      top: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: var(--primary-color);
+      color: white;
+      padding: var(--spacing-sm) var(--spacing-lg);
+      border-radius: var(--radius-lg);
+      font-size: var(--font-size-sm);
+      font-weight: 500;
+      z-index: 10000;
+      box-shadow: var(--shadow-lg);
+      animation: slideDown 0.3s ease-out;
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+
+    /* ========== Utility Classes ========== */
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <!-- UI Preview Notice -->
+  <div class="preview-notice">
+    <span>🎨</span>
+    <span>VCPChat 统一设计系统预览 - 点击右上角切换主题</span>
+  </div>
+
+  <!-- Custom Title Bar -->
+  <div id="titlebar" class="titlebar">
+    <div class="titlebar-left">
+      <div class="titlebar-icon"></div>
+      <span class="titlebar-logo">VCPChat</span>
+    </div>
+    <div class="titlebar-center">
+      当前话题：与 Claude 的对话
+    </div>
+    <div class="titlebar-right">
+      <button class="theme-toggle" onclick="toggleTheme()" title="切换主题">
+        <span id="theme-icon">☀️</span>
+      </button>
+      <div class="window-controls">
+        <button class="window-control-btn minimize" title="最小化">−</button>
+        <button class="window-control-btn maximize" title="最大化">□</button>
+        <button class="window-control-btn close" title="关闭">×</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Application Layout -->
+  <div id="app-container" class="app-container">
+    <!-- Left Sidebar -->
+    <aside id="sidebar-left" class="sidebar sidebar-left">
+      <div class="sidebar-header">
+        <span>对话列表</span>
+        <button class="sidebar-toggle" onclick="toggleSidebar('left')" title="折叠侧边栏">‹</button>
+      </div>
+      <div class="sidebar-content">
+        <div class="sidebar-item active">
+          <div class="sidebar-item-icon">
+            <svg viewBox="0 0 1280 1024" xmlns="http://www.w3.org/2000/svg">
+              <path d="M640 0c35.4 0 64 28.6 64 64v128h240c79.6 0 144 64.4 144 144v544c0 79.6-64.4 144-144 144H336c-79.6 0-144-64.4-144-144V336c0-79.6 64.4-144 144-144h240V64c0-35.4 28.6-64 64-64zM416 768c-17.6 0-32 14.4-32 32s14.4 32 32 32h64c17.6 0 32-14.4 32-32s-14.4-32-32-32h-64z m192 0c-17.6 0-32 14.4-32 32s14.4 32 32 32h64c17.6 0 32-14.4 32-32s-14.4-32-32-32h-64z m192 0c-17.6 0-32 14.4-32 32s14.4 32 32 32h64c17.6 0 32-14.4 32-32s-14.4-32-32-32h-64zM528 512a80 80 0 1 0-160 0 80 80 0 1 0 160 0z m304 80a80 80 0 1 0 0-160 80 80 0 1 0 0 160z"/>
+            </svg>
+          </div>
+          <div class="sidebar-item-text">
+            <div class="sidebar-item-title">Claude</div>
+            <div class="sidebar-item-subtitle">AI 助手</div>
+          </div>
+        </div>
+        <div class="sidebar-item">
+          <div class="sidebar-item-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+            </svg>
+          </div>
+          <div class="sidebar-item-text">
+            <div class="sidebar-item-title">团队协作</div>
+            <div class="sidebar-item-subtitle">3个成员在线</div>
+          </div>
+        </div>
+        <div class="sidebar-item">
+          <div class="sidebar-item-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 11.75c-.69 0-1.25.56-1.25 1.25s.56 1.25 1.25 1.25 1.25-.56 1.25-1.25-.56-1.25-1.25-1.25zm6 0c-.69 0-1.25.56-1.25 1.25s.56 1.25 1.25 1.25 1.25-.56 1.25-1.25-.56-1.25-1.25-1.25zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8 0-.29.02-.58.05-.86 2.36-1.05 4.23-2.98 5.21-5.37C11.07 8.33 14.05 10 17.42 10c.78 0 1.53-.09 2.25-.26.21.71.33 1.47.33 2.26 0 4.41-3.59 8-8 8z"/>
+            </svg>
+          </div>
+          <div class="sidebar-item-text">
+            <div class="sidebar-item-title">创意工坊</div>
+            <div class="sidebar-item-subtitle">头脑风暴</div>
+          </div>
+        </div>
+        <div class="sidebar-item">
+          <div class="sidebar-item-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+            </svg>
+          </div>
+          <div class="sidebar-item-text">
+            <div class="sidebar-item-title">数据分析</div>
+            <div class="sidebar-item-subtitle">项目统计</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Resize Handle for Left Sidebar -->
+    <div id="resize-handle-left" class="resize-handle resize-handle-left"></div>
+
+    <!-- Main Content Area -->
+    <main id="main-content" class="main-content">
+      <div class="welcome-screen">
+        <h1>欢迎使用 VCPChat</h1>
+        <p>AI 协作平台</p>
+        <p class="version">Version 1.0.0 - 统一设计系统</p>
+
+        <div class="features">
+          <div class="feature-card">
+            <div class="feature-card-icon">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
+              </svg>
+            </div>
+            <h3>智能对话</h3>
+            <p>与 AI 进行自然流畅的对话，支持多轮上下文理解和实时响应</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-card-icon">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+              </svg>
+            </div>
+            <h3>协同画布</h3>
+            <p>实时代码编辑和协作，支持语法高亮和差异对比功能</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-card-icon">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+              </svg>
+            </div>
+            <h3>智能笔记</h3>
+            <p>富文本编辑器，支持从对话中快速保存和管理内容</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-card-icon">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5C13 2.12 11.88 1 10.5 1S8 2.12 8 3.5V5H4c-1.1 0-1.99.9-1.99 2v3.8H3.5c1.49 0 2.7 1.21 2.7 2.7s-1.21 2.7-2.7 2.7H2V20c0 1.1.9 2 2 2h3.8v-1.5c0-1.49 1.21-2.7 2.7-2.7 1.49 0 2.7 1.21 2.7 2.7V22H17c1.1 0 2-.9 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5S21.88 11 20.5 11z"/>
+              </svg>
+            </div>
+            <h3>插件生态</h3>
+            <p>丰富的插件系统，扩展无限可能性和定制功能</p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Resize Handle for Right Sidebar -->
+    <div id="resize-handle-right" class="resize-handle resize-handle-right"></div>
+
+    <!-- Right Sidebar -->
+    <aside id="sidebar-right" class="sidebar sidebar-right">
+      <div class="sidebar-header">
+        <span>通知中心</span>
+        <button class="sidebar-toggle" onclick="toggleSidebar('right')" title="折叠侧边栏">›</button>
+      </div>
+      <div class="sidebar-content">
+        <div class="sidebar-item">
+          <div class="sidebar-item-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z"/>
+            </svg>
+          </div>
+          <div class="sidebar-item-text">
+            <div class="sidebar-item-title">系统通知</div>
+            <div class="sidebar-item-subtitle">5分钟前</div>
+          </div>
+        </div>
+        <div class="sidebar-item">
+          <div class="sidebar-item-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+            </svg>
+          </div>
+          <div class="sidebar-item-text">
+            <div class="sidebar-item-title">新消息</div>
+            <div class="sidebar-item-subtitle">来自 AI 助手</div>
+          </div>
+        </div>
+        <div class="sidebar-item">
+          <div class="sidebar-item-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94L14.4 2.81c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+            </svg>
+          </div>
+          <div class="sidebar-item-text">
+            <div class="sidebar-item-title">更新可用</div>
+            <div class="sidebar-item-subtitle">点击查看详情</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    console.log('VCPChat 统一设计系统预览加载完成');
+
+    // Theme Management
+    let currentTheme = 'light';
+
+    function toggleTheme() {
+      currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', currentTheme);
+      document.getElementById('theme-icon').textContent = currentTheme === 'light' ? '☀️' : '🌙';
+
+      // 保存主题偏好
+      localStorage.setItem('theme', currentTheme);
+      console.log(`主题切换至: ${currentTheme}`);
+    }
+
+    // Load saved theme
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      currentTheme = savedTheme;
+      document.documentElement.setAttribute('data-theme', currentTheme);
+      document.getElementById('theme-icon').textContent = currentTheme === 'light' ? '☀️' : '🌙';
+    }
+
+    // Toggle sidebar visibility
+    function toggleSidebar(side) {
+      const sidebar = document.getElementById(`sidebar-${side}`);
+      sidebar.classList.toggle('collapsed');
+    }
+
+    // Resize handle functionality
+    let isResizing = false;
+    let currentHandle = null;
+    let startX = 0;
+    let startWidth = 0;
+
+    document.querySelectorAll('.resize-handle').forEach(handle => {
+      handle.addEventListener('mousedown', (e) => {
+        isResizing = true;
+        currentHandle = handle;
+        startX = e.clientX;
+
+        const sidebar = handle.classList.contains('resize-handle-left')
+          ? document.getElementById('sidebar-left')
+          : document.getElementById('sidebar-right');
+        startWidth = sidebar.offsetWidth;
+
+        document.body.style.cursor = 'col-resize';
+        e.preventDefault();
+      });
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (!isResizing) return;
+
+      const sidebar = currentHandle.classList.contains('resize-handle-left')
+        ? document.getElementById('sidebar-left')
+        : document.getElementById('sidebar-right');
+
+      const delta = currentHandle.classList.contains('resize-handle-left')
+        ? e.clientX - startX
+        : startX - e.clientX;
+
+      const newWidth = Math.max(200, Math.min(500, startWidth + delta));
+      sidebar.style.width = `${newWidth}px`;
+    });
+
+    document.addEventListener('mouseup', () => {
+      if (isResizing) {
+        isResizing = false;
+        currentHandle = null;
+        document.body.style.cursor = '';
+      }
+    });
+
+    // Window control buttons (preview only)
+    document.querySelectorAll('.window-control-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (btn.classList.contains('close')) {
+          alert('关闭窗口 (仅预览)');
+        } else if (btn.classList.contains('minimize')) {
+          alert('最小化窗口 (仅预览)');
+        } else if (btn.classList.contains('maximize')) {
+          alert('最大化窗口 (仅预览)');
+        }
+      });
+    });
+
+    // Auto-hide preview notice
+    setTimeout(() => {
+      const notice = document.querySelector('.preview-notice');
+      if (notice) {
+        notice.style.transition = 'opacity 0.3s ease-out';
+        notice.style.opacity = '0';
+        setTimeout(() => notice.remove(), 300);
+      }
+    }, 5000);
+  </script>
+</body>
+</html>

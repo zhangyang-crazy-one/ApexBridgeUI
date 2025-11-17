@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>数据血缘 - DAMA Platform</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    /* ========== Anthropic Design System ========== */
+    :root {
+      --bg-primary: #FAF9F5;
+      --bg-secondary: #F0EEE6;
+      --bg-tertiary: #E8E6DD;
+      --text-primary: #141413;
+      --text-secondary: #666666;
+      --text-tertiary: #999999;
+      --border-color: #E5E5E5;
+      --primary-color: #2563eb;
+      --primary-light: #dbeafe;
+      --success-color: #10b981;
+      --warning-color: #f59e0b;
+      --danger-color: #ef4444;
+      --button-bg: #141413;
+      --button-text: #FAF9F5;
+      --input-bg: white;
+
+      --font-heading: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-body: Georgia, "Times New Roman", Times, serif;
+
+      --font-size-sm: 14px;
+      --font-size-base: 16px;
+      --font-size-lg: 18px;
+      --font-size-xl: 20px;
+      --font-size-2xl: 24px;
+
+      --spacing-xs: 8px;
+      --spacing-sm: 12px;
+      --spacing-md: 20px;
+      --spacing-lg: 32px;
+      --spacing-xl: 48px;
+
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-heading);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
+
+    /* ========== Header / Navigation ========== */
+    .header {
+      background-color: var(--bg-secondary);
+      padding: var(--spacing-sm) var(--spacing-lg);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .header-container {
+      max-width: 1800px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--spacing-lg);
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      text-decoration: none;
+      color: var(--text-primary);
+      flex-shrink: 0;
+    }
+
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      filter: grayscale(100%) brightness(0);
+    }
+
+    .logo-text {
+      font-family: var(--font-heading);
+      font-size: var(--font-size-xl);
+      font-weight: 500;
+      letter-spacing: -0.5px;
+    }
+
+    .header-nav {
+      display: flex;
+      gap: var(--spacing-xs);
+      flex: 1;
+      justify-content: center;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+      padding: var(--spacing-xs) var(--spacing-sm);
+      font-family: var(--font-heading);
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+      text-decoration: none;
+      border-radius: var(--radius-sm);
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .nav-link:hover {
+      background-color: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .nav-link.active {
+      background-color: var(--button-bg);
+      color: var(--button-text);
+      font-weight: 500;
+    }
+
+    .nav-icon {
+      width: 18px;
+      height: 18px;
+      opacity: 0.7;
+    }
+
+    .nav-link.active .nav-icon {
+      opacity: 1;
+      filter: brightness(0) invert(1);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: var(--spacing-sm);
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .btn-header {
+      padding: var(--spacing-xs) var(--spacing-md);
+      font-family: var(--font-heading);
+      font-size: var(--font-size-sm);
+      font-weight: 500;
+      color: var(--text-primary);
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn-header:hover {
+      background-color: var(--bg-tertiary);
+    }
+
+    .btn-header.btn-primary {
+      background-color: var(--button-bg);
+      color: var(--button-text);
+      border-color: var(--button-bg);
+    }
+
+    .btn-header.btn-primary:hover {
+      opacity: 0.85;
+    }
+
+    /* ========== Buttons ========== */
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: var(--font-heading);
+    }
+
+    .btn-primary {
+      background: var(--button-bg);
+      color: var(--button-text);
+    }
+
+    .btn-primary:hover {
+      background: #2a2a28;
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-secondary);
+    }
+
+    .btn-sm {
+      padding: 6px 14px;
+      font-size: 13px;
+    }
+
+    .w-full {
+      width: 100%;
+    }
+
+    /* ========== Workspace Container ========== */
+    .workspace-container {
+      padding: var(--spacing-lg);
+    }
+
+    .workspace-header {
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .workspace-title {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--text-primary);
+    }
+
+    .workspace-description {
+      font-size: 15px;
+      color: var(--text-secondary);
+    }
+
+    /* ========== Lineage Workspace ========== */
+    .lineage-workspace {
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: var(--spacing-md);
+      height: calc(100vh - 240px);
+    }
+
+    .lineage-canvas {
+      background: white;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .lineage-panel {
+      background: white;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      overflow-y: auto;
+      padding: var(--spacing-md);
+    }
+
+    .panel-title {
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: var(--spacing-md);
+      color: var(--text-primary);
+    }
+
+    #lineage-svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* ========== Lineage Nodes ========== */
+    .node {
+      cursor: pointer;
+    }
+
+    .node rect {
+      fill: white;
+      stroke: var(--text-primary);
+      stroke-width: 2px;
+      rx: 8px;
+    }
+
+    .node.selected rect {
+      fill: var(--primary-light);
+      stroke: var(--primary-color);
+      stroke-width: 3px;
+    }
+
+    .node.source rect {
+      fill: #dbeafe;
+      stroke: #3b82f6;
+    }
+
+    .node.target rect {
+      fill: #d1fae5;
+      stroke: #10b981;
+    }
+
+    .node text {
+      font-size: 13px;
+      fill: var(--text-primary);
+      pointer-events: none;
+      font-weight: 500;
+    }
+
+    .link {
+      fill: none;
+      stroke: var(--border-color);
+      stroke-width: 2px;
+      marker-end: url(#arrowhead);
+    }
+
+    .link.highlighted {
+      stroke: var(--primary-color);
+      stroke-width: 3px;
+    }
+
+    /* ========== Toolbar ========== */
+    .toolbar {
+      display: flex;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-md);
+      background: white;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      margin-bottom: var(--spacing-md);
+      align-items: center;
+    }
+
+    .form-select {
+      padding: 8px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-family: var(--font-heading);
+      background: white;
+      cursor: pointer;
+    }
+
+    .form-select:focus {
+      outline: none;
+      border-color: var(--text-primary);
+    }
+
+    /* ========== Zoom Controls ========== */
+    .zoom-controls {
+      position: absolute;
+      bottom: var(--spacing-md);
+      right: var(--spacing-md);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-xs);
+      background: white;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: var(--spacing-xs);
+      box-shadow: var(--shadow-md);
+    }
+
+    .zoom-btn {
+      width: 36px;
+      height: 36px;
+      border: none;
+      background: var(--bg-secondary);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: 600;
+      transition: all 0.2s;
+      color: var(--text-primary);
+    }
+
+    .zoom-btn:hover {
+      background: var(--text-primary);
+      color: white;
+    }
+
+    /* ========== Impact List ========== */
+    .impact-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .impact-item {
+      padding: var(--spacing-sm);
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      margin-bottom: var(--spacing-sm);
+      font-size: 14px;
+    }
+
+    .impact-item.high {
+      border-left: 4px solid var(--danger-color);
+    }
+
+    .impact-item.medium {
+      border-left: 4px solid var(--warning-color);
+    }
+
+    .impact-item.low {
+      border-left: 4px solid var(--success-color);
+    }
+
+    /* ========== Legend ========== */
+    .legend {
+      display: flex;
+      gap: var(--spacing-md);
+      padding: 8px 16px;
+      background: var(--bg-secondary);
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      margin-left: auto;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+    }
+
+    .legend-box {
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+      border: 2px solid var(--text-primary);
+    }
+
+    /* ========== Detail Sections ========== */
+    .detail-section {
+      margin-bottom: var(--spacing-md);
+    }
+
+    .detail-section h4 {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: var(--spacing-sm);
+      color: var(--text-primary);
+    }
+
+    .detail-row {
+      display: flex;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 14px;
+    }
+
+    .detail-row:last-child {
+      border-bottom: none;
+    }
+
+    .detail-label {
+      flex: 0 0 100px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .detail-value {
+      flex: 1;
+      color: var(--text-primary);
+    }
+
+    .card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: var(--spacing-sm);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .badge-danger {
+      background: var(--danger-color);
+      color: white;
+    }
+
+    /* ========== Responsive Design ========== */
+    @media (max-width: 1200px) {
+      .lineage-workspace {
+        grid-template-columns: 1fr 360px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .lineage-workspace {
+        grid-template-columns: 1fr;
+        height: auto;
+      }
+
+      .lineage-canvas {
+        min-height: 500px;
+      }
+
+      .lineage-panel {
+        max-height: 600px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header / Navigation -->
+  <header class="header">
+    <div class="header-container">
+      <a href="index.html" class="logo-container">
+        <img src="../../icon/hdlogo.com-measurable-data-token-mdt.svg" alt="DAMA Logo" class="logo-icon">
+        <span class="logo-text">DAMA Platform</span>
+      </a>
+
+      <nav class="header-nav">
+        <a href="index.html" class="nav-link">
+          <img src="../../icon/Emoji_instead/dashboard-4.svg" alt="首页" class="nav-icon">
+          <span>首页</span>
+        </a>
+        <a href="modeling.html" class="nav-link">
+          <img src="../../icon/Emoji_instead/data.svg" alt="数据建模" class="nav-icon">
+          <span>数据建模</span>
+        </a>
+        <a href="metadata.html" class="nav-link">
+          <img src="../../icon/Emoji_instead/database-3.svg" alt="元数据管理" class="nav-icon">
+          <span>元数据管理</span>
+        </a>
+        <a href="lineage.html" class="nav-link active">
+          <img src="../../icon/Emoji_instead/code-fork-3.svg" alt="数据血缘" class="nav-icon">
+          <span>数据血缘</span>
+        </a>
+        <a href="data-flow-matrix.html" class="nav-link">
+          <img src="../../icon/Emoji_instead/refresh.svg" alt="数据流矩阵" class="nav-icon">
+          <span>数据流矩阵</span>
+        </a>
+        <a href="enterprise-data-architecture.html" class="nav-link">
+          <img src="../../icon/Emoji_instead/ic_enterprice.svg" alt="企业架构" class="nav-icon">
+          <span>企业架构</span>
+        </a>
+        <a href="ai-assistant.html" class="nav-link">
+          <img src="../../icon/Emoji_instead/robot.svg" alt="AI助手" class="nav-icon">
+          <span>AI助手</span>
+        </a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="btn-header" onclick="resetView()">重置视图</button>
+        <button class="btn-header btn-primary" onclick="analyzeImpact()">影响分析</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Workspace -->
+  <div class="workspace-container">
+    <div class="workspace-header">
+      <h1 class="workspace-title">数据血缘 - 血缘图可视化</h1>
+      <p class="workspace-description">追踪数据流转路径，分析变更影响范围，支持上下游依赖分析</p>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <select class="form-select" style="width: 200px;" onchange="selectEntity(this.value)">
+        <option value="customer">客户表 (customer)</option>
+        <option value="order">订单表 (order)</option>
+        <option value="product">产品表 (product)</option>
+        <option value="dwd_customer">DWD客户表 (dwd_customer)</option>
+      </select>
+
+      <div class="legend">
+        <div class="legend-item">
+          <div class="legend-box" style="background: #dbeafe; border-color: #3b82f6;"></div>
+          <span>数据源</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-box" style="background: white;"></div>
+          <span>中间表</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-box" style="background: #d1fae5; border-color: #10b981;"></div>
+          <span>目标表</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lineage Workspace -->
+    <div class="lineage-workspace">
+      <!-- Lineage Canvas -->
+      <div class="lineage-canvas">
+        <svg id="lineage-svg">
+          <defs>
+            <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+              <polygon points="0 0, 10 3, 0 6" fill="#E5E5E5" />
+            </marker>
+          </defs>
+        </svg>
+
+        <!-- Zoom Controls -->
+        <div class="zoom-controls">
+          <button class="zoom-btn" onclick="zoomIn()">+</button>
+          <button class="zoom-btn" onclick="zoomOut()">−</button>
+          <button class="zoom-btn" onclick="resetZoom()">⊙</button>
+        </div>
+      </div>
+
+      <!-- Lineage Panel -->
+      <div class="lineage-panel">
+        <h3 class="panel-title">血缘详情</h3>
+
+        <div id="lineage-detail">
+          <div class="detail-section">
+            <h4>当前节点</h4>
+            <div class="detail-row">
+              <div class="detail-label">表名</div>
+              <div class="detail-value">customer</div>
+            </div>
+            <div class="detail-row">
+              <div class="detail-label">类型</div>
+              <div class="detail-value">源表</div>
+            </div>
+            <div class="detail-row">
+              <div class="detail-label">数据库</div>
+              <div class="detail-value">生产数据库</div>
+            </div>
+          </div>
+
+          <div class="detail-section">
+            <h4>上游依赖 (0)</h4>
+            <p style="font-size: 14px; color: var(--text-tertiary);">无上游依赖</p>
+          </div>
+
+          <div class="detail-section">
+            <h4>下游影响 (3)</h4>
+            <ul class="impact-list">
+              <li class="impact-item high">
+                <div style="font-weight: 500; margin-bottom: 4px;">ods_customer</div>
+                <div style="color: var(--text-tertiary); font-size: 13px;">ODS层客户表</div>
+              </li>
+              <li class="impact-item medium">
+                <div style="font-weight: 500; margin-bottom: 4px;">dwd_customer</div>
+                <div style="color: var(--text-tertiary); font-size: 13px;">DWD层客户表</div>
+              </li>
+              <li class="impact-item low">
+                <div style="font-weight: 500; margin-bottom: 4px;">customer_report</div>
+                <div style="color: var(--text-tertiary); font-size: 13px;">客户报表</div>
+              </li>
+            </ul>
+          </div>
+
+          <div class="detail-section">
+            <h4>变更影响评估</h4>
+            <div class="card">
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                <span class="badge badge-danger">高风险</span>
+                <span style="font-weight: 500; font-size: 14px;">3个下游表受影响</span>
+              </div>
+              <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.6;">
+                修改此表结构将影响3个下游表和2个报表，建议在非业务高峰期执行变更。
+              </p>
+            </div>
+          </div>
+
+          <div style="margin-top: var(--spacing-md);">
+            <button class="btn btn-primary btn-sm w-full">生成变更计划</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Lineage data
+    const lineageData = {
+      nodes: [
+        { id: 'customer', name: '客户表', type: 'source', x: 100, y: 200 },
+        { id: 'ods_customer', name: 'ODS客户表', type: 'intermediate', x: 350, y: 100 },
+        { id: 'dwd_customer', name: 'DWD客户表', type: 'intermediate', x: 600, y: 100 },
+        { id: 'customer_report', name: '客户报表', type: 'target', x: 850, y: 100 },
+        { id: 'order', name: '订单表', type: 'source', x: 100, y: 350 },
+        { id: 'ods_order', name: 'ODS订单表', type: 'intermediate', x: 350, y: 300 },
+        { id: 'dwd_order', name: 'DWD订单表', type: 'intermediate', x: 600, y: 250 },
+        { id: 'order_report', name: '订单报表', type: 'target', x: 850, y: 250 }
+      ],
+      links: [
+        { source: 'customer', target: 'ods_customer' },
+        { source: 'ods_customer', target: 'dwd_customer' },
+        { source: 'dwd_customer', target: 'customer_report' },
+        { source: 'order', target: 'ods_order' },
+        { source: 'ods_order', target: 'dwd_order' },
+        { source: 'dwd_order', target: 'order_report' },
+        { source: 'dwd_customer', target: 'order_report' }
+      ]
+    };
+
+    let svg, g, zoom;
+    let selectedNode = null;
+
+    function initLineageGraph() {
+      svg = d3.select('#lineage-svg');
+      const width = svg.node().getBoundingClientRect().width;
+      const height = svg.node().getBoundingClientRect().height;
+
+      // Create zoom behavior
+      zoom = d3.zoom()
+        .scaleExtent([0.1, 4])
+        .on('zoom', (event) => {
+          g.attr('transform', event.transform);
+        });
+
+      svg.call(zoom);
+
+      // Create main group
+      g = svg.append('g');
+
+      // Draw links
+      const links = g.selectAll('.link')
+        .data(lineageData.links)
+        .enter()
+        .append('path')
+        .attr('class', 'link')
+        .attr('d', d => {
+          const source = lineageData.nodes.find(n => n.id === d.source);
+          const target = lineageData.nodes.find(n => n.id === d.target);
+          return `M ${source.x + 100} ${source.y + 25} L ${target.x} ${target.y + 25}`;
+        });
+
+      // Draw nodes
+      const nodes = g.selectAll('.node')
+        .data(lineageData.nodes)
+        .enter()
+        .append('g')
+        .attr('class', d => `node ${d.type}`)
+        .attr('transform', d => `translate(${d.x}, ${d.y})`)
+        .on('click', (event, d) => selectNodeById(d.id));
+
+      nodes.append('rect')
+        .attr('width', 100)
+        .attr('height', 50)
+        .attr('rx', 8);
+
+      nodes.append('text')
+        .attr('x', 50)
+        .attr('y', 25)
+        .attr('text-anchor', 'middle')
+        .attr('dominant-baseline', 'middle')
+        .text(d => d.name)
+        .each(function(d) {
+          const text = d3.select(this);
+          const words = d.name.split(' ');
+          text.text('');
+          
+          words.forEach((word, i) => {
+            text.append('tspan')
+              .attr('x', 50)
+              .attr('dy', i === 0 ? 0 : '1.2em')
+              .text(word);
+          });
+        });
+
+      // Center view
+      const bbox = g.node().getBBox();
+      const scale = Math.min(width / bbox.width, height / bbox.height) * 0.8;
+      const translateX = (width - bbox.width * scale) / 2 - bbox.x * scale;
+      const translateY = (height - bbox.height * scale) / 2 - bbox.y * scale;
+      
+      svg.call(zoom.transform, d3.zoomIdentity.translate(translateX, translateY).scale(scale));
+    }
+
+    function selectNodeById(nodeId) {
+      selectedNode = nodeId;
+      
+      // Update visual selection
+      d3.selectAll('.node').classed('selected', false);
+      d3.selectAll('.node').filter(d => d.id === nodeId).classed('selected', true);
+      
+      // Highlight connected links
+      d3.selectAll('.link').classed('highlighted', false);
+      d3.selectAll('.link')
+        .filter(d => d.source === nodeId || d.target === nodeId)
+        .classed('highlighted', true);
+      
+      // Update detail panel
+      updateDetailPanel(nodeId);
+    }
+
+    function updateDetailPanel(nodeId) {
+      const node = lineageData.nodes.find(n => n.id === nodeId);
+      // Update detail panel content based on selected node
+      console.log('Selected node:', node);
+    }
+
+    function selectEntity(entityId) {
+      selectNodeById(entityId);
+    }
+
+    function zoomIn() {
+      svg.transition().call(zoom.scaleBy, 1.3);
+    }
+
+    function zoomOut() {
+      svg.transition().call(zoom.scaleBy, 0.7);
+    }
+
+    function resetZoom() {
+      svg.transition().call(zoom.transform, d3.zoomIdentity);
+    }
+
+    function resetView() {
+      initLineageGraph();
+    }
+
+    function analyzeImpact() {
+      alert('影响分析功能开发中...');
+    }
+
+    // Initialize
+    window.onload = function() {
+      initLineageGraph();
+      selectNodeById('customer');
+    };
+  </script>
+</body>
+</html>
+

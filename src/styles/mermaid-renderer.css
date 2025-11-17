@@ -1,0 +1,447 @@
+/**
+ * Mermaid Renderer Styles
+ *
+ * Theme-aware styles for Mermaid diagram visualization
+ * Follows Anthropic design system color palette
+ */
+
+/* Mermaid Container */
+.mermaid-renderer {
+  width: 100%;
+  max-width: 100%;
+  border-radius: var(--radius-md);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: border-color var(--transition-normal);
+}
+
+.mermaid-renderer:hover {
+  border-color: var(--border-hover);
+}
+
+/* Header */
+.mermaid-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color var(--transition-normal);
+}
+
+.mermaid-title {
+  font-size: var(--font-size-xs);
+  font-family: var(--font-heading);
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.mermaid-type {
+  padding: 2px 8px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  color: var(--text-primary);
+  transition: background-color var(--transition-normal);
+}
+
+/* Actions */
+.mermaid-actions {
+  display: flex;
+  gap: var(--spacing-xs);
+}
+
+.mermaid-export-svg-btn,
+.mermaid-export-png-btn,
+.mermaid-fullscreen-btn,
+.mermaid-source-toggle-btn {
+  padding: 4px 8px;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: var(--font-size-xs);
+  font-family: var(--font-heading);
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.mermaid-export-svg-btn:hover,
+.mermaid-export-png-btn:hover,
+.mermaid-fullscreen-btn:hover,
+.mermaid-source-toggle-btn:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--border-hover);
+}
+
+.mermaid-export-svg-btn:active,
+.mermaid-export-png-btn:active,
+.mermaid-fullscreen-btn:active,
+.mermaid-source-toggle-btn:active {
+  background: var(--active-bg);
+  color: var(--active-text);
+  border-color: var(--active-bg);
+}
+
+.mermaid-source-toggle-btn.active,
+.mermaid-fullscreen-btn.active {
+  background: var(--active-bg);
+  color: var(--active-text);
+  border-color: var(--active-bg);
+}
+
+/* 🔑 修复问题2：全屏图标样式 */
+.fullscreen-icon {
+  width: 16px;
+  height: 16px;
+  /* Light模式下反转浅色SVG图标为深色 */
+  filter: invert(1);
+}
+
+/* Dark模式下保持浅色SVG图标不变 */
+[data-theme="dark"] .fullscreen-icon {
+  filter: none;
+}
+
+/* Diagram Container */
+.mermaid-diagram-container {
+  padding: var(--spacing-lg);
+  background: var(--bg-primary);
+  overflow: auto;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color var(--transition-normal);
+}
+
+/* Mermaid SVG Diagram */
+.mermaid-diagram-container .mermaid {
+  max-width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mermaid-diagram-container .mermaid svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Mermaid Source Code View */
+.mermaid-source {
+  padding: var(--spacing-md);
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-color);
+  font-family: 'Monaco', 'Menlo', 'Consolas', 'Courier New', monospace;
+  font-size: 13px;
+  color: var(--text-primary);
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.6;
+  transition: background-color var(--transition-normal);
+  display: none;
+}
+
+.mermaid-source.visible {
+  display: block;
+}
+
+/* Loading State */
+.mermaid-loading {
+  padding: var(--spacing-lg);
+  text-align: center;
+  color: var(--text-tertiary);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+}
+
+.mermaid-loading::before {
+  content: '';
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  margin-right: var(--spacing-sm);
+  border: 3px solid var(--border-color);
+  border-top-color: var(--active-bg);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Error State */
+.mermaid-renderer.error {
+  border-color: #E74C3C;
+}
+
+.mermaid-error {
+  padding: var(--spacing-md);
+  background: rgba(231, 76, 60, 0.1);
+  border-top: 1px solid rgba(231, 76, 60, 0.3);
+  color: #E74C3C;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
+}
+
+.mermaid-error-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.mermaid-error-message {
+  flex: 1;
+}
+
+/* 🔑 修复问题2：全屏模式样式 */
+.mermaid-renderer.fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  border-radius: 0;
+  max-width: none;
+  min-height: 100vh;
+  background: var(--bg-primary);
+}
+
+.mermaid-renderer.fullscreen .mermaid-diagram-container {
+  min-height: calc(100vh - 60px);
+  max-height: calc(100vh - 60px);
+}
+
+/* Full Screen Mode (Legacy - 保留以防其他地方使用) */
+.mermaid-fullscreen-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(20, 20, 19, 0.95);
+  backdrop-filter: blur(8px);
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn var(--transition-normal);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.mermaid-fullscreen-header {
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mermaid-fullscreen-title {
+  color: var(--text-primary);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  font-weight: 500;
+}
+
+.mermaid-fullscreen-close {
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+}
+
+.mermaid-fullscreen-close:hover {
+  background: var(--active-bg);
+  color: var(--active-text);
+  border-color: var(--active-bg);
+}
+
+.mermaid-fullscreen-content {
+  flex: 1;
+  padding: var(--spacing-xl);
+  overflow: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mermaid-fullscreen-content .mermaid svg {
+  max-width: 95vw;
+  max-height: 85vh;
+}
+
+/* Diagram Type-Specific Styles */
+
+/* Flowchart */
+.mermaid-diagram-container .mermaid .flowchart {
+  /* Default flowchart styles integrated with Mermaid */
+}
+
+/* Sequence Diagram */
+.mermaid-diagram-container .mermaid .sequence {
+  /* Default sequence diagram styles */
+}
+
+/* Gantt Chart */
+.mermaid-diagram-container .mermaid .gantt {
+  /* Default gantt chart styles */
+}
+
+/* Class Diagram */
+.mermaid-diagram-container .mermaid .classDiagram {
+  /* Default class diagram styles */
+}
+
+/* Mermaid Theme Integration */
+[data-theme="light"] .mermaid-diagram-container {
+  /* Light theme - Mermaid will use light colors */
+  background: var(--bg-primary);
+}
+
+[data-theme="dark"] .mermaid-diagram-container {
+  /* Dark theme - Mermaid will use dark colors */
+  background: #1a1a1a;
+}
+
+/* Override Mermaid default colors to match Anthropic palette */
+[data-theme="light"] .mermaid .node rect,
+[data-theme="light"] .mermaid .node circle,
+[data-theme="light"] .mermaid .node polygon {
+  fill: var(--bg-secondary);
+  stroke: var(--border-color);
+  stroke-width: 2px;
+}
+
+[data-theme="dark"] .mermaid .node rect,
+[data-theme="dark"] .mermaid .node circle,
+[data-theme="dark"] .mermaid .node polygon {
+  fill: var(--bg-secondary);
+  stroke: var(--border-color);
+  stroke-width: 2px;
+}
+
+[data-theme="light"] .mermaid .node text {
+  fill: var(--text-primary);
+}
+
+[data-theme="dark"] .mermaid .node text {
+  fill: var(--text-primary);
+}
+
+[data-theme="light"] .mermaid .edgePath .path {
+  stroke: var(--border-color);
+  stroke-width: 2px;
+}
+
+[data-theme="dark"] .mermaid .edgePath .path {
+  stroke: var(--border-hover);
+  stroke-width: 2px;
+}
+
+[data-theme="light"] .mermaid .arrowheadPath {
+  fill: var(--border-color);
+}
+
+[data-theme="dark"] .mermaid .arrowheadPath {
+  fill: var(--border-hover);
+}
+
+/* Scrollbar Styles */
+.mermaid-diagram-container::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.mermaid-diagram-container::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+  border-radius: 5px;
+}
+
+.mermaid-diagram-container::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 5px;
+  transition: background-color var(--transition-fast);
+}
+
+.mermaid-diagram-container::-webkit-scrollbar-thumb:hover {
+  background: var(--border-hover);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .mermaid-diagram-container {
+    padding: var(--spacing-md);
+    min-height: 150px;
+  }
+
+  .mermaid-export-svg-btn,
+  .mermaid-export-png-btn,
+  .mermaid-fullscreen-btn,
+  .mermaid-source-toggle-btn {
+    padding: 4px 6px;
+    font-size: 11px;
+  }
+
+  .mermaid-source {
+    font-size: 12px;
+    padding: var(--spacing-sm);
+  }
+
+  .mermaid-fullscreen-content {
+    padding: var(--spacing-md);
+  }
+}
+
+/* Print Styles */
+@media print {
+  .mermaid-header,
+  .mermaid-actions,
+  .mermaid-source {
+    display: none;
+  }
+
+  .mermaid-diagram-container {
+    padding: 0;
+    background: transparent;
+  }
+
+  .mermaid-renderer {
+    border: none;
+  }
+}

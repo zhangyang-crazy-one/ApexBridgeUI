@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings Panel - Plugins Tab Demo</title>
+
+  <!-- Main Styles -->
+  <link rel="stylesheet" href="/src/styles/main.css">
+  <link rel="stylesheet" href="/src/styles/settings.css">
+  <link rel="stylesheet" href="/src/styles/plugin-store.css">
+  <link rel="stylesheet" href="/src/styles/plugin-manager.css">
+
+  <style>
+    body {
+      margin: 0;
+      padding: var(--spacing-xl);
+      background: var(--bg-secondary);
+      font-family: var(--font-body);
+    }
+
+    .demo-container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .demo-header {
+      margin-bottom: var(--spacing-xl);
+      padding: var(--spacing-lg);
+      background: var(--bg-primary);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-color);
+    }
+
+    .demo-title {
+      font-family: var(--font-heading);
+      font-size: var(--font-size-2xl);
+      color: var(--text-primary);
+      margin: 0 0 var(--spacing-sm) 0;
+    }
+
+    .demo-subtitle {
+      font-family: var(--font-body);
+      font-size: var(--font-size-base);
+      color: var(--text-secondary);
+      margin: 0;
+    }
+
+    .demo-controls {
+      display: flex;
+      gap: var(--spacing-md);
+      margin-top: var(--spacing-md);
+    }
+
+    .theme-toggle-btn,
+    .open-settings-btn {
+      padding: var(--spacing-sm) var(--spacing-md);
+      font-family: var(--font-heading);
+      font-size: var(--font-size-sm);
+      color: var(--text-primary);
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .theme-toggle-btn:hover,
+    .open-settings-btn:hover {
+      background: var(--bg-tertiary);
+      border-color: var(--border-hover);
+    }
+
+    .open-settings-btn {
+      background: var(--active-bg);
+      color: var(--active-text);
+      border-color: var(--active-bg);
+    }
+
+    .open-settings-btn:hover {
+      opacity: 0.9;
+    }
+
+    .demo-info {
+      padding: var(--spacing-lg);
+      background: var(--bg-primary);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-color);
+    }
+
+    .info-list {
+      list-style-position: inside;
+      color: var(--text-secondary);
+      font-size: var(--font-size-sm);
+      line-height: 1.8;
+    }
+  </style>
+</head>
+<body>
+  <div class="demo-container">
+    <div class="demo-header">
+      <h1 class="demo-title">Settings Panel - Plugins Tab Integration Demo</h1>
+      <p class="demo-subtitle">
+        Anthropic/Claude.ai design system compliant settings modal with Plugin Store integration
+      </p>
+      <div class="demo-controls">
+        <button class="theme-toggle-btn" id="themeToggleBtn">
+          Toggle Theme (Current: <span id="currentTheme">Light</span>)
+        </button>
+        <button class="open-settings-btn" id="openSettingsBtn">
+          Open Settings (Plugins Tab)
+        </button>
+      </div>
+    </div>
+
+    <div class="demo-info">
+      <h3 style="font-family: var(--font-heading); color: var(--text-primary); margin-top: 0;">
+        Features Demonstrated:
+      </h3>
+      <ul class="info-list">
+        <li><strong>Settings Modal</strong>: Full settings panel with tabbed interface</li>
+        <li><strong>Plugins Tab</strong>: Two sub-tabs - "Installed Plugins" and "Plugin Store"</li>
+        <li><strong>Plugin Store Integration</strong>: Browse, search, filter, and install plugins</li>
+        <li><strong>PluginManager Integration</strong>: View and manage installed plugins</li>
+        <li><strong>Sub-tab Navigation</strong>: Smooth transitions between Installed/Store views</li>
+        <li><strong>Theme Support</strong>: Works in both light and dark modes</li>
+        <li><strong>Keyboard Shortcuts</strong>: ESC to close, Tab navigation, Ctrl+, global shortcut</li>
+        <li><strong>Design Compliance</strong>: Anthropic warm beige palette, Georgia serif, 300ms transitions</li>
+      </ul>
+
+      <h3 style="font-family: var(--font-heading); color: var(--text-primary); margin-top: var(--spacing-lg);">
+        How to Test:
+      </h3>
+      <ol class="info-list">
+        <li>Click "Open Settings (Plugins Tab)" button to open Settings modal</li>
+        <li>Notice the modal opens directly to the Plugins tab</li>
+        <li>See two sub-tabs: "Installed Plugins" and "Plugin Store"</li>
+        <li>Default view shows "Installed Plugins" (PluginManagerUI)</li>
+        <li>Click "Plugin Store" sub-tab to switch to Plugin Store view</li>
+        <li>Test search, category filtering, and sorting in Plugin Store</li>
+        <li>Click "View Details" or "Install" on any plugin card</li>
+        <li>Switch back to "Installed Plugins" tab to see PluginManager</li>
+        <li>Try other tabs (Global, Theme, Language) to verify navigation works</li>
+        <li>Press ESC or click outside modal to close</li>
+      </ol>
+    </div>
+  </div>
+
+  <script type="module">
+    // Import SettingsUI from settings module
+    import { initSettingsUI, registerSettingsShortcut } from '/src/modules/settings/settings.ts';
+
+    // Theme toggle functionality
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    const currentThemeSpan = document.getElementById('currentTheme');
+
+    function toggleTheme() {
+      const html = document.documentElement;
+      const currentTheme = html.getAttribute('data-theme') || 'light';
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+
+      html.setAttribute('data-theme', newTheme);
+      localStorage.setItem('vcpchat-theme', newTheme);
+
+      currentThemeSpan.textContent = newTheme.charAt(0).toUpperCase() + newTheme.slice(1);
+
+      console.log('[Demo] Theme switched to:', newTheme);
+    }
+
+    themeToggleBtn.addEventListener('click', toggleTheme);
+
+    // Load saved theme on start
+    const savedTheme = localStorage.getItem('vcpchat-theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    currentThemeSpan.textContent = savedTheme.charAt(0).toUpperCase() + savedTheme.slice(1);
+
+    // Initialize Settings UI
+    async function initDemo() {
+      try {
+        console.log('[Demo] Initializing SettingsUI...');
+
+        // Initialize SettingsUI singleton
+        const settingsUI = initSettingsUI();
+
+        // Register global keyboard shortcut (Ctrl+,)
+        registerSettingsShortcut();
+
+        // Open Settings button handler
+        const openSettingsBtn = document.getElementById('openSettingsBtn');
+        openSettingsBtn.addEventListener('click', () => {
+          settingsUI.show('plugins'); // Open directly to plugins tab
+        });
+
+        console.log('[Demo] SettingsUI initialized successfully');
+        console.log('[Demo] Click "Open Settings (Plugins Tab)" to test');
+        console.log('[Demo] You can also use Ctrl+, keyboard shortcut');
+
+      } catch (error) {
+        console.error('[Demo] Failed to initialize SettingsUI:', error);
+        alert(`Error: ${error.message || error}`);
+      }
+    }
+
+    // Start demo on page load
+    document.addEventListener('DOMContentLoaded', initDemo);
+  </script>
+</body>
+</html>

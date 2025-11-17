@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>数据流矩阵 - DAMA Platform</title>
+  <style>
+    /* ========== Anthropic Design System ========== */
+    :root {
+      --bg-primary: #FAF9F5;
+      --bg-secondary: #F0EEE6;
+      --bg-tertiary: #E8E6DD;
+      --text-primary: #141413;
+      --text-secondary: #666666;
+      --text-tertiary: #999999;
+      --border-color: #E5E5E5;
+      --primary-color: #2563eb;
+      --primary-light: #dbeafe;
+      --success-color: #10b981;
+      --warning-color: #f59e0b;
+      --danger-color: #ef4444;
+      --button-bg: #141413;
+      --button-text: #FAF9F5;
+      --input-bg: white;
+
+      --font-heading: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-body: Georgia, "Times New Roman", Times, serif;
+
+      --font-size-sm: 14px;
+      --font-size-base: 16px;
+      --font-size-lg: 18px;
+      --font-size-xl: 20px;
+      --font-size-2xl: 24px;
+
+      --spacing-xs: 8px;
+      --spacing-sm: 12px;
+      --spacing-md: 20px;
+      --spacing-lg: 32px;
+      --spacing-xl: 48px;
+
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-heading);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
+
+    /* ========== Header / Navigation ========== */
+    .header {
+      background-color: var(--bg-secondary);
+      padding: var(--spacing-sm) var(--spacing-lg);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .header-container {
+      max-width: 1800px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--spacing-lg);
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      text-decoration: none;
+      color: var(--text-primary);
+      flex-shrink: 0;
+    }
+
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      filter: grayscale(100%) brightness(0);
+    }
+
+    .logo-text {
+      font-family: var(--font-heading);
+      font-size: var(--font-size-xl);
+      font-weight: 500;
+      letter-spacing: -0.5px;
+    }
+
+    .header-nav {
+      display: flex;
+      gap: var(--spacing-xs);
+      flex: 1;
+      justify-content: center;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+      padding: var(--spacing-xs) var(--spacing-sm);
+      font-family: var(--font-heading);
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+      text-decoration: none;
+      border-radius: var(--radius-sm);
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .nav-link:hover {
+      background-color: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .nav-link.active {
+      background-color: var(--button-bg);
+      color: var(--button-text);
+      font-weight: 500;
+    }
+
+    .nav-icon {
+      width: 18px;
+      height: 18px;
+      opacity: 0.7;
+    }
+
+    .nav-link.active .nav-icon {
+      opacity: 1;
+      filter: brightness(0) invert(1);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: var(--spacing-sm);
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .btn-header {
+      padding: var(--spacing-xs) var(--spacing-md);
+      font-family: var(--font-heading);
+      font-size: var(--font-size-sm);
+      font-weight: 500;
+      color: var(--text-primary);
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn-header:hover {
+      background-color: var(--bg-tertiary);
+    }
+
+    .btn-header.btn-primary {
+      background-color: var(--button-bg);
+      color: var(--button-text);
+      border-color: var(--button-bg);
+    }
+
+    .btn-header.btn-primary:hover {
+      opacity: 0.85;
+    }
+
+    /* ========== Buttons ========== */
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: var(--font-heading);
+    }
+
+    .btn-primary {
+      background: var(--button-bg);
+      color: var(--button-text);
+    }
+
+    .btn-primary:hover {
+      background: #2a2a28;
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-secondary);
+    }
+
+    .btn-sm {
+      padding: 6px 14px;
+      font-size: 13px;
+    }
+
+    .w-full {
+      width: 100%;
+    }
+
+    /* ========== Workspace Container ========== */
+    .workspace-container {
+      padding: var(--spacing-lg);
+    }
+
+    .workspace-header {
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .workspace-title {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--text-primary);
+    }
+
+    .workspace-description {
+      font-size: 15px;
+      color: var(--text-secondary);
+    }
+
+    /* ========== Toolbar ========== */
+    .toolbar {
+      display: flex;
+      gap: var(--spacing-md);
+      padding: var(--spacing-md);
+      background: white;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      margin-bottom: var(--spacing-md);
+      flex-wrap: wrap;
+    }
+
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+    }
+
+    .filter-label {
+      font-size: 14px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .form-select {
+      padding: 6px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-family: var(--font-heading);
+      background: white;
+      cursor: pointer;
+    }
+
+    .form-select:focus {
+      outline: none;
+      border-color: var(--text-primary);
+    }
+
+    /* ========== Matrix Workspace ========== */
+    .matrix-workspace {
+      display: grid;
+      grid-template-columns: 1fr 440px;
+      gap: var(--spacing-md);
+      height: calc(100vh - 340px);
+    }
+
+    .matrix-canvas {
+      background: white;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      overflow: auto;
+      padding: var(--spacing-md);
+    }
+
+    .matrix-panel {
+      background: white;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      overflow-y: auto;
+      padding: var(--spacing-md);
+    }
+
+    .panel-title {
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: var(--spacing-md);
+      color: var(--text-primary);
+    }
+
+
+
+    /* ========== Business Process Flow ========== */
+    .business-process-wrapper {
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .business-process {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+    }
+
+    .process-spacer {
+      width: 150px;
+      flex-shrink: 0;
+    }
+
+    .process-steps {
+      display: flex;
+      flex: 1;
+      gap: 0;
+    }
+
+    .process-step {
+      flex: 1;
+      background: var(--text-primary);
+      color: white;
+      padding: 12px 8px;
+      font-size: 13px;
+      font-weight: 500;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 50px;
+      border-right: 2px solid var(--bg-primary);
+    }
+
+    .process-step:first-child {
+      border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+    }
+
+    .process-step:last-child {
+      border-right: none;
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    }
+
+    /* ========== Matrix Container ========== */
+    .matrix-container {
+      display: table;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      border-collapse: separate;
+      border-spacing: 0;
+      width: 100%;
+    }
+
+    .matrix-header {
+      display: table-row;
+    }
+
+    .matrix-corner {
+      display: table-cell;
+      width: 150px;
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .matrix-col-header {
+      display: table-cell;
+      width: 100px;
+      padding: 12px 8px;
+      text-align: center;
+      font-weight: 500;
+      font-size: 13px;
+      border-right: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+      background: var(--bg-secondary);
+      vertical-align: middle;
+    }
+
+    .matrix-col-header:last-child {
+      border-right: none;
+    }
+
+    #matrix-body {
+      display: table-row-group;
+    }
+
+    .matrix-row {
+      display: table-row;
+    }
+
+    .matrix-row-header {
+      display: table-cell;
+      width: 150px;
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      padding: 12px;
+      font-weight: 500;
+      font-size: 13px;
+      border-right: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    .matrix-row:last-child .matrix-row-header {
+      border-bottom: none;
+    }
+
+    .matrix-cell {
+      display: table-cell;
+      width: 100px;
+      height: 70px;
+      border-right: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+      text-align: center;
+      vertical-align: middle;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      background: white;
+    }
+
+    .matrix-row:last-child .matrix-cell {
+      border-bottom: none;
+    }
+
+    .matrix-cell:last-child {
+      border-right: none;
+    }
+
+    .matrix-cell:hover {
+      background: var(--bg-primary);
+    }
+
+    .matrix-cell.selected {
+      background: var(--primary-light);
+      box-shadow: inset 0 0 0 2px var(--primary-color);
+    }
+
+    .data-point {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--text-primary);
+      display: inline-block;
+    }
+
+    .data-point.create {
+      width: 20px;
+      height: 20px;
+      background: var(--text-primary);
+    }
+
+    .data-point.use {
+      width: 12px;
+      height: 12px;
+      background: var(--text-primary);
+    }
+
+    /* ========== Legend ========== */
+    .legend {
+      display: flex;
+      gap: var(--spacing-lg);
+      margin-top: var(--spacing-lg);
+      padding: var(--spacing-sm);
+      background: var(--bg-secondary);
+      border-radius: var(--radius-sm);
+      justify-content: center;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+      font-size: 14px;
+    }
+
+    .legend-dot {
+      border-radius: 50%;
+      background: var(--text-primary);
+    }
+
+    .legend-dot.create {
+      width: 20px;
+      height: 20px;
+    }
+
+    .legend-dot.use {
+      width: 12px;
+      height: 12px;
+    }
+
+    /* ========== Flow Detail ========== */
+    .flow-detail {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-sm);
+      padding: var(--spacing-sm);
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .flow-detail h4 {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .flow-detail-row {
+      display: flex;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 14px;
+    }
+
+    .flow-detail-row:last-child {
+      border-bottom: none;
+    }
+
+    .flow-detail-label {
+      flex: 0 0 100px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .flow-detail-value {
+      flex: 1;
+      color: var(--text-primary);
+    }
+
+    .badge {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .badge-primary {
+      background: var(--primary-light);
+      color: var(--primary-color);
+    }
+
+    .badge-secondary {
+      background: var(--bg-secondary);
+      color: var(--text-secondary);
+    }
+
+    /* ========== Responsive Design ========== */
+    @media (max-width: 1200px) {
+      .matrix-workspace {
+        grid-template-columns: 1fr 380px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .matrix-workspace {
+        grid-template-columns: 1fr;
+        height: auto;
+      }
+
+      .matrix-canvas {
+        min-height: 500px;
+      }
+
+      .matrix-panel {
+        max-height: 600px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header / Navigation -->
+  <header class="header">
+    <div class="header-container">
+      <a href="index.html" class="logo-container">
+        <img src="../../icon/hdlogo.com-measurable-data-token-mdt.svg" alt="DAMA Logo" class="logo-icon">
+        <span class="logo-text">DAMA Platform</span>
+      </a>
+
+      <nav class="header-nav">
+        <a href="index.html" class="nav-link">
+          <img src="../../icon/Emoji_instead/dashboard-4.svg" alt="首页" class="nav-icon">
+          <span>首页</span>
+        </a>
+        <a href="modeling.html" class="nav-link">
+          <img src="../../icon/Emoji_instead/data.svg" alt="数据建模" class="nav-icon">
+          <span>数据建模</span>
+        </a>
+        <a href="metadata.html" class="nav-link">
+          <img src="../../icon/Emoji_instead/database-3.svg" alt="元数据管理" class="nav-icon">
+          <span>元数据管理</span>
+        </a>
+        <a href="lineage.html" class="nav-link">
+          <img src="../../icon/Emoji_instead/code-fork-3.svg" alt="数据血缘" class="nav-icon">
+          <span>数据血缘</span>
+        </a>
+        <a href="data-flow-matrix.html" class="nav-link active">
+          <img src="../../icon/Emoji_instead/refresh.svg" alt="数据流矩阵" class="nav-icon">
+          <span>数据流矩阵</span>
+        </a>
+        <a href="enterprise-data-architecture.html" class="nav-link">
+          <img src="../../icon/Emoji_instead/ic_enterprice.svg" alt="企业架构" class="nav-icon">
+          <span>企业架构</span>
+        </a>
+        <a href="ai-assistant.html" class="nav-link">
+          <img src="../../icon/Emoji_instead/robot.svg" alt="AI助手" class="nav-icon">
+          <span>AI助手</span>
+        </a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="btn-header" onclick="exportMatrix()">导出Excel</button>
+        <button class="btn-header btn-primary" onclick="generateMatrix()">AI生成矩阵</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Workspace -->
+  <div class="workspace-container">
+    <div class="workspace-header">
+      <h1 class="workspace-title">数据流矩阵 - 系统间数据流动分析</h1>
+      <p class="workspace-description">可视化展示企业系统间的数据流动关系，支持数据域、流向类型、同步频率等多维度分析</p>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="filter-group">
+        <span class="filter-label">数据域:</span>
+        <select class="form-select" style="width: 150px;" onchange="filterByDomain(this.value)">
+          <option value="all">全部</option>
+          <option value="customer">客户域</option>
+          <option value="order">订单域</option>
+          <option value="product">产品域</option>
+          <option value="finance">财务域</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <span class="filter-label">流向类型:</span>
+        <select class="form-select" style="width: 150px;" onchange="filterByType(this.value)">
+          <option value="all">全部</option>
+          <option value="create">创建</option>
+          <option value="use">查询/使用</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <span class="filter-label">频率:</span>
+        <select class="form-select" style="width: 150px;" onchange="filterByFrequency(this.value)">
+          <option value="all">全部</option>
+          <option value="realtime">实时</option>
+          <option value="batch">批量</option>
+          <option value="api">API调用</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Matrix Workspace -->
+    <div class="matrix-workspace">
+      <!-- Matrix Canvas -->
+      <div class="matrix-canvas">
+        <!-- Business Process Flow -->
+        <div class="business-process-wrapper">
+          <div class="business-process">
+            <div class="process-spacer"></div>
+            <div class="process-steps">
+              <div class="process-step">数据采集</div>
+              <div class="process-step">数据清洗</div>
+              <div class="process-step">数据整合</div>
+              <div class="process-step">数据分析</div>
+              <div class="process-step">数据应用</div>
+              <div class="process-step">数据归档</div>
+              <div class="process-step">数据存储</div>
+              <div class="process-step">数据共享</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Data Flow Matrix -->
+        <div class="matrix-container" id="matrix-container">
+          <!-- Matrix Header -->
+          <div class="matrix-header">
+            <div class="matrix-corner"></div>
+            <div class="matrix-col-header">CRM系统</div>
+            <div class="matrix-col-header">ERP系统</div>
+            <div class="matrix-col-header">OA系统</div>
+            <div class="matrix-col-header">数据仓库</div>
+            <div class="matrix-col-header">数据湖</div>
+            <div class="matrix-col-header">BI平台</div>
+            <div class="matrix-col-header">客服系统</div>
+            <div class="matrix-col-header">财务系统</div>
+          </div>
+
+          <!-- Matrix Rows -->
+          <div id="matrix-body">
+            <!-- Rows will be generated by JavaScript -->
+          </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="legend">
+          <div class="legend-item">
+            <div class="legend-dot create"></div>
+            <span>创建 (Create)</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot use"></div>
+            <span>查询/使用 (Read/Use)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Matrix Panel -->
+      <div class="matrix-panel">
+        <h3 class="panel-title">数据流详情</h3>
+
+        <div id="flow-detail-content">
+          <div style="text-align: center; padding: 2rem; color: var(--text-tertiary);">
+            <p>点击矩阵单元格查看数据流详情</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Matrix data: [row][col] = { type: 'create'|'use'|null, ... }
+    const systems = ['CRM系统', 'ERP系统', 'OA系统', '数据仓库', '数据湖', 'BI平台', '客服系统', '财务系统'];
+    
+    const matrixData = [
+      [null, { type: 'use' }, { type: 'use' }, { type: 'create' }, null, null, { type: 'use' }, null],
+      [{ type: 'use' }, null, null, { type: 'create' }, null, null, null, { type: 'create' }],
+      [null, null, null, { type: 'create' }, null, null, null, null],
+      [null, null, null, null, { type: 'create' }, { type: 'create' }, null, null],
+      [null, null, null, { type: 'use' }, null, { type: 'create' }, null, null],
+      [null, null, null, { type: 'use' }, { type: 'use' }, null, null, null],
+      [{ type: 'create' }, null, null, { type: 'create' }, null, null, null, null],
+      [null, { type: 'use' }, null, { type: 'create' }, null, null, null, null]
+    ];
+
+    const flowDetails = {
+      '0-3': { source: 'CRM系统', target: '数据仓库', type: '创建', frequency: '批量ETL', schedule: '每日凌晨2点', volume: '50GB/天', tables: ['customer', 'contact', 'opportunity'] },
+      '1-3': { source: 'ERP系统', target: '数据仓库', type: '创建', frequency: '批量ETL', schedule: '每日凌晨3点', volume: '80GB/天', tables: ['order', 'product', 'inventory'] },
+      '3-4': { source: '数据仓库', target: '数据湖', type: '创建', frequency: '实时同步', schedule: '实时', volume: '200GB/天', tables: ['dwd_*', 'dws_*', 'ads_*'] },
+      '3-5': { source: '数据仓库', target: 'BI平台', type: '创建', frequency: 'API调用', schedule: '按需', volume: '10GB/天', tables: ['ads_report', 'ads_dashboard'] }
+    };
+
+    let selectedCell = null;
+
+    function renderMatrix() {
+      const matrixBody = document.getElementById('matrix-body');
+      matrixBody.innerHTML = '';
+
+      systems.forEach((system, rowIndex) => {
+        const row = document.createElement('div');
+        row.className = 'matrix-row';
+
+        const rowHeader = document.createElement('div');
+        rowHeader.className = 'matrix-row-header';
+        rowHeader.textContent = system;
+        row.appendChild(rowHeader);
+
+        matrixData[rowIndex].forEach((cellData, colIndex) => {
+          const cell = document.createElement('div');
+          cell.className = 'matrix-cell';
+          cell.dataset.row = rowIndex;
+          cell.dataset.col = colIndex;
+          cell.onclick = () => selectCell(rowIndex, colIndex);
+
+          if (cellData) {
+            const dot = document.createElement('div');
+            dot.className = `data-point ${cellData.type}`;
+            cell.appendChild(dot);
+          }
+
+          row.appendChild(cell);
+        });
+
+        matrixBody.appendChild(row);
+      });
+    }
+
+    function selectCell(row, col) {
+      // Clear previous selection
+      document.querySelectorAll('.matrix-cell').forEach(cell => {
+        cell.classList.remove('selected');
+      });
+
+      // Select new cell
+      const cell = document.querySelector(`.matrix-cell[data-row="${row}"][data-col="${col}"]`);
+      if (cell) {
+        cell.classList.add('selected');
+      }
+
+      selectedCell = { row, col };
+
+      // Update detail panel
+      updateDetailPanel(row, col);
+    }
+
+    function updateDetailPanel(row, col) {
+      const detailContent = document.getElementById('flow-detail-content');
+      const cellData = matrixData[row][col];
+      const flowKey = `${row}-${col}`;
+      const flowDetail = flowDetails[flowKey];
+
+      if (!cellData) {
+        detailContent.innerHTML = `
+          <div style="text-align: center; padding: 2rem; color: var(--text-tertiary);">
+            <p>该单元格无数据流</p>
+          </div>
+        `;
+        return;
+      }
+
+      const typeLabel = cellData.type === 'create' ? '创建' : '查询/使用';
+      const typeBadge = cellData.type === 'create' ? 'badge-primary' : 'badge-secondary';
+
+      let detailHTML = `
+        <div class="flow-detail">
+          <h4>基本信息</h4>
+          <div class="flow-detail-row">
+            <div class="flow-detail-label">源系统</div>
+            <div class="flow-detail-value">${systems[row]}</div>
+          </div>
+          <div class="flow-detail-row">
+            <div class="flow-detail-label">目标系统</div>
+            <div class="flow-detail-value">${systems[col]}</div>
+          </div>
+          <div class="flow-detail-row">
+            <div class="flow-detail-label">流向类型</div>
+            <div class="flow-detail-value">
+              <span class="badge ${typeBadge}">${typeLabel}</span>
+            </div>
+          </div>
+        </div>
+      `;
+
+      if (flowDetail) {
+        detailHTML += `
+          <div class="flow-detail">
+            <h4>数据流规格</h4>
+            <div class="flow-detail-row">
+              <div class="flow-detail-label">同步频率</div>
+              <div class="flow-detail-value">${flowDetail.frequency}</div>
+            </div>
+            <div class="flow-detail-row">
+              <div class="flow-detail-label">执行时间</div>
+              <div class="flow-detail-value">${flowDetail.schedule}</div>
+            </div>
+            <div class="flow-detail-row">
+              <div class="flow-detail-label">数据量</div>
+              <div class="flow-detail-value">${flowDetail.volume}</div>
+            </div>
+            <div class="flow-detail-row">
+              <div class="flow-detail-label">涉及表</div>
+              <div class="flow-detail-value">${flowDetail.tables.join(', ')}</div>
+            </div>
+          </div>
+        `;
+      }
+
+      detailHTML += `
+        <div style="margin-top: 1rem;">
+          <button class="btn btn-primary btn-sm w-full" onclick="viewLineage()">查看血缘关系</button>
+        </div>
+      `;
+
+      detailContent.innerHTML = detailHTML;
+    }
+
+    function filterByDomain(domain) {
+      console.log('Filter by domain:', domain);
+      // Implement filtering logic
+    }
+
+    function filterByType(type) {
+      console.log('Filter by type:', type);
+      // Implement filtering logic
+    }
+
+    function filterByFrequency(frequency) {
+      console.log('Filter by frequency:', frequency);
+      // Implement filtering logic
+    }
+
+    function exportMatrix() {
+      alert('导出Excel功能开发中...');
+    }
+
+    function generateMatrix() {
+      alert('AI生成矩阵功能开发中...');
+    }
+
+    function viewLineage() {
+      if (selectedCell) {
+        window.location.href = 'lineage.html';
+      }
+    }
+
+    // Initialize
+    window.onload = function() {
+      renderMatrix();
+    };
+  </script>
+</body>
+</html>
+

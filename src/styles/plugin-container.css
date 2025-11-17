@@ -1,0 +1,249 @@
+/**
+ * Plugin Container Styles
+ * Modal overlay for dynamic plugin mounting
+ * Complies with Anthropic Design System (Constitution v1.1.0 Section V)
+ */
+
+/* ========== Plugin Container Overlay ========== */
+.plugin-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(20, 20, 19, 0.6); /* Semi-transparent overlay */
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: none; /* Hidden by default */
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none; /* Prevent interaction when hidden */
+  transition: opacity var(--transition-normal) ease;
+}
+
+.plugin-container.active {
+  opacity: 1;
+  pointer-events: auto; /* Enable interaction when active */
+}
+
+/* Dark mode overlay adjustment */
+[data-theme="dark"] .plugin-container {
+  background-color: rgba(0, 0, 0, 0.75);
+}
+
+/* ========== Plugin Wrapper ========== */
+.plugin-wrapper {
+  background-color: var(--bg-primary);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-width: 90vw;
+  max-height: 90vh;
+  width: 800px;
+  height: 600px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transform: scale(0.9);
+  opacity: 0;
+  transition: transform var(--transition-normal) ease,
+              opacity var(--transition-normal) ease,
+              background-color var(--transition-normal);
+}
+
+.plugin-wrapper.active {
+  transform: scale(1);
+  opacity: 1;
+}
+
+/* ========== Plugin Header ========== */
+.plugin-header {
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  padding: var(--spacing-md) var(--spacing-lg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  transition: background-color var(--transition-normal),
+              border-color var(--transition-normal);
+}
+
+.plugin-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  font-weight: 500;
+  color: var(--text-primary);
+  margin: 0;
+  transition: color var(--transition-normal);
+}
+
+.plugin-close-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  color: var(--text-secondary);
+  transition: all var(--transition-fast);
+  line-height: 1;
+  padding: 0;
+}
+
+.plugin-close-btn:hover {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.plugin-close-btn:active {
+  background-color: var(--border-hover);
+}
+
+/* ========== Plugin Content Area ========== */
+.plugin-content-area {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  background-color: var(--bg-primary);
+  transition: background-color var(--transition-normal);
+}
+
+/* ========== Plugin Iframe ========== */
+.plugin-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background-color: var(--bg-primary);
+}
+
+/* ========== Plugin HTML Content ========== */
+.plugin-html-content {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: var(--spacing-lg);
+}
+
+/* Scrollbar for HTML content */
+.plugin-html-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.plugin-html-content::-webkit-scrollbar-track {
+  background-color: var(--bg-primary);
+}
+
+.plugin-html-content::-webkit-scrollbar-thumb {
+  background-color: var(--border-color);
+  border-radius: 4px;
+  transition: background-color var(--transition-normal);
+}
+
+.plugin-html-content::-webkit-scrollbar-thumb:hover {
+  background-color: var(--border-hover);
+}
+
+/* ========== Responsive Design ========== */
+@media (max-width: 768px) {
+  .plugin-wrapper {
+    width: 95vw;
+    height: 95vh;
+    max-width: 95vw;
+    max-height: 95vh;
+  }
+
+  .plugin-header {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  .plugin-title {
+    font-size: var(--font-size-base);
+  }
+
+  .plugin-html-content {
+    padding: var(--spacing-md);
+  }
+}
+
+/* ========== Accessibility ========== */
+.plugin-wrapper:focus {
+  outline: 2px solid var(--active-bg);
+  outline-offset: 2px;
+}
+
+.plugin-close-btn:focus-visible {
+  outline: 2px solid var(--active-bg);
+  outline-offset: 2px;
+}
+
+/* ========== Animation Keyframes ========== */
+@keyframes plugin-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes plugin-scale-in {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ========== Loading State ========== */
+.plugin-content-area.loading::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  margin: -20px 0 0 -20px;
+  border: 3px solid var(--border-color);
+  border-top-color: var(--active-bg);
+  border-radius: 50%;
+  animation: plugin-spin 1s linear infinite;
+}
+
+@keyframes plugin-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ========== Error State ========== */
+.plugin-error {
+  padding: var(--spacing-lg);
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.plugin-error-icon {
+  font-size: 48px;
+  margin-bottom: var(--spacing-md);
+}
+
+.plugin-error-message {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.plugin-error-details {
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+}

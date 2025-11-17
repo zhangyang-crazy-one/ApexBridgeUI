@@ -1,0 +1,258 @@
+/**
+ * Code Renderer Styles
+ *
+ * Theme-aware styles for code blocks with syntax highlighting
+ * Follows Anthropic design system color palette
+ */
+
+/* Code Renderer Container */
+.code-renderer {
+  width: 100%;
+  max-width: 100%;
+  border-radius: var(--radius-md);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: border-color var(--transition-normal);
+  font-family: 'Monaco', 'Menlo', 'Consolas', 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.code-renderer:hover {
+  border-color: var(--border-hover);
+}
+
+/* Code Header */
+.code-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color var(--transition-normal);
+}
+
+.code-language {
+  font-size: var(--font-size-xs);
+  font-family: var(--font-heading);
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.code-filename {
+  font-size: var(--font-size-xs);
+  color: var(--text-tertiary);
+  margin-left: var(--spacing-sm);
+}
+
+/* Code Actions */
+.code-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.code-copy-btn,
+.code-fold-btn {
+  padding: 4px 8px;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 16px;
+  transition: all var(--transition-fast);
+}
+
+.code-copy-btn:hover,
+.code-fold-btn:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--border-hover);
+}
+
+/* 🔑 HTML渲染按钮样式 */
+.code-render-btn {
+  padding: 4px 8px;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: var(--font-size-xs);
+  font-family: var(--font-heading);
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.code-render-btn:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--border-hover);
+}
+
+.code-render-btn:active {
+  background: var(--active-bg);
+  color: var(--active-text);
+  border-color: var(--active-bg);
+}
+
+.code-render-icon {
+  width: 16px;
+  height: 16px;
+  /* 🔑 修复问题1：Light模式下反转白色SVG图标为深色 */
+  filter: invert(1);
+}
+
+/* 🔑 修复问题1：Dark模式下保持白色SVG图标不变 */
+[data-theme="dark"] .code-render-icon {
+  filter: none;
+}
+
+/* Code Content Container */
+.code-content {
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+  background: var(--bg-primary);
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+/* Line Numbers */
+.code-line-numbers {
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacing-md) var(--spacing-sm);
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border-color);
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.line-number {
+  display: block;
+  text-align: right;
+  color: var(--text-tertiary);
+  font-size: 13px;
+  line-height: 1.6;
+  min-width: 2.5em;
+}
+
+.line-number.highlight {
+  background: rgba(255, 235, 59, 0.1);
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* Code Lines Container */
+.code-lines {
+  flex: 1;
+  overflow-x: auto;
+}
+
+.code-lines pre {
+  margin: 0;
+  padding: var(--spacing-md);
+  background: var(--bg-primary);
+}
+
+.code-lines code {
+  display: block;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  color: var(--text-primary);
+  white-space: pre;
+  word-break: keep-all;
+}
+
+/* 🔑 HTML预览容器 */
+.html-preview-container {
+  display: none;
+  margin-top: var(--spacing-sm);
+  border-top: 1px solid var(--border-color);
+  padding-top: var(--spacing-sm);
+}
+
+.code-renderer.html-rendered .html-preview-container {
+  display: block;
+}
+
+.code-renderer.html-rendered .code-content {
+  display: none;
+}
+
+/* 预览容器内的HTML渲染器样式调整 */
+.html-preview-container .html-renderer {
+  border: none;
+  border-radius: 0;
+}
+
+/* Code Folding */
+.code-renderer.folded .code-content {
+  max-height: 400px;
+}
+
+.code-renderer.folded .code-fold-btn::after {
+  content: ' (Folded)';
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .code-renderer {
+    font-size: 13px;
+  }
+
+  .code-header {
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+
+  .code-language,
+  .code-filename {
+    font-size: 11px;
+  }
+
+  .code-copy-btn,
+  .code-fold-btn,
+  .code-render-btn {
+    padding: 3px 6px;
+    font-size: 11px;
+  }
+
+  .code-render-icon {
+    width: 12px;
+    height: 12px;
+  }
+
+  .code-lines pre {
+    padding: var(--spacing-sm);
+  }
+}
+
+/* Print Styles */
+@media print {
+  .code-header,
+  .code-actions {
+    display: none;
+  }
+
+  .code-renderer {
+    border: none;
+    background: transparent;
+  }
+
+  .code-content {
+    max-height: none;
+  }
+}
+

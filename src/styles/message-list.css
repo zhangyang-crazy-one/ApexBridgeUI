@@ -1,0 +1,226 @@
+/**
+ * Message List Styles
+ * Supports virtual scrolling and message rendering
+ */
+
+.message-list-scroll {
+  /* Smooth scrolling */
+  scroll-behavior: smooth;
+
+  /* Custom scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) transparent;
+}
+
+.message-list-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.message-list-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.message-list-scroll::-webkit-scrollbar-thumb {
+  background-color: var(--border-color);
+  border-radius: 4px;
+  transition: background-color var(--transition-fast);
+}
+
+.message-list-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: var(--border-hover);
+}
+
+.message-list-content {
+  padding: var(--spacing-lg);
+}
+
+/* Message container */
+.message {
+  margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  background-color: var(--bg-secondary);
+  transition: background-color var(--transition-normal);
+  position: relative;
+}
+
+.message:hover {
+  background-color: var(--bg-tertiary);
+}
+
+/* CORE-014: Message wrapper with avatar */
+.message__wrapper {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+}
+
+/* CORE-014: Message content (beside avatar) */
+.message__content {
+  flex: 1;
+  min-width: 0; /* Allow text wrapping */
+  display: flex;
+  flex-direction: column;
+}
+
+/* User messages (right-aligned) */
+.message-user {
+  align-self: flex-end;
+  max-width: 75%;
+  background-color: var(--active-bg);
+  color: var(--active-text);
+}
+
+.message-user:hover {
+  background-color: var(--active-bg);
+  filter: brightness(1.1);
+}
+
+/* Agent messages (left-aligned) */
+.message-agent {
+  align-self: flex-start;
+  max-width: 85%;
+}
+
+/* Message header (avatar + name + timestamp) */
+.message-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
+}
+
+.message-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--border-color);
+}
+
+.message-sender-name {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.message-user .message-sender-name {
+  color: var(--active-text);
+}
+
+.message-timestamp {
+  font-size: var(--font-size-xs);
+  color: var(--text-tertiary);
+  margin-left: auto;
+}
+
+.message-user .message-timestamp {
+  color: var(--active-text);
+  opacity: 0.7;
+}
+
+/* Message content */
+.message-content {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  line-height: 1.6;
+  color: var(--text-primary);
+  word-wrap: break-word;
+}
+
+.message-user .message-content {
+  color: var(--active-text);
+}
+
+/* Streaming indicator */
+.message-streaming {
+  position: relative;
+}
+
+.message-streaming::after {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 1em;
+  background-color: var(--text-primary);
+  margin-left: 4px;
+  animation: blink 1s infinite;
+}
+
+.message-user.message-streaming::after {
+  background-color: var(--active-text);
+}
+
+@keyframes blink {
+  0%, 49% {
+    opacity: 1;
+  }
+  50%, 100% {
+    opacity: 0;
+  }
+}
+
+/* Message metadata */
+.message-metadata {
+  display: flex;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-sm);
+  font-size: var(--font-size-xs);
+  color: var(--text-tertiary);
+  font-family: var(--font-heading);
+}
+
+.message-user .message-metadata {
+  color: var(--active-text);
+  opacity: 0.7;
+}
+
+/* Attachments */
+.message-attachments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-sm);
+}
+
+/* Tool calls */
+.message-tool-calls {
+  margin-top: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  background-color: var(--bg-tertiary);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+}
+
+.message-user .message-tool-calls {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Loading state */
+.message-list-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--spacing-xl);
+  color: var(--text-secondary);
+}
+
+/* Empty state */
+.message-list-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-secondary);
+  font-size: var(--font-size-lg);
+  padding: var(--spacing-xl);
+  text-align: center;
+}
+
+.message-list-empty-icon {
+  font-size: 48px;
+  margin-bottom: var(--spacing-md);
+  opacity: 0.5;
+}

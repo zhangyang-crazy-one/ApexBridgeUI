@@ -1,0 +1,393 @@
+/**
+ * VCPChat Theme System (CORE-065, CORE-066, CORE-067)
+ *
+ * Complete theme framework with CSS variables for light and dark modes
+ * Based on Anthropic/Claude.ai design system
+ *
+ * Features:
+ * - CORE-065: Theme framework with CSS variables
+ * - CORE-066: Claude Light theme (official Anthropic colors)
+ * - CORE-067: Claude Dark theme
+ *
+ * Theme Switching:
+ * - Controlled via [data-theme] attribute on <html> element
+ * - localStorage key: 'vcpchat-theme'
+ * - All transitions use --transition-normal (300ms)
+ *
+ * Usage:
+ * ```javascript
+ * // Toggle theme
+ * const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+ * const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+ * document.documentElement.setAttribute('data-theme', newTheme);
+ * localStorage.setItem('vcpchat-theme', newTheme);
+ * ```
+ */
+
+/* ========================================================================
+   CORE-066: Claude Light Theme (Default)
+   ======================================================================== */
+
+/**
+ * Light Mode Theme Variables
+ * Official Anthropic/Claude.ai warm beige aesthetic
+ *
+ * Design Philosophy:
+ * - Warm, professional, approachable (not cold or sterile)
+ * - Beige gradient backgrounds for warmth
+ * - Deep black for emphasis (not blue!)
+ * - High contrast for readability
+ */
+
+:root {
+  /* === Background Colors === */
+  /* Warm beige gradient from lightest to deepest */
+  --bg-primary: #FAF9F5;        /* Warm white main background - primary surface */
+  --bg-secondary: #F0EEE6;      /* Light beige secondary - title bar, sidebars */
+  --bg-tertiary: #E8E6DD;       /* Deeper beige tertiary - hover states, elevated surfaces */
+
+  /* === Text Colors === */
+  /* Deep black to light gray gradient for hierarchy */
+  --text-primary: #141413;      /* Deep black primary text (almost black) - headings, body */
+  --text-secondary: #666666;    /* Medium gray secondary text - labels, metadata */
+  --text-tertiary: #999999;     /* Light gray tertiary text - hints, placeholders, disabled */
+
+  /* === Border Colors === */
+  /* Subtle borders that don't fight with content */
+  --border-color: #E5E5E5;      /* Light gray borders - default state */
+  --border-hover: #D5D3CB;      /* Slightly darker hover border - interactive elements */
+
+  /* === Active/Interaction States === */
+  /* Black active states for strong emphasis (NEVER blue!) */
+  --active-bg: #141413;         /* Black active state background - selected items, pressed buttons */
+  --active-text: #FAF9F5;       /* White text on active background - high contrast */
+
+  /* === SVG Icon Colors === */
+  /* Icons follow text color logic */
+  --icon-fill: #141413;         /* Dark icons in light mode - matches text-primary */
+
+  /* === Typography === */
+  /* Font families: Sans-serif for UI, serif for content */
+  --font-heading: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                  "Helvetica Neue", Arial, "Microsoft YaHei", sans-serif;
+  --font-body: Georgia, "Times New Roman", Times, serif, "Microsoft YaHei";
+
+  /* Font sizes: Defined scale from XS to 2XL */
+  --font-size-xs: 13px;         /* Small labels, metadata, captions */
+  --font-size-sm: 15px;         /* Secondary text, button text */
+  --font-size-base: 17px;       /* Body text (Georgia serif for warmth) */
+  --font-size-lg: 19px;         /* Emphasized text, large labels */
+  --font-size-xl: 22px;         /* Subheadings, section titles */
+  --font-size-2xl: 26px;        /* Main headings, page titles */
+
+  /* === Spacing === */
+  /* Consistent spacing scale for layout rhythm */
+  --spacing-xs: 6px;            /* Tight spacing - button gaps, icon spacing */
+  --spacing-sm: 10px;           /* Small spacing - compact lists */
+  --spacing-md: 16px;           /* Medium spacing - standard padding (most common) */
+  --spacing-lg: 24px;           /* Large spacing - section margins */
+  --spacing-xl: 36px;           /* Extra large spacing - major section separation */
+
+  /* === Border Radius === */
+  /* Rounded corners for modern, friendly appearance */
+  --radius-sm: 6px;             /* Small elements - buttons, tags */
+  --radius-md: 10px;            /* Medium elements - cards, inputs */
+  --radius-lg: 14px;            /* Large elements - modals, panels */
+
+  /* === Layout Dimensions === */
+  /* Fixed dimensions for consistent layout */
+  --titlebar-height: 44px;      /* Title bar height (macOS standard) */
+  --sidebar-width: 260px;       /* Default sidebar width */
+  --resize-handle-width: 4px;   /* Resize handle width */
+
+  /* === Transitions === */
+  /* Smooth transitions for professional feel */
+  --transition-fast: 150ms ease-in-out;    /* Quick interactions - button hover, icon change */
+  --transition-normal: 300ms ease-in-out;  /* Standard transitions - theme switch, color change */
+  --transition-slow: 400ms ease-in-out;    /* Deliberate animations - modal open, large movement */
+
+  /* === Shadows === */
+  /* Subtle elevation for depth */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);     /* Small shadow - buttons, cards */
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);     /* Medium shadow - dropdowns, tooltips */
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.15);    /* Large shadow - modals, overlays */
+
+  /* === Scrollbar === */
+  /* Custom scrollbar styling for consistency */
+  --scrollbar-width: 8px;                         /* Scrollbar width */
+  --scrollbar-track: #F0EEE6;                     /* Track color (bg-secondary) */
+  --scrollbar-thumb: #D5D3CB;                     /* Thumb color (border-hover) */
+  --scrollbar-thumb-hover: #141413;               /* Thumb hover color (active-bg) */
+}
+
+/* ========================================================================
+   CORE-067: Claude Dark Theme
+   ======================================================================== */
+
+/**
+ * Dark Mode Theme Variables
+ * Professional dark theme with warm undertones
+ *
+ * Design Philosophy:
+ * - Dark neutral gradient (not pure black)
+ * - Warm white text (not stark white)
+ * - Inverted active states
+ * - Maintains warmth even in dark mode
+ */
+
+[data-theme="dark"] {
+  /* === Background Colors === */
+  /* Dark neutral gradient from darkest to lightest */
+  --bg-primary: #1a1a1a;        /* Very dark gray main background - reduces eye strain */
+  --bg-secondary: #2a2a2a;      /* Dark gray secondary - title bar, sidebars */
+  --bg-tertiary: #3a3a3a;       /* Lighter dark gray tertiary - hover states */
+
+  /* === Text Colors === */
+  /* Warm white to gray gradient (inverted from light mode) */
+  --text-primary: #e8e6e0;      /* Warm white primary text - maintains warmth in dark */
+  --text-secondary: #a8a8a8;    /* Light gray secondary text - good contrast */
+  --text-tertiary: #707070;     /* Medium gray tertiary text - subtle but readable */
+
+  /* === Border Colors === */
+  /* Darker borders that blend with dark surfaces */
+  --border-color: #3a3a3a;      /* Dark border - subtle separation */
+  --border-hover: #4a4a4a;      /* Lighter hover border - interactive feedback */
+
+  /* === Active/Interaction States === */
+  /* Light active states for contrast in dark mode */
+  --active-bg: #e8e6e0;         /* Light active background - inverted from light mode */
+  --active-text: #141413;       /* Dark text on light background - high contrast */
+
+  /* === SVG Icon Colors === */
+  /* Light icons for visibility on dark backgrounds */
+  --icon-fill: #e8e6e0;         /* Light icons in dark mode - matches text-primary */
+
+  /* === Shadows === */
+  /* Deeper shadows for dark mode elevation */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);      /* Small shadow - more pronounced */
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);     /* Medium shadow - clear elevation */
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);     /* Large shadow - strong separation */
+
+  /* === Scrollbar === */
+  /* Darker scrollbar for dark mode */
+  --scrollbar-track: #2a2a2a;                     /* Dark track (bg-secondary) */
+  --scrollbar-thumb: #4a4a4a;                     /* Lighter thumb (border-hover) */
+  --scrollbar-thumb-hover: #e8e6e0;               /* Light thumb hover (active-bg) */
+}
+
+/* ========================================================================
+   CORE-065: Theme Framework Features
+   ======================================================================== */
+
+/**
+ * Smooth Theme Transitions
+ * All color properties transition smoothly during theme switch
+ */
+
+* {
+  transition: background-color var(--transition-normal),
+              border-color var(--transition-normal),
+              color var(--transition-normal),
+              fill var(--transition-normal);
+}
+
+/* Disable transitions for specific properties to avoid lag */
+*:where([style*="transition"]),
+*:where([class*="no-transition"]) {
+  transition: none !important;
+}
+
+/**
+ * Custom Scrollbar Styling
+ * Consistent scrollbar appearance across themes
+ */
+
+::-webkit-scrollbar {
+  width: var(--scrollbar-width);
+  height: var(--scrollbar-width);
+}
+
+::-webkit-scrollbar-track {
+  background-color: var(--scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb);
+  border-radius: calc(var(--scrollbar-width) / 2);
+  transition: background-color var(--transition-fast);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--scrollbar-thumb-hover);
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+/**
+ * Accessibility: Respect User Preferences
+ * Honor prefers-color-scheme and prefers-reduced-motion
+ */
+
+/* Auto dark mode based on system preference (optional enhancement) */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    /* Inherit dark theme variables when no explicit theme is set */
+    /* This allows system preference to control theme */
+  }
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+/**
+ * Focus Indicators for Keyboard Navigation
+ * Visible focus states for accessibility
+ */
+
+*:focus-visible {
+  outline: 2px solid var(--active-bg);
+  outline-offset: 2px;
+  transition: outline var(--transition-fast);
+}
+
+/* Remove focus outline for mouse users */
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/**
+ * Selection Highlighting
+ * Branded selection colors
+ */
+
+::selection {
+  background-color: var(--active-bg);
+  color: var(--active-text);
+}
+
+::-moz-selection {
+  background-color: var(--active-bg);
+  color: var(--active-text);
+}
+
+/**
+ * Print Styles
+ * Force light theme for printing
+ */
+
+@media print {
+  :root {
+    /* Override with light theme variables for better print readability */
+    --bg-primary: #FFFFFF;
+    --bg-secondary: #F5F5F5;
+    --text-primary: #000000;
+    --border-color: #CCCCCC;
+  }
+
+  /* Hide non-essential elements */
+  .titlebar,
+  .sidebar,
+  button,
+  [role="navigation"] {
+    display: none !important;
+  }
+}
+
+/**
+ * High Contrast Mode Support
+ * Enhanced contrast for accessibility
+ */
+
+@media (prefers-contrast: high) {
+  :root {
+    --text-primary: #000000;
+    --text-secondary: #333333;
+    --border-color: #000000;
+    --active-bg: #000000;
+  }
+
+  [data-theme="dark"] {
+    --text-primary: #FFFFFF;
+    --text-secondary: #CCCCCC;
+    --border-color: #FFFFFF;
+    --active-bg: #FFFFFF;
+  }
+}
+
+/**
+ * Theme Utilities
+ * Helper classes for theme-specific styling
+ */
+
+/* Force light mode for specific elements */
+.theme-light {
+  color-scheme: light;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Force dark mode for specific elements */
+.theme-dark {
+  color-scheme: dark;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Inverse theme colors (dark text on light bg in dark mode) */
+.theme-inverse {
+  background-color: var(--active-bg);
+  color: var(--active-text);
+}
+
+/**
+ * Documentation and Usage Examples
+ *
+ * JavaScript Theme Toggle:
+ * ```javascript
+ * function toggleTheme() {
+ *   const html = document.documentElement;
+ *   const currentTheme = html.getAttribute('data-theme') || 'light';
+ *   const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+ *
+ *   html.setAttribute('data-theme', newTheme);
+ *   localStorage.setItem('vcpchat-theme', newTheme);
+ * }
+ *
+ * // On app start
+ * document.addEventListener('DOMContentLoaded', () => {
+ *   const savedTheme = localStorage.getItem('vcpchat-theme') || 'light';
+ *   document.documentElement.setAttribute('data-theme', savedTheme);
+ * });
+ * ```
+ *
+ * CSS Usage:
+ * ```css
+ * .my-component {
+ *   background-color: var(--bg-primary);
+ *   color: var(--text-primary);
+ *   border: 1px solid var(--border-color);
+ *   padding: var(--spacing-md);
+ *   border-radius: var(--radius-md);
+ *   transition: all var(--transition-normal);
+ * }
+ *
+ * .my-component:hover {
+ *   background-color: var(--bg-tertiary);
+ *   border-color: var(--border-hover);
+ * }
+ *
+ * .my-component.active {
+ *   background-color: var(--active-bg);
+ *   color: var(--active-text);
+ * }
+ * ```
+ */

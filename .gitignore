@@ -28,8 +28,35 @@ src-tauri/WixTools/
 *.test.js
 *.spec.ts
 *.spec.js
-src/tests/
-src-tauri/tests/
+**/tests/
+**/test/
+**/*test*/**
+**/*-test.ts
+**/*-test.js
+**/*.test.tsx
+**/*.spec.tsx
+
+# Demo files
+**/demo/
+**/demos/
+**/*demo*/**
+**/*-demo.ts
+**/*-demo.js
+**/*.demo.tsx
+*demo*.html
+*demo*.ts
+*demo*.js
+
+# Preview files
+**/preview/
+**/previews/
+**/*preview*/**
+**/*-preview.ts
+**/*-preview.js
+**/*.preview.tsx
+*preview*.html
+*preview*.ts
+*preview*.js
 
 # IDE and editor files
 .vscode/
